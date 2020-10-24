@@ -27,6 +27,11 @@ namespace TrueFalse
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddSignalR(config =>
+            {
+                config.ClientTimeoutInterval = TimeSpan.FromMinutes(1);
+                config.KeepAliveInterval = TimeSpan.FromSeconds(30);
+            });
             services.AddTrueFalseGame();
         }
 

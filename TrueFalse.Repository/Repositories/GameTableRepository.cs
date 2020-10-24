@@ -46,7 +46,7 @@ namespace TrueFalse.Repository.Repositories
             var item = _gameTables.FirstOrDefault(t => t.Id == gameTable.Id);
             if (item == null)
             {
-                throw new NullReferenceException(nameof(item));
+                throw new NullReferenceException($"Удаляемый игровой стол с Id = {gameTable.Id} не существует либо уже был удален");
             }
 
             _gameTables.Remove(item);

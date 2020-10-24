@@ -13,7 +13,9 @@ namespace TrueFalse.DependencyInjection
         public static IServiceCollection AddTrueFalseGame(this IServiceCollection services)
         {
             return services.AddSingleton<GameTableService>()
-                .AddSingleton<IGameTableRepository, GameTableRepository>();
+                .AddSingleton<PlayerService>()
+                .AddSingleton<IGameTableRepository, GameTableRepository>()
+                .AddSingleton<IPlayerRepository, PlayerRepository>();
         }
     }
 }
