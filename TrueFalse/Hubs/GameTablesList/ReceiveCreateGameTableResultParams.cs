@@ -9,6 +9,6 @@ namespace TrueFalse.Hubs.GameTablesList
     {
         public Guid? GameTableId { get; set; }
 
-        public bool IsCompleted { get; set; }
+        public bool IsSucceeded { get; set; }
     }
 }

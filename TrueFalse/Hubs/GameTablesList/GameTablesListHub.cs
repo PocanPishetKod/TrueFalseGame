@@ -35,7 +35,7 @@ namespace TrueFalse.Hubs.GameTablesList
                 await Clients.Caller.ReceiveCreateGameTableResult(new ReceiveCreateGameTableResultParams()
                 {
                     GameTableId = id,
-                    IsCompleted = true
+                    IsSucceeded = true
                 });
             }
             catch (Exception)
@@ -43,7 +43,7 @@ namespace TrueFalse.Hubs.GameTablesList
                 await Clients.Caller.ReceiveCreateGameTableResult(new ReceiveCreateGameTableResultParams()
                 {
                     GameTableId = null,
-                    IsCompleted = false
+                    IsSucceeded = false
                 });
             }
         }
