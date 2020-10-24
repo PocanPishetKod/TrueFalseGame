@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using TrueFalse.Application.Dtos;
 using TrueFalse.Domain.Interfaces.Repositories;
 using TrueFalse.Domain.Models;
 
@@ -17,9 +19,19 @@ namespace TrueFalse.Application.Services
             _playerRepository = playerRepository;
         }
 
-        public IReadOnlyCollection<GameTable> GetGameTables()
+        public IReadOnlyCollection<GameTableDto> GetGameTables()
         {
-            return _gameTableRepository.GetGameTables();
+            return _gameTableRepository.GetGameTables().Select(gt => new GameTableDto()
+            {
+                Id = gt.Id,
+                Name = gt.Name,
+                Owner = new PlayerDto() { Id = gt.Owner.Id, Name = gt.Owner.Name },
+                Players = gt.Players.Select(p => new GameTablerPlayerDto() 
+                { 
+                    GameTablePlaceNumber = p.GameTablePlaceNumber,
+                    Player = new PlayerDto() { Id = p.Player.Id, Name = p.Player.Name} 
+                }).ToList()
+            }).ToList();
         }
 
         public Guid CreateGameTable(Guid ownerId, string gameTableName, int maxPlayersCount, int cardsCount)
