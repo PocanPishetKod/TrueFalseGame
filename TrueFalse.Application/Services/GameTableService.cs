@@ -12,11 +12,13 @@ namespace TrueFalse.Application.Services
     {
         private readonly IGameTableRepository _gameTableRepository;
         private readonly IPlayerRepository _playerRepository;
+        private readonly CreateGameTableChecker _createGameTableChecker;
 
-        public GameTableService(IGameTableRepository gameTableRepository, IPlayerRepository playerRepository)
+        public GameTableService(IGameTableRepository gameTableRepository, IPlayerRepository playerRepository, CreateGameTableChecker createGameTableChecker)
         {
             _gameTableRepository = gameTableRepository;
             _playerRepository = playerRepository;
+            _createGameTableChecker = createGameTableChecker;
         }
 
         public IReadOnlyCollection<GameTableDto> GetGameTables()
@@ -50,6 +52,11 @@ namespace TrueFalse.Application.Services
             if (player == null)
             {
                 throw new NullReferenceException($"Отсутствует пользователь с id = {ownerId}");
+            }
+
+            if (!_createGameTableChecker.CanCreateGameTable(player))
+            {
+                throw new Exception($"Игрок с Id = {player.Id} не может создать комнату");
             }
 
             var gameTable = GameTableFactory.Create(player, gameTableName, maxPlayersCount, cardsCount);

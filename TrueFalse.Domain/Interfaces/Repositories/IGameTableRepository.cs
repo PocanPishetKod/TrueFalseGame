@@ -16,5 +16,9 @@ namespace TrueFalse.Domain.Interfaces.Repositories
         void Remove(GameTable gameTable);
 
         void Update(GameTable gameTable);
+
+        GameTable GetByOwner(Player player);
+
+        GameTable GetByPlayer(Player player);
     }
 }

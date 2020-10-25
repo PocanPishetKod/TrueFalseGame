@@ -2,9 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TrueFalse.Application.Services;
-using TrueFalse.Domain.Interfaces.Repositories;
-using TrueFalse.Repository.Repositories;
+using TrueFalse.Application;
+using TrueFalse.Repository;
 
 namespace TrueFalse.DependencyInjection
 {
@@ -12,10 +11,8 @@ namespace TrueFalse.DependencyInjection
     {
         public static IServiceCollection AddTrueFalseGame(this IServiceCollection services)
         {
-            return services.AddSingleton<GameTableService>()
-                .AddSingleton<PlayerService>()
-                .AddSingleton<IGameTableRepository, GameTableRepository>()
-                .AddSingleton<IPlayerRepository, PlayerRepository>();
+            return services.AddTrueFalseApplication()
+                .AddRepositories();
         }
     }
 }
