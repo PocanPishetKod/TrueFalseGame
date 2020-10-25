@@ -30,7 +30,7 @@ namespace TrueFalse.Hubs.GameTablesList
         {
             try
             {
-                var id = _gameTableService.CreateGameTable(@params.OwnerId, @params.Name, @params.MaxPlayersCount, @params.CardsCount);
+                var id = _gameTableService.CreateGameTable(@params.OwnerId, @params.Name, @params.PlayersCount, @params.CardsCount);
 
                 await Clients.Caller.ReceiveCreateGameTableResult(new ReceiveCreateGameTableResultParams()
                 {

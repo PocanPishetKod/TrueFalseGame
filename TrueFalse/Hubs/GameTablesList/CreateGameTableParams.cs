@@ -11,7 +11,7 @@ namespace TrueFalse.Hubs.GameTablesList
 
         public Guid OwnerId { get; set; }
 
-        public int MaxPlayersCount { get; set; }
+        public int PlayersCount { get; set; }
 
         public int CardsCount { get; set; }
     }

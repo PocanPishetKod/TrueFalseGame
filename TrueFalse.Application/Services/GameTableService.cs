@@ -36,7 +36,7 @@ namespace TrueFalse.Application.Services
             }).ToList();
         }
 
-        public Guid CreateGameTable(Guid ownerId, string gameTableName, int maxPlayersCount, int cardsCount)
+        public Guid CreateGameTable(Guid ownerId, string gameTableName, int playersCount, int cardsCount)
         {
             if (string.IsNullOrWhiteSpace(gameTableName))
             {
@@ -59,7 +59,7 @@ namespace TrueFalse.Application.Services
                 throw new Exception($"Игрок с Id = {player.Id} не может создать комнату");
             }
 
-            var gameTable = GameTableFactory.Create(player, gameTableName, maxPlayersCount, cardsCount);
+            var gameTable = GameTableFactory.Create(player, gameTableName, playersCount, cardsCount);
 
             _gameTableRepository.Add(gameTable);
 
