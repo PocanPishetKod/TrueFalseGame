@@ -26,7 +26,7 @@ namespace TrueFalse.Application.Services
                 Id = gt.Id,
                 Name = gt.Name,
                 Owner = new PlayerDto() { Id = gt.Owner.Id, Name = gt.Owner.Name },
-                Players = gt.Players.Select(p => new GameTablerPlayerDto() 
+                Players = gt.Players.Select(p => new GameTablePlayerDto() 
                 { 
                     GameTablePlaceNumber = p.GameTablePlaceNumber,
                     Player = new PlayerDto() { Id = p.Player.Id, Name = p.Player.Name} 

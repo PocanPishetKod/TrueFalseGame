@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TrueFalse.Application.Dtos
 {
-    public class GameTablerPlayerDto
+    public class GameTablePlayerDto
     {
         public int GameTablePlaceNumber { get; set; }
 

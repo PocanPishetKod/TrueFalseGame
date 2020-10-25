@@ -12,6 +12,6 @@ namespace TrueFalse.Application.Dtos
 
         public PlayerDto Owner { get; set; }
 
-        public List<GameTablerPlayerDto> Players { get; set; }
+        public List<GameTablePlayerDto> Players { get; set; }
     }
 }
