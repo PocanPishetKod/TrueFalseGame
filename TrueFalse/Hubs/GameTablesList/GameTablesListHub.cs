@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TrueFalse.Application.Dtos;
 using TrueFalse.Application.Services;
 
 namespace TrueFalse.Hubs.GameTablesList
@@ -14,6 +15,14 @@ namespace TrueFalse.Hubs.GameTablesList
         public GameTablesListHub(GameTableService gameTableService)
         {
             _gameTableService = gameTableService;
+        }
+
+        private async Task GameTableCreated(GameTableDto gameTable)
+        {
+            await Clients.AllExcept(Context.ConnectionId).OnCreatedNewGameTable(new OnCreatedNewGameTableParams()
+            {
+                GameTable = gameTable
+            });
         }
 
         public async Task GetGameTables(GetGameTablesParams @params)
@@ -30,13 +39,15 @@ namespace TrueFalse.Hubs.GameTablesList
         {
             try
             {
-                var id = _gameTableService.CreateGameTable(@params.OwnerId, @params.Name, @params.PlayersCount, @params.CardsCount);
+                var dto = _gameTableService.CreateGameTable(@params.OwnerId, @params.Name, @params.PlayersCount, @params.CardsCount);
 
                 await Clients.Caller.ReceiveCreateGameTableResult(new ReceiveCreateGameTableResultParams()
                 {
-                    GameTableId = id,
+                    GameTableId = dto.Id,
                     IsSucceeded = true
                 });
+
+                await GameTableCreated(dto);
             }
             catch (Exception)
             {

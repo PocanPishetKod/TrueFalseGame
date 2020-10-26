@@ -36,7 +36,7 @@ namespace TrueFalse.Application.Services
             }).ToList();
         }
 
-        public Guid CreateGameTable(Guid ownerId, string gameTableName, int playersCount, int cardsCount)
+        public GameTableDto CreateGameTable(Guid ownerId, string gameTableName, int playersCount, int cardsCount)
         {
             if (string.IsNullOrWhiteSpace(gameTableName))
             {
@@ -63,7 +63,21 @@ namespace TrueFalse.Application.Services
 
             _gameTableRepository.Add(gameTable);
 
-            return gameTable.Id;
+            return new GameTableDto()
+            {
+                Id = gameTable.Id,
+                Name = gameTable.Name,
+                Owner = new PlayerDto()
+                { 
+                    Id = gameTable.Owner.Id,
+                    Name = gameTable.Owner.Name
+                },
+                Players = gameTable.Players.Select(p => new GameTablePlayerDto()
+                {
+                    GameTablePlaceNumber = p.GameTablePlaceNumber,
+                    Player = new PlayerDto() { Id = p.Player.Id, Name = p.Player.Name }
+                }).ToList()
+            };
         }
     }
 }

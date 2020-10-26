@@ -69,5 +69,10 @@ namespace TrueFalse.Domain.Models
 
             Players.Add(new GameTablePlayer(player, GetNextPositionNumber()));
         }
+
+        public void Leave(Player player)
+        {
+
+        }
     }
 }

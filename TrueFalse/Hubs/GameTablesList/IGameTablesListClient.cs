@@ -31,5 +31,12 @@ namespace TrueFalse.Hubs.GameTablesList
         /// <param name="params"></param>
         /// <returns></returns>
         Task ReceiveCreateGameTableResult(ReceiveCreateGameTableResultParams @params);
+
+        /// <summary>
+        /// Получает уведомление о создании нового игрового стола
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task OnCreatedNewGameTable(OnCreatedNewGameTableParams @params);
     }
 }
