@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TrueFalse.Application;
+using TrueFalse.Auth;
 using TrueFalse.Repository;
 
 namespace TrueFalse.DependencyInjection
@@ -12,7 +13,8 @@ namespace TrueFalse.DependencyInjection
         public static IServiceCollection AddTrueFalseGame(this IServiceCollection services)
         {
             return services.AddTrueFalseApplication()
-                .AddRepositories();
+                .AddRepositories()
+                .AddAuth();
         }
     }
 }

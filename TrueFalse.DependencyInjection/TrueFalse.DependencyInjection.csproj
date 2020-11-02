@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TrueFalse.Application\TrueFalse.Application.csproj" />
+    <ProjectReference Include="..\TrueFalse.Auth\TrueFalse.Auth.csproj" />
     <ProjectReference Include="..\TrueFalse.Domain\TrueFalse.Domain.csproj" />
     <ProjectReference Include="..\TrueFalse.Repository\TrueFalse.Repository.csproj" />
   </ItemGroup>
