@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TrueFalse.Hubs.GameTablesList
+namespace TrueFalse.Controllers.Dtos
 {
-    public class GetGameTablesParams
+    public class JwtRequest
     {
+        public string PlayerName { get; set; }
     }
 }

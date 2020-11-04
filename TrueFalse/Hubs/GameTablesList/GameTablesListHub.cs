@@ -5,16 +5,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
 using TrueFalse.Application.Services;
+using TrueFalse.Hubs.GameTablesList.Dtos;
 
 namespace TrueFalse.Hubs.GameTablesList
 {
     public class GameTablesListHub : Hub<IGameTablesListClient>
     {
         private readonly GameTableService _gameTableService;
+        private readonly PlayerService _playerService;
 
-        public GameTablesListHub(GameTableService gameTableService)
+        public GameTablesListHub(GameTableService gameTableService, PlayerService playerService)
         {
             _gameTableService = gameTableService;
+            _playerService = playerService;
+        }
+
+        public async override Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
         }
 
         private async Task GameTableCreated(GameTableDto gameTable)
@@ -27,11 +35,11 @@ namespace TrueFalse.Hubs.GameTablesList
 
         public async Task GetGameTables(GetGameTablesParams @params)
         {
-            var result = _gameTableService.GetGameTables();
+            var result = _gameTableService.GetGameTablesTest();
 
             await Clients.Caller.ReceiveGameTables(new ReceiveGameTableParams()
             {
-                GameTables = result
+                GameTables = result.ToList()
             });
         }
 

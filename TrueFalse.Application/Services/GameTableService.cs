@@ -21,6 +21,35 @@ namespace TrueFalse.Application.Services
             _createGameTableChecker = createGameTableChecker;
         }
 
+        public IReadOnlyCollection<GameTableDto> GetGameTablesTest()
+        {
+            return new List<GameTableDto>()
+            {
+                new GameTableDto()
+                { 
+                    Id = Guid.NewGuid(),
+                    Name = "Test1",
+                    Owner = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 1" },
+                    Players = new List<GameTablePlayerDto>() 
+                    {
+                        new GameTablePlayerDto() { GameTablePlaceNumber = 1, Player = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 1" } },
+                        new GameTablePlayerDto() { GameTablePlaceNumber = 2, Player = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 2" } }
+                    }
+                },
+                new GameTableDto()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Test2",
+                    Owner = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 3" },
+                    Players = new List<GameTablePlayerDto>()
+                    {
+                        new GameTablePlayerDto() { GameTablePlaceNumber = 1, Player = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 3" } },
+                        new GameTablePlayerDto() { GameTablePlaceNumber = 2, Player = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 4" } }
+                    }
+                }
+            };
+        }
+
         public IReadOnlyCollection<GameTableDto> GetGameTables()
         {
             return _gameTableRepository.GetGameTables().Select(gt => new GameTableDto()

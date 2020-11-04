@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TrueFalse.Application.Dtos;
 using TrueFalse.Domain.Interfaces.Repositories;
 using TrueFalse.Domain.Models;
 
@@ -15,7 +16,7 @@ namespace TrueFalse.Application.Services
             _playerRepository = playerRepository;
         }
 
-        public Guid CreatePlayer(string playerName)
+        public PlayerDto CreatePlayer(string playerName)
         {
             if (string.IsNullOrWhiteSpace(playerName))
             {
@@ -23,7 +24,13 @@ namespace TrueFalse.Application.Services
             }
 
             var player = new Player(Guid.NewGuid(), playerName);
-            return player.Id;
+            _playerRepository.Add(player);
+
+            return new PlayerDto()
+            {
+                Id = player.Id,
+                Name = player.Name
+            };
         }
     }
 }

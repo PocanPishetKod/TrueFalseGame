@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TrueFalse.DependencyInjection;
+using TrueFalse.Hubs.GameTablesList;
 
 namespace TrueFalse
 {
@@ -52,6 +53,7 @@ namespace TrueFalse
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<GameTablesListHub>("/gametables");
             });
         }
     }

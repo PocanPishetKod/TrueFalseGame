@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
@@ -17,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TrueFalse.Application\TrueFalse.Application.csproj" />
+    <ProjectReference Include="..\TrueFalse.Auth\TrueFalse.Auth.csproj" />
     <ProjectReference Include="..\TrueFalse.DependencyInjection\TrueFalse.DependencyInjection.csproj" />
   </ItemGroup>
 

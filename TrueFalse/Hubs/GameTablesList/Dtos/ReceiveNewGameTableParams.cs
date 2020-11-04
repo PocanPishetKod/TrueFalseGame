@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
 
-namespace TrueFalse.Hubs.GameTablesList
+namespace TrueFalse.Hubs.GameTablesList.Dtos
 {
     public class ReceiveNewGameTableParams
     {

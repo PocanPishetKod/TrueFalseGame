@@ -31,6 +31,26 @@ namespace TrueFalse.Repository.Repositories
             return _gameTables.FirstOrDefault(t => t.Id == id);
         }
 
+        public GameTable GetByOwner(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            return _gameTables.FirstOrDefault(t => t.Owner.Id == player.Id);
+        }
+
+        public GameTable GetByPlayer(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            return _gameTables.FirstOrDefault(t => t.Players.Any(p => p.Player.Id == player.Id));
+        }
+
         public IReadOnlyCollection<GameTable> GetGameTables()
         {
             return _gameTables;

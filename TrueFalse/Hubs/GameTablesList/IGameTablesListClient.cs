@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
+using TrueFalse.Hubs.GameTablesList.Dtos;
 
 namespace TrueFalse.Hubs.GameTablesList
 {
