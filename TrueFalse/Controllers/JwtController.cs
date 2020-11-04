@@ -19,9 +19,10 @@ namespace TrueFalse.Controllers
         private readonly JwtService _jwtService;
         private readonly PlayerService _playerService;
 
-        public JwtController(JwtService jwtService)
+        public JwtController(JwtService jwtService, PlayerService playerService)
         {
             _jwtService = jwtService;
+            _playerService = playerService;
         }
 
         [HttpPost]
