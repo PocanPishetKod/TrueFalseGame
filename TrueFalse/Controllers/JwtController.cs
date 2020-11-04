@@ -29,9 +29,9 @@ namespace TrueFalse.Controllers
         [AllowAnonymous]
         public IActionResult Token([Required] JwtRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.PlayerName))
+            if (User.Identity.IsAuthenticated)
             {
-                return BadRequest(new { Error = $"{nameof(request.PlayerName)} не должно быть пустым или null" });
+                return Forbid();
             }
 
             try
