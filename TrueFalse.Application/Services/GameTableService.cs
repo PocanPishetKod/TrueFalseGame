@@ -5,6 +5,7 @@ using System.Text;
 using TrueFalse.Application.Dtos;
 using TrueFalse.Domain.Interfaces.Repositories;
 using TrueFalse.Domain.Models;
+using TrueFalse.Domain.Models.GameTables;
 
 namespace TrueFalse.Application.Services
 {

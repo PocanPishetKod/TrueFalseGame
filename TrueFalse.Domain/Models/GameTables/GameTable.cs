@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueFalse.Domain.Models.Players;
 
-namespace TrueFalse.Domain.Models
+namespace TrueFalse.Domain.Models.GameTables
 {
     /// <summary>
     /// Игровой стол

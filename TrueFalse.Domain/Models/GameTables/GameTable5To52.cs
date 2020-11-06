@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TrueFalse.Domain.Models.Players;
 
-namespace TrueFalse.Domain.Models
+namespace TrueFalse.Domain.Models.GameTables
 {
     public class GameTable5To52 : GameTable
     {

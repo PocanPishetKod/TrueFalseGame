@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TrueFalse.Domain.Interfaces.Repositories;
-using TrueFalse.Domain.Models;
+using TrueFalse.Domain.Models.Players;
 
 namespace TrueFalse.Application.Services
 {

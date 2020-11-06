@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TrueFalse.Domain.Models
+namespace TrueFalse.Domain.Models.Players
 {
     public class Player
     {

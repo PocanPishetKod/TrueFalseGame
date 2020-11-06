@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using TrueFalse.Domain.Models;
+using TrueFalse.Domain.Models.GameTables;
+using TrueFalse.Domain.Models.Players;
 
 namespace TrueFalse.Domain.Interfaces.Repositories
 {
