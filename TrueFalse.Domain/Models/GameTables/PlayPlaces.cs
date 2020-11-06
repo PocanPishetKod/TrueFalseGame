@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Models.Players;
 
 namespace TrueFalse.Domain.Models.GameTables
@@ -24,21 +25,44 @@ namespace TrueFalse.Domain.Models.GameTables
         }
 
         /// <summary>
-        /// Заполнена ли комната
+        /// Переназначает номера всем местам
         /// </summary>
-        /// <returns></returns>
-        public bool IsFull()
+        private void ReassignNumbers()
         {
-            return _seatedPlayers.Count == PlacesCount;
+            throw new NotImplementedException("Хз нада или нет(");
+        }
+
+        /// <summary>
+        /// Проверяет занятость места пользователем
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        private bool PlayerAlreadySeated(Player player)
+        {
+            return _seatedPlayers.Any(p => p.Player.Id == player.Id);
         }
 
         /// <summary>
         /// Возвращает номер следующего игрового места
         /// </summary>
         /// <returns></returns>
-        private int GetNextPlaceNumber()
+        protected int GetNextPlaceNumber()
         {
-            return _seatedPlayers.Max(p => p.GameTablePlaceNumber);
+            if (_seatedPlayers.Count == 0)
+            {
+                return 1;
+            }
+
+            return _seatedPlayers.Max(p => p.GameTablePlaceNumber) + 1;
+        }
+
+        /// <summary>
+        /// Заполнена ли комната
+        /// </summary>
+        /// <returns></returns>
+        public bool IsFull()
+        {
+            return _seatedPlayers.Count == PlacesCount;
         }
 
         /// <summary>
@@ -54,10 +78,35 @@ namespace TrueFalse.Domain.Models.GameTables
 
             if (IsFull())
             {
-                throw new Exception("Нет свободных игровых мест");
+                throw new TrueFalseGameException("Нет свободных игровых мест");
+            }
+
+            if (PlayerAlreadySeated(player))
+            {
+                throw new TrueFalseGameException($"Пользователь с Id = {player.Id} уже сидит за столом");
             }
 
             _seatedPlayers.Add(new GameTablePlayer(player, GetNextPlaceNumber()));
+        }
+
+        /// <summary>
+        /// Удаляет игрока с его игрового места
+        /// </summary>
+        /// <param name="player"></param>
+        public void RemovePlayer(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            if (!PlayerAlreadySeated(player))
+            {
+                throw new TrueFalseGameException($"Пользователя с Id = {player.Id} нет за столом");
+            }
+
+            var place = _seatedPlayers.FirstOrDefault(p => p.Player.Id == player.Id);
+            _seatedPlayers.Remove(place);
         }
     }
 }

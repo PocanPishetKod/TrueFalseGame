@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Utils;
 
 namespace TrueFalse.Domain.Models.Cards
@@ -68,7 +69,7 @@ namespace TrueFalse.Domain.Models.Cards
         {
             if (_cards.Count == 0)
             {
-                throw new Exception("Нельзя брать карты из пустой колоды");
+                throw new TrueFalseGameException("Нельзя брать карты из пустой колоды");
             }
 
             var result = _cards[_cards.Count - 1];
@@ -85,7 +86,7 @@ namespace TrueFalse.Domain.Models.Cards
         {
             if (_cards.Count < count)
             {
-                throw new Exception("Нельзя брать больше карт из колоды, чем в ней есть");
+                throw new TrueFalseGameException("Нельзя брать больше карт из колоды, чем в ней есть");
             }
 
             var startIndex = (_cards.Count - 1) - (count - 1);

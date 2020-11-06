@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueFalse.Domain.Models.Cards;
 using TrueFalse.Domain.Models.Players;
 
 namespace TrueFalse.Domain.Models.GameTables
@@ -19,6 +20,10 @@ namespace TrueFalse.Domain.Models.GameTables
 
         public ICollection<GameTablePlayer> Players { get; set; }
 
+        protected abstract PlayPlaces PlayPlaces { get; }
+
+        protected abstract CardsPack CardsPack { get; }
+
         public GameTable(Player owner, string name, Guid id)
         {
             if (owner == null)
@@ -34,23 +39,18 @@ namespace TrueFalse.Domain.Models.GameTables
             Id = id;
             Name = name;
             Owner = owner;
-            Players = new List<GameTablePlayer>();
+
+            Initialize();
 
             Join(owner);
         }
 
-        private int GetNextPositionNumber()
-        {
-            if (Players.Count == 0)
-            {
-                return 1;
-            }
+        protected abstract void Initialize();
 
-            return Players.Max(p => p.GameTablePlaceNumber) + 1;
-        }
-
-        protected abstract bool CanJoinPlayer();
-
+        /// <summary>
+        /// Присоединяет пользователя к игровому столу
+        /// </summary>
+        /// <param name="player"></param>
         public void Join(Player player)
         {
             if (player == null)
@@ -58,22 +58,21 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(player));
             }
 
-            if (CanJoinPlayer())
-            {
-                throw new Exception($"К столу с Id = {Id} нельзя присоединиться");
-            }
-
-            if (Players.Any(p => p.Player.Id == player.Id))
-            {
-                throw new Exception($"Игрок с Id = {player.Id} уже находится за столом с Id = {Id}");
-            }
-
-            Players.Add(new GameTablePlayer(player, GetNextPositionNumber()));
+            PlayPlaces.PlantPlayer(player);
         }
 
+        /// <summary>
+        /// Убирает пользователя из игрового стола
+        /// </summary>
+        /// <param name="player"></param>
         public void Leave(Player player)
         {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
 
+            PlayPlaces.RemovePlayer(player);
         }
     }
 }
