@@ -10,6 +10,11 @@ namespace TrueFalse.Domain.Models.Cards
     public class PlayingCard
     {
         /// <summary>
+        /// Идентификатор карты уникальный на уровне комнаты
+        /// </summary>
+        public int Id { get; private set; }
+
+        /// <summary>
         /// Масть
         /// </summary>
         public PlayingCardSuit Suit { get; private set; }
@@ -19,7 +24,7 @@ namespace TrueFalse.Domain.Models.Cards
         /// </summary>
         public PlayingCardRank Rank { get; set; }
 
-        public PlayingCard(PlayingCardSuit suit, PlayingCardRank rank)
+        public PlayingCard(int id, PlayingCardSuit suit, PlayingCardRank rank)
         {
             Suit = suit;
             Rank = rank;

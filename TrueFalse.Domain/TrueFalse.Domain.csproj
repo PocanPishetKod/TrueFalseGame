@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\GameRules\" />
+    <Folder Include="Models\GameRules\DontBelieveMoveRules\" />
+    <Folder Include="Models\GameRules\BelieveMoveRules\" />
   </ItemGroup>
 
 </Project>
