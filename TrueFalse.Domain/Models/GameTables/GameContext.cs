@@ -16,8 +16,6 @@ namespace TrueFalse.Domain.Models.GameTables
 
         public Player CurrentMover { get; internal set; }
 
-        public PlayPlaces Players { get; set; }
-
         public ICollection<GameRound> Rounds { get; internal set; }
 
         public bool IsCompleted => Loser != null;
@@ -33,15 +31,9 @@ namespace TrueFalse.Domain.Models.GameTables
             Rounds = new List<GameRound>();
         }
 
-        public bool AlreadyMadeMoves()
+        public GameRound GetLastRound()
         {
-            var currentRound = Rounds.LastOrDefault();
-            if (currentRound == null)
-            {
-                return false;
-            }
-
-            return currentRound.MovesCount > 0;
+            return Rounds.LastOrDefault();
         }
     }
 }

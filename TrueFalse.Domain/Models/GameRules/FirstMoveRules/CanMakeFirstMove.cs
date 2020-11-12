@@ -10,7 +10,7 @@ namespace TrueFalse.Domain.Models.GameRules.FirstMoveRules
     {
         public bool Check(FirstMove move, GameTable gameTable)
         {
-            throw new NotImplementedException();
+            return !gameTable.AlreadyMadeMovesInLastRound();
         }
     }
 }

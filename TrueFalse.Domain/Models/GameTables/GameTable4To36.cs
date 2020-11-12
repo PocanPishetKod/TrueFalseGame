@@ -8,22 +8,19 @@ namespace TrueFalse.Domain.Models.GameTables
 {
     public class GameTable4To36 : GameTable
     {
-        private Play4Places _places;
-        private CardsPack36 _cardsPack;
-
-        protected override PlayPlaces PlayPlaces => _places;
-
-        protected override CardsPack CardsPack => _cardsPack;
-
         public GameTable4To36(Player owner, string name, Guid id) : base(owner, name, id)
         {
             
         }
 
-        protected override void Initialize()
+        protected override CardsPack CreateNewCardsPack()
         {
-            _places = new Play4Places();
-            _cardsPack = new CardsPack36();
+            return new CardsPack36();
+        }
+
+        protected override PlayPlaces CreatePlayPlaces()
+        {
+            return new Play4Places();
         }
     }
 }

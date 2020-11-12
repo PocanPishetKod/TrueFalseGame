@@ -19,6 +19,8 @@ namespace TrueFalse.Domain.Models.GameTables
         /// </summary>
         protected abstract int PlacesCount { get; }
 
+        public IReadOnlyCollection<GameTablePlayer> Players => _seatedPlayers;
+
         public PlayPlaces()
         {
             _seatedPlayers = new List<GameTablePlayer>();

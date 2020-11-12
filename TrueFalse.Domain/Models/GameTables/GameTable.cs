@@ -17,17 +17,17 @@ namespace TrueFalse.Domain.Models.GameTables
     {
         protected StandartGameRules GameRules { get; set; }
 
+        protected PlayPlaces PlayPlaces { get; }
+
+        protected GameContext CurrentGame { get; set; }
+
         public Guid Id { get; protected set; }
 
         public string Name { get; protected set; }
 
         public Player Owner { get; protected set; }
 
-        public GameContext CurrentGame { get; private set; }
-
-        public ICollection<GameTablePlayer> Players { get; set; }
-
-        protected abstract PlayPlaces PlayPlaces { get; }
+        public IReadOnlyCollection<GameTablePlayer> Players => PlayPlaces.Players;
 
         public GameTable(Player owner, string name, Guid id)
         {
@@ -45,13 +45,10 @@ namespace TrueFalse.Domain.Models.GameTables
             Name = name;
             Owner = owner;
             GameRules = new StandartGameRules();
-
-            Initialize();
+            CreatePlayPlaces();
 
             Join(owner);
         }
-
-        protected abstract void Initialize();
 
         protected abstract CardsPack CreateNewCardsPack();
 
@@ -95,7 +92,7 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Игра еще не окончена");
             }
 
-            if (!CurrentGame.Players.IsFull())
+            if (!PlayPlaces.IsFull())
             {
                 throw new TrueFalseGameException("Не хватает игроков");
             }
@@ -118,9 +115,15 @@ namespace TrueFalse.Domain.Models.GameTables
             GameRules.ExecuteMove(move, this);
         }
 
-        public bool AlreadyMadeMove()
+        public bool AlreadyMadeMovesInLastRound()
         {
+            var lastRound = CurrentGame.GetLastRound();
+            if (lastRound == null)
+            {
+                return false;
+            }
 
+            return lastRound.MovesCount > 0;
         }
     }
 }
