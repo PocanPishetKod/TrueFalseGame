@@ -100,6 +100,10 @@ namespace TrueFalse.Domain.Models.GameTables
             CurrentGame = new GameContext(CreateNewCardsPack());
         }
 
+        /// <summary>
+        /// Обрабатывает ход
+        /// </summary>
+        /// <param name="move"></param>
         public void MakeMove(IMove move)
         {
             if (CurrentGame == null || CurrentGame.IsCompleted)
@@ -115,6 +119,10 @@ namespace TrueFalse.Domain.Models.GameTables
             GameRules.ExecuteMove(move, this);
         }
 
+        /// <summary>
+        /// Опряделяет были ли уже ходы в раунде
+        /// </summary>
+        /// <returns></returns>
         public bool AlreadyMadeMovesInLastRound()
         {
             var lastRound = CurrentGame.GetLastRound();
