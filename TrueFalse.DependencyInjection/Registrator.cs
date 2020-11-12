@@ -16,5 +16,11 @@ namespace TrueFalse.DependencyInjection
                 .AddRepositories()
                 .AddAuth();
         }
+
+        public static IServiceCollection AddTrueFalseGameForUnitTasts(this IServiceCollection services)
+        {
+            return services.AddTrueFalseApplication()
+                .AddRepositories();
+        }
     }
 }

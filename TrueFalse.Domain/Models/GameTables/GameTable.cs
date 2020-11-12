@@ -45,7 +45,7 @@ namespace TrueFalse.Domain.Models.GameTables
             Name = name;
             Owner = owner;
             GameRules = new StandartGameRules();
-            CreatePlayPlaces();
+            PlayPlaces = CreatePlayPlaces();
 
             Join(owner);
         }

@@ -44,7 +44,7 @@ namespace TrueFalse.Controllers
                     Token = jwt
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return InternalServerError();
             }
