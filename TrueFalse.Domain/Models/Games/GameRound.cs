@@ -5,7 +5,7 @@ using System.Text;
 using TrueFalse.Domain.Models.Moves;
 using TrueFalse.Domain.Models.Players;
 
-namespace TrueFalse.Domain.Models.GameTables
+namespace TrueFalse.Domain.Models.Games
 {
     public class GameRound
     {

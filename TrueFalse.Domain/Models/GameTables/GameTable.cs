@@ -5,6 +5,7 @@ using System.Text;
 using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Models.Cards;
 using TrueFalse.Domain.Models.GameRules;
+using TrueFalse.Domain.Models.Games;
 using TrueFalse.Domain.Models.Moves;
 using TrueFalse.Domain.Models.Players;
 
@@ -19,7 +20,7 @@ namespace TrueFalse.Domain.Models.GameTables
 
         protected PlayPlaces PlayPlaces { get; }
 
-        protected GameContext CurrentGame { get; set; }
+        protected Game CurrentGame { get; set; }
 
         public Guid Id { get; protected set; }
 
@@ -97,7 +98,8 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Не хватает игроков");
             }
 
-            CurrentGame = new GameContext(CreateNewCardsPack());
+            CurrentGame = new Game(CreateNewCardsPack(), Players, GameRules);
+            CurrentGame.Start();
         }
 
         /// <summary>
@@ -125,7 +127,7 @@ namespace TrueFalse.Domain.Models.GameTables
         /// <returns></returns>
         public bool AlreadyMadeMovesInLastRound()
         {
-            var lastRound = CurrentGame.GetLastRound();
+            var lastRound = CurrentGame.GetCurrentRound();
             if (lastRound == null)
             {
                 return false;
