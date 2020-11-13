@@ -29,9 +29,9 @@ namespace TrueFalse.Domain.Models.Cards
         /// <param name="startRank"></param>
         protected void CreateCards(PlayingCardRank startRank)
         {
-            for (int i = (int)startRank, id = 1; i < EnumUtils.MaxValue<PlayingCardRank>(); i++, id++)
+            for (int i = (int)startRank, id = 1; i <= EnumUtils.MaxValue<PlayingCardRank>(); i++)
             {
-                for (int j = EnumUtils.MinValue<PlayingCardSuit>(); j < EnumUtils.MaxValue<PlayingCardSuit>(); j++)
+                for (int j = EnumUtils.MinValue<PlayingCardSuit>(); j <= EnumUtils.MaxValue<PlayingCardSuit>(); id++, j++)
                 {
                     _cards.Add(new PlayingCard(id, (PlayingCardSuit)j, (PlayingCardRank)i));
                 }

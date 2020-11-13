@@ -26,6 +26,7 @@ namespace TrueFalse.Domain.Models.Cards
 
         public PlayingCard(int id, PlayingCardSuit suit, PlayingCardRank rank)
         {
+            Id = id;
             Suit = suit;
             Rank = rank;
         }
