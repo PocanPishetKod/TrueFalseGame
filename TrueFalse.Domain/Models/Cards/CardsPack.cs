@@ -43,12 +43,20 @@ namespace TrueFalse.Domain.Models.Cards
         /// </summary>
         public void Shuffle()
         {
-            var temp = new List<PlayingCard>(4);
-            for (int i = 0; i < _cards.Count; i += 4)
+            PlayingCard temp;
+            var random = new Random();
+            for (int i = 0; i < _cards.Count; i++)
             {
-                temp.AddRange(_cards.GetRange(i, 4));
-                _cards.InsertRange(i, _cards.GetRange(i + 4, 4));
-                _cards.InsertRange(i + 4, temp);
+                int index;
+                do
+                {
+                    index = random.Next(0, _cards.Count);
+                }
+                while (index == i);
+
+                temp = _cards[index];
+                _cards[index] = _cards[i];
+                _cards[i] = temp;
             }
         }
 
