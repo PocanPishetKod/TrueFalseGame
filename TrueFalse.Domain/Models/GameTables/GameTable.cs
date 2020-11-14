@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Models.Cards;
-using TrueFalse.Domain.Models.GameRules;
 using TrueFalse.Domain.Models.Games;
 using TrueFalse.Domain.Models.Moves;
 using TrueFalse.Domain.Models.Players;
@@ -16,8 +15,6 @@ namespace TrueFalse.Domain.Models.GameTables
     /// </summary>
     public abstract class GameTable
     {
-        protected StandartGameRules GameRules { get; set; }
-
         protected PlayPlaces PlayPlaces { get; }
 
         protected Game CurrentGame { get; set; }
@@ -45,7 +42,6 @@ namespace TrueFalse.Domain.Models.GameTables
             Id = id;
             Name = name;
             Owner = owner;
-            GameRules = new StandartGameRules();
             PlayPlaces = CreatePlayPlaces();
 
             Join(owner);
@@ -98,42 +94,23 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Не хватает игроков");
             }
 
-            CurrentGame = new Game(CreateNewCardsPack(), Players, GameRules);
+            CurrentGame = new Game(CreateNewCardsPack(), Players);
             CurrentGame.Start();
         }
 
-        /// <summary>
-        /// Обрабатывает ход
-        /// </summary>
-        /// <param name="move"></param>
-        public void MakeMove(IMove move)
+        public void MakeFirstMove(FirstMove move)
         {
-            if (CurrentGame == null || CurrentGame.IsCompleted)
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (CurrentGame == null)
             {
                 throw new TrueFalseGameException("Игра еще не началась");
             }
 
-            if (!GameRules.CheckMove(move, this))
-            {
-                throw new TrueFalseGameException("Нарушение правил игры");
-            }
-
-            GameRules.ExecuteMove(move, this);
-        }
-
-        /// <summary>
-        /// Опряделяет были ли уже ходы в раунде
-        /// </summary>
-        /// <returns></returns>
-        public bool AlreadyMadeMovesInLastRound()
-        {
-            var lastRound = CurrentGame.GetCurrentRound();
-            if (lastRound == null)
-            {
-                return false;
-            }
-
-            return lastRound.MovesCount > 0;
+            CurrentGame.MakeFirstMove(move);
         }
     }
 }

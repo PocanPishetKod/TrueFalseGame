@@ -24,6 +24,13 @@ namespace TrueFalse.Domain.Models.Cards
         protected abstract void CreateCards();
 
         /// <summary>
+        /// Определяет входил ли в данный тип колоды указанный rank
+        /// </summary>
+        /// <param name="rank"></param>
+        /// <returns></returns>
+        public abstract bool IsRankContains(PlayingCardRank rank);
+
+        /// <summary>
         /// Заполняет колоду начиная с указанного достоинства карты
         /// </summary>
         /// <param name="startRank"></param>

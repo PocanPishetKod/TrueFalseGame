@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Models.Cards;
-using TrueFalse.Domain.Models.GameRules;
 using TrueFalse.Domain.Models.GameTables;
 using TrueFalse.Domain.Models.Moves;
 using TrueFalse.Domain.Models.Players;
@@ -13,21 +12,35 @@ namespace TrueFalse.Domain.Models.Games
 {
     public class Game
     {
-        private StandartGameRules GameRules { get; set; }
-
         private ICollection<GameRound> Rounds { get; set; }
 
-        public ICollection<GamePlayer> GamePlayers { get; set; }
+        private ICollection<GamePlayer> GamePlayers { get; set; }
 
-        public Player Loser { get; internal set; }
+        public Player Loser { get; private set; }
 
-        public CardsPack CardsPack { get; internal set; }
+        public CardsPack CardsPack { get; private set; }
 
-        public Player CurrentMover { get; internal set; }
+        public Player CurrentMover { get; private set; }
 
         public bool IsCompleted => Loser != null;
 
-        public Game(CardsPack cardsPack, IReadOnlyCollection<GameTablePlayer> players, StandartGameRules gameRules)
+        public bool IsStarted { get; private set; }
+
+        public GameRound CurrentRound 
+        { 
+            get
+            {
+                var lastRound = Rounds.LastOrDefault();
+                if (lastRound != null && lastRound.Loser == null)
+                {
+                    return lastRound;
+                }
+
+                return null;
+            }
+        }
+
+        public Game(CardsPack cardsPack, IReadOnlyCollection<GameTablePlayer> players)
         {
             if (cardsPack == null)
             {
@@ -39,7 +52,6 @@ namespace TrueFalse.Domain.Models.Games
                 throw new ArgumentNullException(nameof(players));
             }
 
-            GameRules = gameRules;
             CardsPack = cardsPack;
             Rounds = new List<GameRound>();
             SetPlayers(players);
@@ -68,23 +80,77 @@ namespace TrueFalse.Domain.Models.Games
             {
                 for (int i = 0; i < cardPerPlayer; i += cardPerPlayer)
                 {
-                    player.Cards.AddRange(CardsPack.TakeMany(cardPerPlayer));
+                    player.GiveCards(CardsPack.TakeMany(cardPerPlayer));
                 }
             }
         }
 
-        public GameRound GetCurrentRound()
+        private void NextRound()
         {
-            return Rounds.LastOrDefault();
+            Rounds.Add(new GameRound());
+        }
+
+        private bool ValidateFirstMove(FirstMove move)
+        {
+            if (move.Cards.Count > 4)
+            {
+                return false;
+            }
+
+            if (!CardsPack.IsRankContains(move.Rank))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void Start()
         {
             CardsPack.Shuffle();
             DealCards();
+            NextRound();
+            IsStarted = true;
         }
 
-        public void MakeMove(IMove move)
+        public void MakeFirstMove(FirstMove move)
+        {
+            if (!IsStarted)
+            {
+                throw new TrueFalseGameException("Игра еще не началась");
+            }
+
+            if (IsCompleted)
+            {
+                throw new TrueFalseGameException("Игра уже завершилась");
+            }
+
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            var gamePlayer = GamePlayers.FirstOrDefault(p => p.Player.Id == move.InitiatorId);
+            if (gamePlayer == null)
+            {
+                throw new TrueFalseGameException($"Игрока с Id = {move.InitiatorId} нет за игровым столом");
+            }
+
+            if (!ValidateFirstMove(move))
+            {
+                throw new TrueFalseGameException("Не валидный ход");
+            }
+
+            gamePlayer.TakeCards(move.Cards.Select(c => c.Id).ToList());
+            CurrentRound.AddMove(move);
+        }
+
+        public void MakeBeleiveMove(BelieveMove move)
+        {
+
+        }
+
+        public void MakeDontBeleiveMove(DontBelieveMove move)
         {
 
         }

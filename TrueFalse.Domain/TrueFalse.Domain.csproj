@@ -4,9 +4,4 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\GameRules\DontBelieveMoveRules\" />
-    <Folder Include="Models\GameRules\BelieveMoveRules\" />
-  </ItemGroup>
-
 </Project>

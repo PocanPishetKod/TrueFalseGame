@@ -13,7 +13,7 @@ namespace TrueFalse.Domain.Models.Games
 
         public int MovesCount => _moves.Count;
 
-        public Player Loser { get; internal set; }
+        public Player Loser { get; private set; }
 
         public GameRound()
         {
@@ -28,6 +28,16 @@ namespace TrueFalse.Domain.Models.Games
         public void AddMove(IMove move)
         {
             _moves.Add(move);
+        }
+
+        public void Complete(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            Loser = player;
         }
     }
 }
