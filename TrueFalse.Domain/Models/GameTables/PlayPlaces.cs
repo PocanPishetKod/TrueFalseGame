@@ -21,17 +21,14 @@ namespace TrueFalse.Domain.Models.GameTables
 
         public IReadOnlyCollection<GameTablePlayer> Players => _seatedPlayers;
 
+        /// <summary>
+        /// Заполнена ли комната
+        /// </summary>
+        public bool IsFull => _seatedPlayers.Count == PlacesCount;
+
         public PlayPlaces()
         {
             _seatedPlayers = new List<GameTablePlayer>();
-        }
-
-        /// <summary>
-        /// Переназначает номера всем местам
-        /// </summary>
-        private void ReassignNumbers()
-        {
-            throw new NotImplementedException("Хз нада или нет(");
         }
 
         /// <summary>
@@ -59,15 +56,6 @@ namespace TrueFalse.Domain.Models.GameTables
         }
 
         /// <summary>
-        /// Заполнена ли комната
-        /// </summary>
-        /// <returns></returns>
-        public bool IsFull()
-        {
-            return _seatedPlayers.Count == PlacesCount;
-        }
-
-        /// <summary>
         /// Усаживает игрока за игровое место
         /// </summary>
         /// <param name="player"></param>
@@ -78,7 +66,7 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(player));
             }
 
-            if (IsFull())
+            if (IsFull)
             {
                 throw new TrueFalseGameException("Нет свободных игровых мест");
             }

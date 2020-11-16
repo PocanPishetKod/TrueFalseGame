@@ -89,7 +89,7 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Игра еще не окончена");
             }
 
-            if (!PlayPlaces.IsFull())
+            if (!PlayPlaces.IsFull)
             {
                 throw new TrueFalseGameException("Не хватает игроков");
             }
