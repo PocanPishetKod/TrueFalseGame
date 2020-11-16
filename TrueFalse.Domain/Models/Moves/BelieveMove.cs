@@ -10,8 +10,6 @@ namespace TrueFalse.Domain.Models.Moves
     /// </summary>
     public class BelieveMove : MoveWithCards
     {
-        public Guid InitiatorId { get; private set; }
-
         public BelieveMove(IReadOnlyList<PlayingCard> cards, Guid initiatorId)
         {
             if (Cards == null)

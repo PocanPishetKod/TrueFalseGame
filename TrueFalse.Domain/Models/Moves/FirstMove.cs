@@ -15,8 +15,6 @@ namespace TrueFalse.Domain.Models.Moves
         /// </summary>
         public PlayingCardRank Rank { get; private set; }
 
-        public Guid InitiatorId { get; private set; }
-
         public FirstMove(IReadOnlyList<PlayingCard> cards, PlayingCardRank rank, Guid initiatorId)
         {
             if (cards == null)

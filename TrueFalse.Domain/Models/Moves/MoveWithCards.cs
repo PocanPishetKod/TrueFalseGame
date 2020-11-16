@@ -11,5 +11,7 @@ namespace TrueFalse.Domain.Models.Moves
         /// Подкидываемые карты
         /// </summary>
         public IReadOnlyList<PlayingCard> Cards { get; protected set; }
+
+        public Guid InitiatorId { get; protected set; }
     }
 }
