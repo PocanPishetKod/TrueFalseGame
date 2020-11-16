@@ -30,6 +30,10 @@ namespace TrueFalse.Domain.Models.Games
             _cards = new List<PlayingCard>();
         }
 
+        /// <summary>
+        /// Дает карты игроку
+        /// </summary>
+        /// <param name="cards"></param>
         public void GiveCards(IReadOnlyCollection<PlayingCard> cards)
         {
             if (cards == null)
@@ -40,8 +44,18 @@ namespace TrueFalse.Domain.Models.Games
             _cards.AddRange(cards);
         }
 
+        /// <summary>
+        /// Забирает карты у игрока
+        /// </summary>
+        /// <param name="cardIds"></param>
+        /// <returns></returns>
         public IReadOnlyCollection<PlayingCard> TakeCards(IReadOnlyCollection<int> cardIds)
         {
+            if (_cards.Count == 0)
+            {
+                throw new TrueFalseGameException("У игрока нет карт");
+            }
+
             var result = new List<PlayingCard>();
             foreach (var id in cardIds)
             {
@@ -52,6 +66,7 @@ namespace TrueFalse.Domain.Models.Games
                 }
 
                 result.Add(card);
+                _cards.Remove(card);
             }
 
             return result;

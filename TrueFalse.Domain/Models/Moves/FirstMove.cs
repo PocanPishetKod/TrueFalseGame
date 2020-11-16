@@ -8,13 +8,8 @@ namespace TrueFalse.Domain.Models.Moves
     /// <summary>
     /// Первый ход в раунде
     /// </summary>
-    public class FirstMove : IMove
+    public class FirstMove : MoveWithCards
     {
-        /// <summary>
-        /// Подкидываемые карты
-        /// </summary>
-        public IReadOnlyList<PlayingCard> Cards { get; private set; }
-
         /// <summary>
         /// Объявляемая стоимость карт
         /// </summary>

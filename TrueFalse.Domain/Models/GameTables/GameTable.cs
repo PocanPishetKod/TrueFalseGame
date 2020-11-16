@@ -84,7 +84,7 @@ namespace TrueFalse.Domain.Models.GameTables
         /// </summary>
         public void StartNewGame()
         {
-            if (CurrentGame != null &&! CurrentGame.IsCompleted)
+            if (CurrentGame != null &&! CurrentGame.IsEnded)
             {
                 throw new TrueFalseGameException("Игра еще не окончена");
             }
@@ -98,6 +98,10 @@ namespace TrueFalse.Domain.Models.GameTables
             CurrentGame.Start();
         }
 
+        /// <summary>
+        /// Делает ход "Первый ход"
+        /// </summary>
+        /// <param name="move"></param>
         public void MakeFirstMove(FirstMove move)
         {
             if (move == null)
@@ -111,6 +115,44 @@ namespace TrueFalse.Domain.Models.GameTables
             }
 
             CurrentGame.MakeFirstMove(move);
+        }
+
+        /// <summary>
+        /// Делает ход "Верю"
+        /// </summary>
+        /// <param name="move"></param>
+        public void MakeBeleiveMove(BelieveMove move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (CurrentGame == null)
+            {
+                throw new TrueFalseGameException("Игра еще не началась");
+            }
+
+            CurrentGame.MakeBeleiveMove(move);
+        }
+
+        /// <summary>
+        /// Делает ход "Не верю"
+        /// </summary>
+        /// <param name="move"></param>
+        public void MakeDontBeleiveMove(DontBelieveMove move)
+        {
+            if (move == null)
+            {
+                throw new ArgumentNullException(nameof(move));
+            }
+
+            if (CurrentGame == null)
+            {
+                throw new TrueFalseGameException("Игра еще не началась");
+            }
+
+            CurrentGame.MakeDontBeleiveMove(move);
         }
     }
 }

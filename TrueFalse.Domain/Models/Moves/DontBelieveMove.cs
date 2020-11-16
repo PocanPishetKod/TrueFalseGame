@@ -12,11 +12,11 @@ namespace TrueFalse.Domain.Models.Moves
         /// <summary>
         /// Выбранная карта на проверку
         /// </summary>
-        public Guid SelectedCardId { get; private set; }
+        public int SelectedCardId { get; private set; }
 
         public Guid InitiatorId { get; private set; }
 
-        public DontBelieveMove(Guid selectedCardId, Guid initiatorId)
+        public DontBelieveMove(int selectedCardId, Guid initiatorId)
         {
             SelectedCardId = selectedCardId;
             InitiatorId = initiatorId;
