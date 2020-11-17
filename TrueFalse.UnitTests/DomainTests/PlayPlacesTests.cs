@@ -53,6 +53,7 @@ namespace TrueFalse.UnitTests.DomainTests
             places.RemovePlayer(places.Players.Last().Player);
             Assert.Equal(2, places.Players.Count);
             var player = places.Players.Last().Player;
+            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
             RemoveAllPlayers(places);
             Assert.Equal(0, places.Players.Count);
             Assert.Throws<TrueFalseGameException>(() => { places.RemovePlayer(player); });
@@ -63,6 +64,7 @@ namespace TrueFalse.UnitTests.DomainTests
             Assert.True(places.IsFull);
             Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(new Player(Guid.NewGuid(), "Test")); });
             player = places.Players.Last().Player;
+            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
             places.RemovePlayer(places.Players.Last().Player);
             Assert.Equal(3, places.Players.Count);
             RemoveAllPlayers(places);
@@ -75,6 +77,7 @@ namespace TrueFalse.UnitTests.DomainTests
             Assert.True(places.IsFull);
             Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(new Player(Guid.NewGuid(), "Test")); });
             player = places.Players.Last().Player;
+            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
             places.RemovePlayer(places.Players.Last().Player);
             Assert.Equal(4, places.Players.Count);
             RemoveAllPlayers(places);
