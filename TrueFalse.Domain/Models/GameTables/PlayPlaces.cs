@@ -95,7 +95,7 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException($"Пользователя с Id = {player.Id} нет за столом");
             }
 
-            var place = _seatedPlayers.FirstOrDefault(p => p.Player.Id == player.Id);
+            var place = _seatedPlayers.First(p => p.Player.Id == player.Id);
             _seatedPlayers.Remove(place);
         }
     }
