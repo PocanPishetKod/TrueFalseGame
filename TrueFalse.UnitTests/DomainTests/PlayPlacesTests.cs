@@ -42,47 +42,30 @@ namespace TrueFalse.UnitTests.DomainTests
             }
         }
 
+        private void AddAndRemovePlayersTestInternal(PlayPlaces places, int maxPlaces)
+        {
+            AddPlayers(places, maxPlaces);
+            Assert.Equal(maxPlaces, places.Players.Count);
+            Assert.True(places.IsFull);
+            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(new Player(Guid.NewGuid(), "Test")); });
+            var player = places.Players.Last().Player;
+            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
+            places.RemovePlayer(player);
+            Assert.Equal(maxPlaces - 1, places.Players.Count);
+            Assert.Null(places.Players.FirstOrDefault(p => p.Player.Id == player.Id));
+            player = places.Players.Last().Player;
+            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
+            RemoveAllPlayers(places);
+            Assert.Equal(0, places.Players.Count);
+            Assert.Throws<TrueFalseGameException>(() => { places.RemovePlayer(player); });
+        }
+
         [Fact]
         public void AddAndRemovePlayersTest()
         {
-            PlayPlaces places = new Play3Places();
-            AddPlayers(places, 3);
-            Assert.Equal(3, places.Players.Count);
-            Assert.True(places.IsFull);
-            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(new Player(Guid.NewGuid(), "Test")); });
-            places.RemovePlayer(places.Players.Last().Player);
-            Assert.Equal(2, places.Players.Count);
-            var player = places.Players.Last().Player;
-            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
-            RemoveAllPlayers(places);
-            Assert.Equal(0, places.Players.Count);
-            Assert.Throws<TrueFalseGameException>(() => { places.RemovePlayer(player); });
-
-            places = new Play4Places();
-            AddPlayers(places, 4);
-            Assert.Equal(4, places.Players.Count);
-            Assert.True(places.IsFull);
-            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(new Player(Guid.NewGuid(), "Test")); });
-            player = places.Players.Last().Player;
-            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
-            places.RemovePlayer(places.Players.Last().Player);
-            Assert.Equal(3, places.Players.Count);
-            RemoveAllPlayers(places);
-            Assert.Equal(0, places.Players.Count);
-            Assert.Throws<TrueFalseGameException>(() => { places.RemovePlayer(player); });
-
-            places = new Play5Places();
-            AddPlayers(places, 5);
-            Assert.Equal(5, places.Players.Count);
-            Assert.True(places.IsFull);
-            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(new Player(Guid.NewGuid(), "Test")); });
-            player = places.Players.Last().Player;
-            Assert.Throws<TrueFalseGameException>(() => { places.PlantPlayer(player); });
-            places.RemovePlayer(places.Players.Last().Player);
-            Assert.Equal(4, places.Players.Count);
-            RemoveAllPlayers(places);
-            Assert.Equal(0, places.Players.Count);
-            Assert.Throws<TrueFalseGameException>(() => { places.RemovePlayer(player); });
+            AddAndRemovePlayersTestInternal(new Play3Places(), 3);
+            AddAndRemovePlayersTestInternal(new Play4Places(), 4);
+            AddAndRemovePlayersTestInternal(new Play5Places(), 5);
         }
 
         private void CheckPlaceNumbers(PlayPlaces places)
@@ -111,11 +94,9 @@ namespace TrueFalse.UnitTests.DomainTests
             throw new Exception("Что-то не так");
         }
 
-        [Fact]
-        public void PlaceNumbersTest()
+        private void PlaceNumbersTestInternal(PlayPlaces places, int maxPlaces)
         {
-            PlayPlaces places = new Play3Places();
-            AddPlayers(places, 3);
+            AddPlayers(places, maxPlaces);
             CheckPlaceNumbers(places);
             var player = places.Players.First().Player;
             places.RemovePlayer(player);
@@ -123,24 +104,14 @@ namespace TrueFalse.UnitTests.DomainTests
             places.PlantPlayer(player);
             places.RemovePlayer(GetMiddlePlayer(places));
             CheckPlaceNumbers(places);
+        }
 
-            places = new Play4Places();
-            AddPlayers(places, 4);
-            CheckPlaceNumbers(places);
-            player = places.Players.First().Player;
-            places.RemovePlayer(player);
-            CheckPlaceNumbers(places);
-            places.RemovePlayer(GetMiddlePlayer(places));
-            CheckPlaceNumbers(places);
-
-            places = new Play5Places();
-            AddPlayers(places, 5);
-            CheckPlaceNumbers(places);
-            player = places.Players.First().Player;
-            places.RemovePlayer(player);
-            CheckPlaceNumbers(places);
-            places.RemovePlayer(GetMiddlePlayer(places));
-            CheckPlaceNumbers(places);
+        [Fact]
+        public void PlaceNumbersTest()
+        {
+            PlaceNumbersTestInternal(new Play3Places(), 3);
+            PlaceNumbersTestInternal(new Play4Places(), 4);
+            PlaceNumbersTestInternal(new Play5Places(), 5);
         }
     }
 }
