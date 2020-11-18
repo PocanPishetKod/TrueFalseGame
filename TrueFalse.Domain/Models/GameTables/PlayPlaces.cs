@@ -42,6 +42,19 @@ namespace TrueFalse.Domain.Models.GameTables
         }
 
         /// <summary>
+        /// Пересчитывает номера игровых мест
+        /// </summary>
+        private void RecalculatePlaceNumbers()
+        {
+            var newPlaceNumber = 1;
+            foreach (var player in _seatedPlayers)
+            {
+                player.GameTablePlaceNumber = newPlaceNumber;
+                newPlaceNumber++;
+            }
+        }
+
+        /// <summary>
         /// Возвращает номер следующего игрового места
         /// </summary>
         /// <returns></returns>
@@ -97,6 +110,7 @@ namespace TrueFalse.Domain.Models.GameTables
 
             var place = _seatedPlayers.First(p => p.Player.Id == player.Id);
             _seatedPlayers.Remove(place);
+            RecalculatePlaceNumbers();
         }
     }
 }

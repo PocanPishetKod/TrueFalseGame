@@ -18,7 +18,7 @@ namespace TrueFalse.Domain.Models.GameTables
         /// <summary>
         /// Место игрока за игровым столом
         /// </summary>
-        public int GameTablePlaceNumber { get; private set; }
+        public int GameTablePlaceNumber { get; internal set; }
 
         public GameTablePlayer(Player player, int gameTablePlaceNumber)
         {

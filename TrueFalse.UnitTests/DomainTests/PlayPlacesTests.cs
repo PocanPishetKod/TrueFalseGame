@@ -95,22 +95,52 @@ namespace TrueFalse.UnitTests.DomainTests
             }
         }
 
+        private Player GetMiddlePlayer(PlayPlaces places)
+        {
+            var isFirst = true;
+            foreach (var player in places.Players)
+            {
+                if (!isFirst)
+                {
+                    return player.Player;
+                }
+
+                isFirst = false;
+            }
+
+            throw new Exception("Что-то не так");
+        }
+
         [Fact]
         public void PlaceNumbersTest()
         {
             PlayPlaces places = new Play3Places();
             AddPlayers(places, 3);
             CheckPlaceNumbers(places);
+            var player = places.Players.First().Player;
+            places.RemovePlayer(player);
+            CheckPlaceNumbers(places);
+            places.PlantPlayer(player);
+            places.RemovePlayer(GetMiddlePlayer(places));
+            CheckPlaceNumbers(places);
 
             places = new Play4Places();
             AddPlayers(places, 4);
+            CheckPlaceNumbers(places);
+            player = places.Players.First().Player;
+            places.RemovePlayer(player);
+            CheckPlaceNumbers(places);
+            places.RemovePlayer(GetMiddlePlayer(places));
             CheckPlaceNumbers(places);
 
             places = new Play5Places();
             AddPlayers(places, 5);
             CheckPlaceNumbers(places);
-
-            // todo подумать насчет изменения порядка номеров при удалении игрока
+            player = places.Players.First().Player;
+            places.RemovePlayer(player);
+            CheckPlaceNumbers(places);
+            places.RemovePlayer(GetMiddlePlayer(places));
+            CheckPlaceNumbers(places);
         }
     }
 }
