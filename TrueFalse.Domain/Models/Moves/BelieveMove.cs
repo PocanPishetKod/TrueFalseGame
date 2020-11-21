@@ -12,7 +12,7 @@ namespace TrueFalse.Domain.Models.Moves
     {
         public BelieveMove(IReadOnlyList<PlayingCard> cards, Guid initiatorId)
         {
-            if (Cards == null)
+            if (cards == null)
             {
                 throw new ArgumentNullException(nameof(cards));
             }

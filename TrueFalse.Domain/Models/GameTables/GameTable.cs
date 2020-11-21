@@ -27,6 +27,13 @@ namespace TrueFalse.Domain.Models.GameTables
 
         public IReadOnlyCollection<GameTablePlayer> Players => PlayPlaces.Players;
 
+        public bool IsFull => PlayPlaces.IsFull;
+
+        /// <summary>
+        /// Является ли комната прогодна для использования
+        /// </summary>
+        public bool IsInvalid => Owner == null;
+
         public GameTable(Player owner, string name, Guid id)
         {
             if (owner == null)
@@ -47,6 +54,20 @@ namespace TrueFalse.Domain.Models.GameTables
             Join(owner);
         }
 
+        /// <summary>
+        /// Возвращает следующего владельца комнаты
+        /// </summary>
+        /// <returns></returns>
+        private GameTablePlayer GetNextOwner()
+        {
+            if (Players.Count == 0)
+            {
+                return null;
+            }
+
+            return Players.First(p => p.GameTablePlaceNumber == Players.Min(gp => gp.GameTablePlaceNumber));
+        }
+
         protected abstract CardsPack CreateNewCardsPack();
 
         protected abstract PlayPlaces CreatePlayPlaces();
@@ -60,6 +81,11 @@ namespace TrueFalse.Domain.Models.GameTables
             if (player == null)
             {
                 throw new ArgumentNullException(nameof(player));
+            }
+
+            if (IsInvalid)
+            {
+                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
             }
 
             PlayPlaces.PlantPlayer(player);
@@ -76,7 +102,16 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(player));
             }
 
+            if (IsInvalid)
+            {
+                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+            }
+
             PlayPlaces.RemovePlayer(player);
+            if (player.Id == Owner.Id)
+            {
+                Owner = GetNextOwner()?.Player;
+            }
         }
 
         /// <summary>
@@ -84,6 +119,11 @@ namespace TrueFalse.Domain.Models.GameTables
         /// </summary>
         public void StartNewGame()
         {
+            if (IsInvalid)
+            {
+                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+            }
+
             if (CurrentGame != null &&! CurrentGame.IsEnded)
             {
                 throw new TrueFalseGameException("Игра еще не окончена");
@@ -109,6 +149,11 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(move));
             }
 
+            if (IsInvalid)
+            {
+                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+            }
+
             if (CurrentGame == null)
             {
                 throw new TrueFalseGameException("Игра еще не началась");
@@ -128,6 +173,11 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(move));
             }
 
+            if (IsInvalid)
+            {
+                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+            }
+
             if (CurrentGame == null)
             {
                 throw new TrueFalseGameException("Игра еще не началась");
@@ -145,6 +195,11 @@ namespace TrueFalse.Domain.Models.GameTables
             if (move == null)
             {
                 throw new ArgumentNullException(nameof(move));
+            }
+
+            if (IsInvalid)
+            {
+                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
             }
 
             if (CurrentGame == null)
