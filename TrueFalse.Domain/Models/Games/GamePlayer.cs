@@ -8,7 +8,7 @@ using TrueFalse.Domain.Models.Players;
 
 namespace TrueFalse.Domain.Models.Games
 {
-    public class GamePlayer
+    public class GamePlayer : IGamePlayerInfo
     {
         private List<PlayingCard> _cards;
 

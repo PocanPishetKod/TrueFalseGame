@@ -14,17 +14,19 @@ namespace TrueFalse.Domain.Models.Games
     {
         private ICollection<GameRound> Rounds { get; set; }
 
-        private ICollection<GamePlayer> GamePlayers { get; set; }
+        private List<GamePlayer> GamePlayers { get; set; }
+
+        private CardsPack CardsPack { get; set; }
 
         public Player Loser { get; private set; }
-
-        public CardsPack CardsPack { get; private set; }
 
         public Player CurrentMover { get; private set; }
 
         public bool IsEnded => Loser != null;
 
         public bool IsStarted { get; private set; }
+
+        public IReadOnlyCollection<IGamePlayerInfo> Players => GamePlayers;
 
         public GameRound CurrentRound 
         { 
@@ -153,8 +155,7 @@ namespace TrueFalse.Domain.Models.Games
             {
                 CurrentMover = GamePlayers.First(p => p.Priority == GamePlayers.Min(pm => pm.Priority)).Player;
             }
-
-            if (loser == null || loser.Player.Id == CurrentMover.Id)
+            else if (loser == null || loser.Player.Id == CurrentMover.Id)
             {
                 CurrentMover = GetNextMover().Player;
             }
