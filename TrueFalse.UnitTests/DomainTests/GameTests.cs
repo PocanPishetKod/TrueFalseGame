@@ -52,6 +52,11 @@ namespace TrueFalse.UnitTests.DomainTests
 
             var mover = game.Players.First(p => p.Priority == game.Players.Min(pp => pp.Priority));
             Assert.Equal(mover.Player.Id, game.CurrentMover.Id);
+
+            foreach (var player in game.Players)
+            {
+                Assert.NotEmpty(player.Cards);
+            }
         }
     }
 }
