@@ -19,6 +19,8 @@ namespace TrueFalse.Domain.Models.GameTables
 
         protected Game CurrentGame { get; set; }
 
+        public DateTime DateOfCreate { get; protected set; }
+
         public Guid Id { get; protected set; }
 
         public string Name { get; protected set; }
@@ -49,6 +51,7 @@ namespace TrueFalse.Domain.Models.GameTables
             Id = id;
             Name = name;
             Owner = owner;
+            DateOfCreate = DateTime.Now;
             PlayPlaces = CreatePlayPlaces();
 
             Join(owner);

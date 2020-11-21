@@ -51,9 +51,9 @@ namespace TrueFalse.Application.Services
             };
         }
 
-        public IReadOnlyCollection<GameTableDto> GetGameTables()
+        public IReadOnlyCollection<GameTableDto> GetGameTables(int pageNum, int perPage)
         {
-            return _gameTableRepository.GetGameTables().Select(gt => new GameTableDto()
+            return _gameTableRepository.GetGameTables(pageNum, perPage).Select(gt => new GameTableDto()
             {
                 Id = gt.Id,
                 Name = gt.Name,

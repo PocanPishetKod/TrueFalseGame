@@ -8,7 +8,7 @@ namespace TrueFalse.Domain.Interfaces.Repositories
 {
     public interface IGameTableRepository
     {
-        IReadOnlyCollection<GameTable> GetGameTables();
+        IReadOnlyCollection<GameTable> GetGameTables(int pageNum, int perPage);
 
         GameTable GetById(Guid id);
 
