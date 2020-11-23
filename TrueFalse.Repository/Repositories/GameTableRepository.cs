@@ -70,6 +70,16 @@ namespace TrueFalse.Repository.Repositories
                 .ToList();
         }
 
+        public bool IsAlreadyPlaying(Player player)
+        {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            return _gameTables.Values.Any(gt => gt.Players.Any(p => p.Player.Id == player.Id));
+        }
+
         public void Remove(GameTable gameTable)
         {
             if (gameTable == null)

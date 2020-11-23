@@ -5,32 +5,47 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
 using TrueFalse.Application.Services;
-using TrueFalse.Hubs.GameTablesList.Dtos;
+using TrueFalse.Hubs.Main.Dtos;
 
-namespace TrueFalse.Hubs.GameTablesList
+namespace TrueFalse.Hubs.Main
 {
-    public class GameTablesListHub : Hub<IGameTablesListClient>
+    public class MainHub : Hub<IMainHubClient>
     {
         private readonly GameTableService _gameTableService;
         private readonly PlayerService _playerService;
 
-        public GameTablesListHub(GameTableService gameTableService, PlayerService playerService)
+        public MainHub(GameTableService gameTableService, PlayerService playerService)
         {
             _gameTableService = gameTableService;
             _playerService = playerService;
         }
 
-        public async override Task OnConnectedAsync()
+        private async Task NotifyAboutPlayerJoined()
         {
-            await base.OnConnectedAsync();
+
         }
 
-        private async Task GameTableCreated(GameTableDto gameTable)
+        private async Task NotifyAboutPlayerLeaved()
+        {
+
+        }
+
+        private async Task NotifyGameStarted()
+        {
+
+        }
+
+        private async Task NotifyGameTableCreated(GameTableDto gameTable)
         {
             await Clients.AllExcept(Context.ConnectionId).OnCreatedNewGameTable(new OnCreatedNewGameTableParams()
             {
                 GameTable = gameTable
             });
+        }
+
+        public async override Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
         }
 
         public async Task GetGameTables(GetGameTablesParams @params)
@@ -55,7 +70,7 @@ namespace TrueFalse.Hubs.GameTablesList
                     IsSucceeded = true
                 });
 
-                await GameTableCreated(dto);
+                await NotifyGameTableCreated(dto);
             }
             catch (Exception)
             {
@@ -65,6 +80,43 @@ namespace TrueFalse.Hubs.GameTablesList
                     IsSucceeded = false
                 });
             }
+        }
+
+        public async Task JoinToGameTable(JoinToGameTableParams @params)
+        {
+            try
+            {
+                
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        public async Task LeaveFromGameTable()
+        {
+
+        }
+
+        public async Task StartGame()
+        {
+
+        }
+
+        public async Task MakeFirstMove(MakeFirstMoveParams @params)
+        {
+
+        }
+
+        public async Task MakeBeliveMove(MakeBeliveMoveParams @params)
+        {
+
+        }
+
+        public async Task MakeDontBelieveMove(MakeDontBeliveMoveParams @params)
+        {
+
         }
     }
 }

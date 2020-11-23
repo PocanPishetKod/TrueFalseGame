@@ -21,5 +21,7 @@ namespace TrueFalse.Domain.Interfaces.Repositories
         GameTable GetByOwner(Player player);
 
         GameTable GetByPlayer(Player player);
+
+        bool IsAlreadyPlaying(Player player);
     }
 }

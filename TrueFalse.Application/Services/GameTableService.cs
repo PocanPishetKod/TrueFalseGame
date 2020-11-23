@@ -120,6 +120,11 @@ namespace TrueFalse.Application.Services
                 throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
             }
 
+            if (_gameTableRepository.IsAlreadyPlaying(player))
+            {
+                throw new Exception($"Игрок c Id = {playerId} уже играет за другим игровым столом");
+            }
+
             var gameTable = _gameTableRepository.GetById(gameTableId);
             if (gameTable == null)
             {
@@ -129,7 +134,7 @@ namespace TrueFalse.Application.Services
             gameTable.Join(player);
         }
 
-        public void Leave(Guid gameTableId, Guid playerId)
+        public void Leave(Guid playerId)
         {
             var player = _playerRepository.GetById(playerId);
             if (player == null)
@@ -137,16 +142,16 @@ namespace TrueFalse.Application.Services
                 throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
             }
 
-            var gameTable = _gameTableRepository.GetById(gameTableId);
+            var gameTable = _gameTableRepository.GetByPlayer(player);
             if (gameTable == null)
             {
-                throw new Exception($"Игрового стола с Id = {gameTableId} не существует");
+                throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
             gameTable.Leave(player);
         }
 
-        public void StartGame(Guid gameTableId, Guid playerId)
+        public void StartGame(Guid playerId)
         {
             var player = _playerRepository.GetById(playerId);
             if (player == null)
@@ -154,16 +159,16 @@ namespace TrueFalse.Application.Services
                 throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
             }
 
-            var gameTable = _gameTableRepository.GetById(gameTableId);
+            var gameTable = _gameTableRepository.GetByOwner(player);
             if (gameTable == null)
             {
-                throw new Exception($"Игрового стола с Id = {gameTableId} не существует");
+                throw new Exception($"Игрок с Id = {playerId} не является создателем игрового стола");
             }
 
             gameTable.StartNewGame(player);
         }
 
-        public void MakeFirstMove(Guid gameTableId, Guid playerId, IReadOnlyCollection<PlayingCardDto> cards, int rank)
+        public void MakeFirstMove(Guid playerId, IReadOnlyCollection<PlayingCardDto> cards, int rank)
         {
             if (cards == null)
             {
@@ -176,10 +181,10 @@ namespace TrueFalse.Application.Services
                 throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
             }
 
-            var gameTable = _gameTableRepository.GetById(gameTableId);
+            var gameTable = _gameTableRepository.GetByPlayer(player);
             if (gameTable == null)
             {
-                throw new Exception($"Игрового стола с Id = {gameTableId} не существует");
+                throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
             var move = new FirstMove(cards.Select(c => new PlayingCard(c.Id, (PlayingCardSuit)c.Suit, (PlayingCardRank)c.Rank)).ToList(), (PlayingCardRank)rank, playerId);
@@ -187,7 +192,7 @@ namespace TrueFalse.Application.Services
             gameTable.MakeFirstMove(move);
         }
 
-        public void MakeBelieveMove(Guid gameTableId, Guid playerId, IReadOnlyCollection<PlayingCardDto> cards)
+        public void MakeBelieveMove(Guid playerId, IReadOnlyCollection<PlayingCardDto> cards)
         {
             if (cards == null)
             {
@@ -200,10 +205,10 @@ namespace TrueFalse.Application.Services
                 throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
             }
 
-            var gameTable = _gameTableRepository.GetById(gameTableId);
+            var gameTable = _gameTableRepository.GetByPlayer(player);
             if (gameTable == null)
             {
-                throw new Exception($"Игрового стола с Id = {gameTableId} не существует");
+                throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
             var move = new BelieveMove(cards.Select(c => new PlayingCard(c.Id, (PlayingCardSuit)c.Suit, (PlayingCardRank)c.Rank)).ToList(), playerId);
@@ -211,7 +216,7 @@ namespace TrueFalse.Application.Services
             gameTable.MakeBeleiveMove(move);
         }
 
-        public void MakeDontBeliveMove(Guid gameTableId, Guid playerId, int selectedCardId)
+        public void MakeDontBeliveMove(Guid playerId, int selectedCardId)
         {
             if (selectedCardId <= 0)
             {
@@ -224,10 +229,10 @@ namespace TrueFalse.Application.Services
                 throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
             }
 
-            var gameTable = _gameTableRepository.GetById(gameTableId);
+            var gameTable = _gameTableRepository.GetByPlayer(player);
             if (gameTable == null)
             {
-                throw new Exception($"Игрового стола с Id = {gameTableId} не существует");
+                throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
             var move = new DontBelieveMove(selectedCardId, playerId);

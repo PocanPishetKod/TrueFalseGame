@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
-using TrueFalse.Hubs.GameTablesList.Dtos;
+using TrueFalse.Hubs.Main.Dtos;
 
-namespace TrueFalse.Hubs.GameTablesList
+namespace TrueFalse.Hubs.Main
 {
     /// <summary>
     /// Интерфейс клиентских методов списка игровых столов
     /// </summary>
-    public interface IGameTablesListClient
+    public interface IMainHubClient
     {
         /// <summary>
         /// Принимает игровые столы от сервера

@@ -91,7 +91,7 @@ namespace TrueFalse.UnitTests.DomainTests
             var player = new Player(Guid.NewGuid(), "Test");
             Assert.Throws<TrueFalseGameException>(() => { gameTable.Join(player); });
             Assert.Throws<TrueFalseGameException>(() => { gameTable.Leave(player); });
-            Assert.Throws<TrueFalseGameException>(() => { gameTable.StartNewGame(); });
+            Assert.Throws<TrueFalseGameException>(() => { gameTable.StartNewGame(player); });
             Assert.Throws<TrueFalseGameException>(() => { gameTable.MakeFirstMove(new FirstMove(new List<PlayingCard>(), PlayingCardRank.Ace, player.Id)); });
             Assert.Throws<TrueFalseGameException>(() => { gameTable.MakeBeleiveMove(new BelieveMove(new List<PlayingCard>(), player.Id)); });
             Assert.Throws<TrueFalseGameException>(() => { gameTable.MakeDontBeleiveMove(new DontBelieveMove(3, player.Id)); });
