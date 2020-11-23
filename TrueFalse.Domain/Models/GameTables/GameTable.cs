@@ -120,8 +120,13 @@ namespace TrueFalse.Domain.Models.GameTables
         /// <summary>
         /// Запускает новую игру
         /// </summary>
-        public void StartNewGame()
+        public void StartNewGame(Player player)
         {
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
             if (IsInvalid)
             {
                 throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
@@ -130,6 +135,11 @@ namespace TrueFalse.Domain.Models.GameTables
             if (CurrentGame != null &&! CurrentGame.IsEnded)
             {
                 throw new TrueFalseGameException("Игра еще не окончена");
+            }
+
+            if (player.Id != Owner.Id)
+            {
+                throw new TrueFalseGameException("Только владелец игрового стола может запустить игру");
             }
 
             if (!PlayPlaces.IsFull)
