@@ -18,6 +18,7 @@
     <ProjectReference Include="..\TrueFalse.Application\TrueFalse.Application.csproj" />
     <ProjectReference Include="..\TrueFalse.Auth\TrueFalse.Auth.csproj" />
     <ProjectReference Include="..\TrueFalse.DependencyInjection\TrueFalse.DependencyInjection.csproj" />
+    <ProjectReference Include="..\TrueFalse.Logger\TrueFalse.Logger.csproj" />
   </ItemGroup>
 
 
