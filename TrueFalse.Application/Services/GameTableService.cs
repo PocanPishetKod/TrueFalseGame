@@ -134,7 +134,7 @@ namespace TrueFalse.Application.Services
             gameTable.Join(player);
         }
 
-        public void Leave(Guid playerId)
+        public Guid Leave(Guid playerId)
         {
             var player = _playerRepository.GetById(playerId);
             if (player == null)
@@ -149,9 +149,11 @@ namespace TrueFalse.Application.Services
             }
 
             gameTable.Leave(player);
+
+            return gameTable.Id;
         }
 
-        public void StartGame(Guid playerId)
+        public Guid StartGame(Guid playerId)
         {
             var player = _playerRepository.GetById(playerId);
             if (player == null)
@@ -166,6 +168,8 @@ namespace TrueFalse.Application.Services
             }
 
             gameTable.StartNewGame(player);
+
+            return gameTable.Id;
         }
 
         public void MakeFirstMove(Guid playerId, IReadOnlyCollection<PlayingCardDto> cards, int rank)
