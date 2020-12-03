@@ -177,7 +177,7 @@ namespace TrueFalse.Application.Services
             };
         }
 
-        public FirstMoveResult MakeFirstMove(Guid playerId, IReadOnlyCollection<int> cardIds, int rank)
+        public MakeFirstMoveResult MakeFirstMove(Guid playerId, IReadOnlyCollection<int> cardIds, int rank)
         {
             if (cardIds == null)
             {
@@ -196,19 +196,19 @@ namespace TrueFalse.Application.Services
                 throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
-            var cards = gameTable.GetPlayerCardsByIds(playerId, cardIds);
+            var cards = gameTable.GetPlayerCards(playerId, cardIds);
 
             var move = new FirstMove(cards.Select(c => new PlayingCard(c.Id, c.Suit, c.Rank)).ToList(), (PlayingCardRank)rank, playerId);
 
             gameTable.MakeFirstMove(move);
 
-            return new FirstMoveResult()
+            return new MakeFirstMoveResult()
             {
                 NextMoverId = gameTable.CurrentMover.Id
             };
         }
 
-        public void MakeBelieveMove(Guid playerId, IReadOnlyCollection<int> cardIds)
+        public MakeBeleiveMoveResult MakeBelieveMove(Guid playerId, IReadOnlyCollection<int> cardIds)
         {
             if (cardIds == null)
             {
@@ -227,14 +227,20 @@ namespace TrueFalse.Application.Services
                 throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
-            var cards = gameTable.GetPlayerCardsByIds(playerId, cardIds);
+            var cards = gameTable.GetPlayerCards(playerId, cardIds);
 
             var move = new BelieveMove(cards.Select(c => new PlayingCard(c.Id, c.Suit, c.Rank)).ToList(), playerId);
 
             gameTable.MakeBeleiveMove(move);
+
+            return new MakeBeleiveMoveResult()
+            {
+                GameTableId = gameTable.Id,
+                NextMoverId = gameTable.CurrentMover.Id
+            };
         }
 
-        public void MakeDontBeliveMove(Guid playerId, int selectedCardId)
+        public MakeDontBeliveMoveResult MakeDontBeliveMove(Guid playerId, int selectedCardId)
         {
             if (selectedCardId <= 0)
             {
@@ -255,7 +261,28 @@ namespace TrueFalse.Application.Services
 
             var move = new DontBelieveMove(selectedCardId, playerId);
 
-            gameTable.MakeDontBeleiveMove(move);
+            var checkedCard = gameTable.GetCardFromCurrentRoundById(selectedCardId);
+
+            gameTable.MakeDontBeleiveMove(move, out var takedLoserCards, out var loserId);
+
+            return new MakeDontBeliveMoveResult()
+            {
+                GameTableId = gameTable.Id,
+                NextMoverId = gameTable.CurrentMover?.Id,
+                CheckedCard = new PlayingCardDto()
+                {
+                    Id = checkedCard.Id,
+                    Rank = (int)checkedCard.Rank,
+                    Suit = (int)checkedCard.Suit
+                },
+                LoserId = loserId,
+                TakedLoserCards = takedLoserCards.Select(c => new PlayingCardDto()
+                {
+                    Id = c.Id,
+                    Rank = (int)c.Rank,
+                    Suit = (int)c.Suit
+                }).ToList()
+            };
         }
     }
 }

@@ -93,6 +93,11 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
             }
 
+            if (CurrentGame != null && CurrentGame.IsStarted && !CurrentGame.IsEnded)
+            {
+                throw new TrueFalseGameException("Игра уже началась");
+            }
+
             PlayPlaces.PlantPlayer(player);
         }
 
@@ -113,6 +118,7 @@ namespace TrueFalse.Domain.Models.GameTables
             }
 
             PlayPlaces.RemovePlayer(player);
+
             if (player.Id == Owner.Id)
             {
                 Owner = GetNextOwner()?.Player;
@@ -205,7 +211,7 @@ namespace TrueFalse.Domain.Models.GameTables
         /// Делает ход "Не верю"
         /// </summary>
         /// <param name="move"></param>
-        public void MakeDontBeleiveMove(DontBelieveMove move)
+        public void MakeDontBeleiveMove(DontBelieveMove move, out IReadOnlyCollection<IPlayingCardInfo> takedLoserCards, out Guid loserId)
         {
             if (move == null)
             {
@@ -222,16 +228,16 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Игра еще не началась");
             }
 
-            CurrentGame.MakeDontBeleiveMove(move);
+            CurrentGame.MakeDontBeleiveMove(move, out takedLoserCards, out loserId);
         }
 
         /// <summary>
-        /// Возвращает карты игрока по идентификаторам карт
+        /// Возвращает карты игрока
         /// </summary>
         /// <param name="playerId"></param>
         /// <param name="cardIds"></param>
         /// <returns></returns>
-        public IReadOnlyCollection<IPlayingCardInfo> GetPlayerCardsByIds(Guid playerId, IReadOnlyCollection<int> cardIds)
+        public IReadOnlyCollection<IPlayingCardInfo> GetPlayerCards(Guid playerId, IReadOnlyCollection<int> cardIds = null)
         {
             if (cardIds == null)
             {
@@ -243,7 +249,22 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new TrueFalseGameException("Игра еще не началась");
             }
 
-            return CurrentGame.GetPlayerCardsByIds(playerId, cardIds);
+            return CurrentGame.GetPlayerCards(playerId, cardIds);
+        }
+
+        /// <summary>
+        /// Возвращает карту из ходов текущего раунда по идентификатору
+        /// </summary>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
+        public IPlayingCardInfo GetCardFromCurrentRoundById(int cardId)
+        {
+            if (CurrentGame == null)
+            {
+                throw new TrueFalseGameException("Игра еще не началась");
+            }
+
+            return CurrentGame.GetCardFromCurrentRoundById(cardId);
         }
     }
 }

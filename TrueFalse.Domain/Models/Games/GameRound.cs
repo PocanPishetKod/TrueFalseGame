@@ -107,5 +107,17 @@ namespace TrueFalse.Domain.Models.Games
 
             Loser = loser;
         }
+
+        /// <summary>
+        /// Возвращает карту из ходов по идентификатору
+        /// </summary>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
+        public PlayingCard GetCardById(int cardId)
+        {
+            return GetMoves<MoveWithCards>()
+                .SelectMany(m => m.Cards)
+                .FirstOrDefault(c => c.Id == cardId);
+        }
     }
 }

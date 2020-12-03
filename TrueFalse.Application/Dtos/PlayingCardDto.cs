@@ -6,9 +6,9 @@ namespace TrueFalse.Application.Dtos
 {
     public class PlayingCardDto
     {
-        public int Id { get; private set; }
+        public int Id { get; set; }
 
-        public int Suit { get; private set; }
+        public int Suit { get; set; }
 
         public int Rank { get; set; }
     }

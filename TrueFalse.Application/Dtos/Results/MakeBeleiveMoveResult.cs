@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TrueFalse.Application.Dtos.Results
 {
-    public class FirstMoveResult
+    public class MakeBeleiveMoveResult
     {
         public Guid GameTableId { get; set; }
 

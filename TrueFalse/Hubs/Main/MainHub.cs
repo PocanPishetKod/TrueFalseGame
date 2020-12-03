@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
+using TrueFalse.Application.Dtos.Results;
 using TrueFalse.Application.Services;
 using TrueFalse.Auth.Extensions;
 using TrueFalse.Hubs.Main.Dtos;
@@ -75,6 +76,33 @@ namespace TrueFalse.Hubs.Main
                 NextMoverId = nextMoverId,
                 CardIds = cardIds.ToList()
             });
+        }
+
+        private async Task NotifyBelieveMoveMade(Guid gameTableId, IReadOnlyCollection<int> cardIds, Guid nextMoverId)
+        {
+            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
+            {
+                CardIds = cardIds.ToList(),
+                NextMoverId = nextMoverId
+            });
+        }
+
+        private async Task NotifyDontBeliveMoveMade(MakeDontBeliveMoveResult moveResult)
+        {
+            if (moveResult.LoserId == Context.User.GetUserId())
+            {
+                await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[1] { Context.ConnectionId }).OnDontBeliveMoveMade(new OnDontBeliveMoveMadeParams()
+                {
+                    LoserId = moveResult.LoserId,
+                    CheckedCard = moveResult.CheckedCard,
+                    NextMoverId = moveResult.NextMoverId,
+                    HiddenTakedLoserCards = moveResult.TakedLoserCards.Select(c => c.Id).ToList()
+                });
+            }
+            else
+            {
+                // Найти лузера и отправить ему раскрытые карты, а остальным скрытые
+            }
         }
 
         public async override Task OnConnectedAsync()
@@ -216,12 +244,54 @@ namespace TrueFalse.Hubs.Main
 
         public async Task MakeBeliveMove(MakeBeliveMoveParams @params)
         {
+            try
+            {
+                var result = _gameTableService.MakeBelieveMove(Context.User.GetUserId(), @params.CardIds);
 
+                await NotifyBelieveMoveMade(result.GameTableId, @params.CardIds, result.NextMoverId);
+                await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
+                {
+                    Succeeded = true,
+                    NextMoverId = result.NextMoverId
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Ошибка хода типа \"Верю\". Игрок с Id = {Context.User.GetUserId()}");
+
+                await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
+                {
+                    Succeeded = false
+                });
+            }
         }
 
         public async Task MakeDontBelieveMove(MakeDontBeliveMoveParams @params)
         {
+            try
+            {
+                var result = _gameTableService.MakeDontBeliveMove(Context.User.GetUserId(), @params.SelectedCardId);
 
+                await NotifyDontBeliveMoveMade(result);
+                await Clients.Caller.ReceiveMakeDontBeliveMoveResult(new ReceiveMakeDontBeliveMoveResultParams()
+                {
+                    Succeeded = true,
+                    CheckedCard = result.CheckedCard,
+                    LoserId = result.LoserId,
+                    NextMoverId = result.NextMoverId,
+                    HiddenTakedLoserCards = result.LoserId != Context.User.GetUserId() ? result.TakedLoserCards.Select(c => c.Id).ToList() : null,
+                    TakedLoserCards = result.LoserId == Context.User.GetUserId() ? result.TakedLoserCards.ToList() : null
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Ошибка хода типа \"Не верю\". Игрок с Id = {Context.User.GetUserId()}");
+
+                await Clients.Caller.ReceiveMakeDontBeliveMoveResult(new ReceiveMakeDontBeliveMoveResultParams()
+                {
+                    Succeeded = false
+                });
+            }
         }
     }
 }

@@ -296,7 +296,7 @@ namespace TrueFalse.Domain.Models.Games
         /// Делает ход "Не верю"
         /// </summary>
         /// <param name="move"></param>
-        public void MakeDontBeleiveMove(DontBelieveMove move)
+        public void MakeDontBeleiveMove(DontBelieveMove move, out IReadOnlyCollection<IPlayingCardInfo> takedLoserCards, out Guid loserId)
         {
             if (!CanMakeMove())
             {
@@ -341,20 +341,23 @@ namespace TrueFalse.Domain.Models.Games
                 throw new TrueFalseGameException("Указанныая пользователем карта не может быть выбрана для проверки так как ее нет в картах последнего хода");
             }
 
+            var loserCards = CurrentRound.GetAllCards();
+            takedLoserCards = loserCards;
             GamePlayer loser;
             if (selectedCard.Rank == CurrentRound.GetRank()) // Проиграл
             {
-                gamePlayer.GiveCards(CurrentRound.GetAllCards());
+                gamePlayer.GiveCards(loserCards);
                 loser = gamePlayer;
             }
             else // Выиграл
             {
                 loser = GetPreviousMover();
-                loser.GiveCards(CurrentRound.GetAllCards());
+                loser.GiveCards(loserCards);
             }
 
             CurrentRound.AddMove(move);
             CurrentRound.End(loser.Player);
+            loserId = loser.Player.Id;
 
             if (GamePlayers.Where(gp => gp.Cards.Any()).Count() == 1) // Игра закончилась
             {
@@ -368,12 +371,12 @@ namespace TrueFalse.Domain.Models.Games
         }
 
         /// <summary>
-        /// Возвращает карты игрока по идентификаторам карт
+        /// Возвращает карты игрока
         /// </summary>
         /// <param name="playerId"></param>
         /// <param name="cardIds"></param>
         /// <returns></returns>
-        public IReadOnlyCollection<IPlayingCardInfo> GetPlayerCardsByIds(Guid playerId, IReadOnlyCollection<int> cardIds)
+        public IReadOnlyCollection<IPlayingCardInfo> GetPlayerCards(Guid playerId, IReadOnlyCollection<int> cardIds = null)
         {
             if (cardIds == null)
             {
@@ -396,7 +399,27 @@ namespace TrueFalse.Domain.Models.Games
                 throw new TrueFalseGameException($"Игрока с Id = {playerId} нет за игровым столом");
             }
 
-            return gamePlayer.Cards.Where(c => cardIds.Contains(c.Id)).ToList();
+            if (cardIds != null)
+            {
+                return gamePlayer.Cards.Where(c => cardIds.Contains(c.Id)).ToList();
+            }
+
+            return gamePlayer.Cards;
+        }
+
+        /// <summary>
+        /// Возвращает карту из ходов текущего раунда по идентификатору
+        /// </summary>
+        /// <param name="cardId"></param>
+        /// <returns></returns>
+        public IPlayingCardInfo GetCardFromCurrentRoundById(int cardId)
+        {
+            if (CurrentRound == null)
+            {
+                throw new TrueFalseGameException("Игра еще не началась или уже закончилась");
+            }
+
+            return CurrentRound.GetCardById(cardId);
         }
     }
 }

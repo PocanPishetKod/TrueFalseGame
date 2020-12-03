@@ -95,5 +95,33 @@ namespace TrueFalse.Hubs.Main
         /// <param name="params"></param>
         /// <returns></returns>
         Task ReceiveMakeFirstMoveResult(ReceiveMakeFirstMoveResultParams @params);
+
+        /// <summary>
+        /// Получает уведомление о совершении хода типа "Верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task OnBeliveMoveMade(OnBeliveMoveMadeParams @params);
+
+        /// <summary>
+        /// Получает результат совершения хода типа "Верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task ReceiveMakeBeliveMoveResult(ReceiveMakeBeliveMoveResultParams @params);
+
+        /// <summary>
+        /// Получает уведомление о совершении хода типа "Не верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task OnDontBeliveMoveMade(OnDontBeliveMoveMadeParams @params);
+
+        /// <summary>
+        /// Получает результат совершения хода типа "Не верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task ReceiveMakeDontBeliveMoveResult(ReceiveMakeDontBeliveMoveResultParams @params);
     }
 }
