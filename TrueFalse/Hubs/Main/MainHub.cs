@@ -52,9 +52,12 @@ namespace TrueFalse.Hubs.Main
             });
         }
 
-        private async Task NotifyGameStarted(Guid gameTableId)
+        private async Task NotifyGameStarted(Guid gameTableId, Guid moverId)
         {
-            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnGameStarted();
+            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnGameStarted(new OnGameStartedParams()
+            {
+                MoverId = moverId
+            });
         }
 
         private async Task NotifyGameTableCreated(GameTableDto gameTable)
@@ -62,6 +65,15 @@ namespace TrueFalse.Hubs.Main
             await Clients.AllExcept(Context.ConnectionId).OnCreatedNewGameTable(new OnCreatedNewGameTableParams()
             {
                 GameTable = gameTable
+            });
+        }
+
+        private async Task NotifyFirstMoveMade(Guid gameTableId, IReadOnlyCollection<int> cardIds, Guid nextMoverId)
+        {
+            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnFirstMoveMade(new OnFirstMoveMadeParams()
+            {
+                NextMoverId = nextMoverId,
+                CardIds = cardIds.ToList()
             });
         }
 
@@ -158,12 +170,13 @@ namespace TrueFalse.Hubs.Main
         {
             try
             {
-                var gameTableId = _gameTableService.StartGame(Context.User.GetUserId());
+                var result = _gameTableService.StartGame(Context.User.GetUserId());
 
-                await NotifyGameStarted(gameTableId);
+                await NotifyGameStarted(result.GameTableId, result.MoverId);
                 await Clients.Caller.ReceiveGameStartResult(new ReceiveGameStartResultParams()
                 {
-                    Succeeded = true
+                    Succeeded = true,
+                    MoverId = result.MoverId
                 });
             }
             catch (Exception ex)
@@ -179,7 +192,26 @@ namespace TrueFalse.Hubs.Main
 
         public async Task MakeFirstMove(MakeFirstMoveParams @params)
         {
+            try
+            {
+                var result = _gameTableService.MakeFirstMove(Context.User.GetUserId(), @params.CardIds, @params.Rank);
 
+                await NotifyFirstMoveMade(result.GameTableId, @params.CardIds, result.NextMoverId);
+                await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
+                {
+                    Succeeded = true,
+                    NextMoverId = result.NextMoverId
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Ошибка хода типа \"Первый ход\". Игрок с Id = {Context.User.GetUserId()}");
+
+                await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
+                {
+                    Succeeded = false
+                });
+            }
         }
 
         public async Task MakeBeliveMove(MakeBeliveMoveParams @params)

@@ -71,8 +71,9 @@ namespace TrueFalse.Hubs.Main
         /// <summary>
         /// Получает уведомление о начале игры
         /// </summary>
+        /// <param name="params"></param>
         /// <returns></returns>
-        Task OnGameStarted();
+        Task OnGameStarted(OnGameStartedParams @params);
 
         /// <summary>
         /// Получает результат попытки начать игру
@@ -80,5 +81,19 @@ namespace TrueFalse.Hubs.Main
         /// <param name="params"></param>
         /// <returns></returns>
         Task ReceiveGameStartResult(ReceiveGameStartResultParams @params);
+
+        /// <summary>
+        /// Получает уведомление о совершении первого хода
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task OnFirstMoveMade(OnFirstMoveMadeParams @params);
+
+        /// <summary>
+        /// Получает результат совершения первого хода
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        Task ReceiveMakeFirstMoveResult(ReceiveMakeFirstMoveResultParams @params);
     }
 }

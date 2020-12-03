@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using TrueFalse.Application.Dtos;
+using TrueFalse.Application.Dtos.Results;
 using TrueFalse.Domain.Interfaces.Repositories;
 using TrueFalse.Domain.Models;
 using TrueFalse.Domain.Models.Cards;
@@ -153,7 +154,7 @@ namespace TrueFalse.Application.Services
             return gameTable.Id;
         }
 
-        public Guid StartGame(Guid playerId)
+        public StartGameResult StartGame(Guid playerId)
         {
             var player = _playerRepository.GetById(playerId);
             if (player == null)
@@ -169,14 +170,18 @@ namespace TrueFalse.Application.Services
 
             gameTable.StartNewGame(player);
 
-            return gameTable.Id;
+            return new StartGameResult()
+            {
+                GameTableId = gameTable.Id,
+                MoverId = gameTable.CurrentMover.Id
+            };
         }
 
-        public void MakeFirstMove(Guid playerId, IReadOnlyCollection<PlayingCardDto> cards, int rank)
+        public FirstMoveResult MakeFirstMove(Guid playerId, IReadOnlyCollection<int> cardIds, int rank)
         {
-            if (cards == null)
+            if (cardIds == null)
             {
-                throw new ArgumentNullException(nameof(cards));
+                throw new ArgumentNullException(nameof(cardIds));
             }
 
             var player = _playerRepository.GetById(playerId);
@@ -191,16 +196,23 @@ namespace TrueFalse.Application.Services
                 throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
-            var move = new FirstMove(cards.Select(c => new PlayingCard(c.Id, (PlayingCardSuit)c.Suit, (PlayingCardRank)c.Rank)).ToList(), (PlayingCardRank)rank, playerId);
+            var cards = gameTable.GetPlayerCardsByIds(playerId, cardIds);
+
+            var move = new FirstMove(cards.Select(c => new PlayingCard(c.Id, c.Suit, c.Rank)).ToList(), (PlayingCardRank)rank, playerId);
 
             gameTable.MakeFirstMove(move);
+
+            return new FirstMoveResult()
+            {
+                NextMoverId = gameTable.CurrentMover.Id
+            };
         }
 
-        public void MakeBelieveMove(Guid playerId, IReadOnlyCollection<PlayingCardDto> cards)
+        public void MakeBelieveMove(Guid playerId, IReadOnlyCollection<int> cardIds)
         {
-            if (cards == null)
+            if (cardIds == null)
             {
-                throw new ArgumentNullException(nameof(cards));
+                throw new ArgumentNullException(nameof(cardIds));
             }
 
             var player = _playerRepository.GetById(playerId);
@@ -215,7 +227,9 @@ namespace TrueFalse.Application.Services
                 throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
-            var move = new BelieveMove(cards.Select(c => new PlayingCard(c.Id, (PlayingCardSuit)c.Suit, (PlayingCardRank)c.Rank)).ToList(), playerId);
+            var cards = gameTable.GetPlayerCardsByIds(playerId, cardIds);
+
+            var move = new BelieveMove(cards.Select(c => new PlayingCard(c.Id, c.Suit, c.Rank)).ToList(), playerId);
 
             gameTable.MakeBeleiveMove(move);
         }

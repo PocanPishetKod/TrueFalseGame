@@ -366,5 +366,37 @@ namespace TrueFalse.Domain.Models.Games
                 SetNextMover(loser);
             }
         }
+
+        /// <summary>
+        /// Возвращает карты игрока по идентификаторам карт
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="cardIds"></param>
+        /// <returns></returns>
+        public IReadOnlyCollection<IPlayingCardInfo> GetPlayerCardsByIds(Guid playerId, IReadOnlyCollection<int> cardIds)
+        {
+            if (cardIds == null)
+            {
+                throw new ArgumentNullException(nameof(cardIds));
+            }
+
+            if (!IsStarted)
+            {
+                throw new TrueFalseGameException("Игра еще не началась. Карты не розданы");
+            }
+
+            if (IsEnded)
+            {
+                throw new TrueFalseGameException("Игра уже закончилась");
+            }
+
+            var gamePlayer = GamePlayers.FirstOrDefault(gp => gp.Player.Id == playerId);
+            if (gamePlayer == null)
+            {
+                throw new TrueFalseGameException($"Игрока с Id = {playerId} нет за игровым столом");
+            }
+
+            return gamePlayer.Cards.Where(c => cardIds.Contains(c.Id)).ToList();
+        }
     }
 }

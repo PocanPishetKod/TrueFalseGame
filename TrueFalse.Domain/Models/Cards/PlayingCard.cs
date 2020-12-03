@@ -7,7 +7,7 @@ namespace TrueFalse.Domain.Models.Cards
     /// <summary>
     /// Игровая карта
     /// </summary>
-    public class PlayingCard
+    public class PlayingCard : IPlayingCardInfo
     {
         /// <summary>
         /// Идентификатор карты уникальный на уровне комнаты

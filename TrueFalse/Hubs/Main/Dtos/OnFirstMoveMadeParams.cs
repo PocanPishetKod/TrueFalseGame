@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.Hubs.Main.Dtos
 {
-    public class ReceiveGameStartResultParams
+    public class OnFirstMoveMadeParams
     {
-        public bool Succeeded { get; set; }
+        public List<int> CardIds { get; set; }
 
-        public Guid? MoverId { get; set; }
+        public Guid NextMoverId { get; set; }
     }
 }

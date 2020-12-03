@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.Hubs.Main.Dtos
 {
-    public class ReceiveGameStartResultParams
+    public class OnGameStartedParams
     {
-        public bool Succeeded { get; set; }
-
-        public Guid? MoverId { get; set; }
+        public Guid MoverId { get; set; }
     }
 }

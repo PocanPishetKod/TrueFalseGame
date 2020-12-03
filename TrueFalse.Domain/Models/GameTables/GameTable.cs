@@ -36,6 +36,8 @@ namespace TrueFalse.Domain.Models.GameTables
         /// </summary>
         public bool IsInvalid => Owner == null;
 
+        public Player CurrentMover => CurrentGame?.CurrentMover;
+
         public GameTable(Player owner, string name, Guid id)
         {
             if (owner == null)
@@ -221,6 +223,27 @@ namespace TrueFalse.Domain.Models.GameTables
             }
 
             CurrentGame.MakeDontBeleiveMove(move);
+        }
+
+        /// <summary>
+        /// Возвращает карты игрока по идентификаторам карт
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <param name="cardIds"></param>
+        /// <returns></returns>
+        public IReadOnlyCollection<IPlayingCardInfo> GetPlayerCardsByIds(Guid playerId, IReadOnlyCollection<int> cardIds)
+        {
+            if (cardIds == null)
+            {
+                throw new ArgumentNullException(nameof(cardIds));
+            }
+
+            if (CurrentGame == null)
+            {
+                throw new TrueFalseGameException("Игра еще не началась");
+            }
+
+            return CurrentGame.GetPlayerCardsByIds(playerId, cardIds);
         }
     }
 }
