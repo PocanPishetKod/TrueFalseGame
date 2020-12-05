@@ -19,6 +19,6 @@ namespace TrueFalse.Repository.MongoDb
             _database = _mongoClient.GetDatabase(mongoDbSettings.DatabaseName);
         }
 
-        public IMongoCollection<Player> PlayerCollection => _database.GetCollection<Player>(Player.CollectionName);
+        public IMongoCollection<DbPlayer> PlayerCollection => _database.GetCollection<DbPlayer>(DbPlayer.CollectionName);
     }
 }

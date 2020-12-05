@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.Repository.Models.MongoDb
 {
-    public class Player
+    public class DbPlayer
     {
         public const string CollectionName = "Players";
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public Guid Id { get; private set; }
+        public Guid Id { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
     }
 }
