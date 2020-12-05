@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TrueFalse.Application.Dtos;
-using TrueFalse.Hubs.Main.Dtos;
+using TrueFalse.SignalR.Core.Dtos;
 
-namespace TrueFalse.Hubs.Main
+namespace TrueFalse.SignalR.Api.Hubs.Main
 {
     /// <summary>
     /// Интерфейс клиентских методов списка игровых столов

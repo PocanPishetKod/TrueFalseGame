@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TrueFalse.Hubs.Main.Dtos
+namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class MakeFirstMoveParams
+    public class OnBeliveMoveMadeParams
     {
         public List<int> CardIds { get; set; }
 
-        public int Rank { get; set; }
+        public Guid NextMoverId { get; set; }
     }
 }

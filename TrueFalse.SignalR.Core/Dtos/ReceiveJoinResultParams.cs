@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TrueFalse.Hubs.Main.Dtos
+namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class ReceiveGameStartResultParams
+    public class ReceiveJoinResultParams
     {
         public bool Succeeded { get; set; }
-
-        public Guid? MoverId { get; set; }
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TrueFalse.Hubs.Main.Dtos
+namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class ReceiveMakeFirstMoveResultParams
+    public class ReceiveMakeBeliveMoveResultParams
     {
         public bool Succeeded { get; set; }
 

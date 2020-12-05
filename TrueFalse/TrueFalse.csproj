@@ -19,6 +19,7 @@
     <ProjectReference Include="..\TrueFalse.Auth\TrueFalse.Auth.csproj" />
     <ProjectReference Include="..\TrueFalse.DependencyInjection\TrueFalse.DependencyInjection.csproj" />
     <ProjectReference Include="..\TrueFalse.Logger\TrueFalse.Logger.csproj" />
+    <ProjectReference Include="..\TrueFalse.SignalR.Api\TrueFalse.SignalR.Api.csproj" />
   </ItemGroup>
 
 

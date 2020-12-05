@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrueFalse.Application.Dtos;
 
-namespace TrueFalse.Hubs.Main.Dtos
+namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class ReceiveGameTableParams
+    public class ReceiveNewGameTableParams
     {
-        public List<GameTableDto> GameTables { get; set; }
+        public GameTableDto GameTable { get; set; }
     }
 }

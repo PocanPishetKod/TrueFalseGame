@@ -11,8 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TrueFalse.DependencyInjection;
-using TrueFalse.Hubs.Main;
 using TrueFalse.Logger;
+using TrueFalse.SignalR.Api.Hubs.Main;
 
 namespace TrueFalse
 {

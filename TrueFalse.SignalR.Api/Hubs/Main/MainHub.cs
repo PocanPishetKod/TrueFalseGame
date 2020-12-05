@@ -9,9 +9,9 @@ using TrueFalse.Application.Dtos;
 using TrueFalse.Application.Dtos.Results;
 using TrueFalse.Application.Services;
 using TrueFalse.Auth.Extensions;
-using TrueFalse.Hubs.Main.Dtos;
+using TrueFalse.SignalR.Core.Dtos;
 
-namespace TrueFalse.Hubs.Main
+namespace TrueFalse.SignalR.Api.Hubs.Main
 {
     public class MainHub : Hub<IMainHubClient>
     {
