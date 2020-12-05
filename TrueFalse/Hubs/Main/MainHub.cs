@@ -41,6 +41,23 @@ namespace TrueFalse.Hubs.Main
             await Groups.RemoveFromGroupAsync(connectionId, groupName);
         }
 
+        private async Task DisconnectInternal()
+        {
+            var gameTableId = _gameTableService.GetGameTableIdByPlayerId(Context.User.GetUserId());
+            if (gameTableId.HasValue)
+            {
+                _gameTableService.Leave(Context.User.GetUserId());
+
+                await RemoveFromGroup(gameTableId.Value.ToString(), Context.ConnectionId);
+                await NotifyAboutPlayerLeaved(gameTableId.Value, Context.User.GetUserId());
+            }
+
+            if (!_userConnectionIdStore.TryRemove(Context.User.GetUserId(), out var removedValue))
+            {
+                _logger.LogError("Идентификатор подключения уже был удален из словаря");
+            }
+        }
+
         #region Notificators
 
         private async Task NotifyAboutPlayerJoined(Guid gameTableId, Guid playerId)
@@ -157,12 +174,26 @@ namespace TrueFalse.Hubs.Main
 
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            if (_userConnectionIdStore.TryGetValue(Context.User.GetUserId(), out var connectionId))
+            {
+                await DisconnectInternal();
+            }
+
             await base.OnDisconnectedAsync(exception);
         }
 
         #endregion
 
         #region Api
+
+        public async Task Disconnect()
+        {
+            if (_userConnectionIdStore.TryGetValue(Context.User.GetUserId(), out var connectionId))
+            {
+                await DisconnectInternal();
+                Context.Abort();
+            }
+        }
 
         public async Task GetGameTables(GetGameTablesParams @params)
         {
