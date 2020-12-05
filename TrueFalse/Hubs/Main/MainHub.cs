@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,13 +16,18 @@ namespace TrueFalse.Hubs.Main
     public class MainHub : Hub<IMainHubClient>
     {
         private readonly GameTableService _gameTableService;
-        private readonly PlayerService _playerService;
         private readonly ILogger<MainHub> _logger;
 
-        public MainHub(GameTableService gameTableService, PlayerService playerService, ILogger<MainHub> logger)
+        private static readonly ConcurrentDictionary<Guid, string> _userConnectionIdStore;
+
+        static MainHub()
+        {
+            _userConnectionIdStore = new ConcurrentDictionary<Guid, string>();
+        }
+
+        public MainHub(GameTableService gameTableService, ILogger<MainHub> logger)
         {
             _gameTableService = gameTableService;
-            _playerService = playerService;
             _logger = logger;
         }
 
@@ -34,6 +40,8 @@ namespace TrueFalse.Hubs.Main
         {
             await Groups.RemoveFromGroupAsync(connectionId, groupName);
         }
+
+        #region Notificators
 
         private async Task NotifyAboutPlayerJoined(Guid gameTableId, Guid playerId)
         {
@@ -89,26 +97,72 @@ namespace TrueFalse.Hubs.Main
 
         private async Task NotifyDontBeliveMoveMade(MakeDontBeliveMoveResult moveResult)
         {
-            if (moveResult.LoserId == Context.User.GetUserId())
+            if (_userConnectionIdStore.TryGetValue(moveResult.LoserId, out var loserConnectionId))
             {
-                await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[1] { Context.ConnectionId }).OnDontBeliveMoveMade(new OnDontBeliveMoveMadeParams()
+                await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[2] { loserConnectionId, Context.ConnectionId }).OnDontBeliveMoveMade(new OnDontBeliveMoveMadeParams()
                 {
                     LoserId = moveResult.LoserId,
                     CheckedCard = moveResult.CheckedCard,
                     NextMoverId = moveResult.NextMoverId,
                     HiddenTakedLoserCards = moveResult.TakedLoserCards.Select(c => c.Id).ToList()
                 });
+
+                await Clients.Client(loserConnectionId).OnDontBeliveMoveMade(new OnDontBeliveMoveMadeParams()
+                {
+                    LoserId = moveResult.LoserId,
+                    CheckedCard = moveResult.CheckedCard,
+                    NextMoverId = moveResult.NextMoverId,
+                    TakedLoserCards = moveResult.TakedLoserCards.ToList()
+                });
             }
             else
             {
-                // Найти лузера и отправить ему раскрытые карты, а остальным скрытые
+                _logger.LogError("Игрок не найден в группе");
             }
         }
 
+        #endregion
+
+        #region overriden
+
         public async override Task OnConnectedAsync()
         {
+            try
+            {
+                if (_userConnectionIdStore.TryGetValue(Context.User.GetUserId(), out var oldConnectionId))
+                {
+                    var gameTableId = _gameTableService.GetGameTableIdByPlayerId(Context.User.GetUserId());
+                    if (gameTableId.HasValue)
+                    {
+                        if (!_userConnectionIdStore.TryUpdate(Context.User.GetUserId(), Context.ConnectionId, oldConnectionId))
+                        {
+                            throw new Exception("Что-то пошло не так. Старое значение было изменено в другом потоке");
+                        }
+
+                        await AddToGroup(gameTableId.ToString(), Context.ConnectionId);
+                    }
+                }
+                else
+                {
+                    _userConnectionIdStore.TryAdd(Context.User.GetUserId(), Context.ConnectionId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при подключении игрока");
+            }
+
             await base.OnConnectedAsync();
         }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await base.OnDisconnectedAsync(exception);
+        }
+
+        #endregion
+
+        #region Api
 
         public async Task GetGameTables(GetGameTablesParams @params)
         {
@@ -293,5 +347,7 @@ namespace TrueFalse.Hubs.Main
                 });
             }
         }
+
+        #endregion
     }
 }

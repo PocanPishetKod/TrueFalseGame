@@ -69,6 +69,19 @@ namespace TrueFalse.Application.Services
             }).ToList();
         }
 
+        public Guid? GetGameTableIdByPlayerId(Guid playerId)
+        {
+            var player = _playerRepository.GetById(playerId);
+            if (player == null)
+            {
+                throw new NullReferenceException($"Отсутствует пользователь с id = {playerId}");
+            }
+
+            var gameTable = _gameTableRepository.GetByPlayer(player);
+
+            return gameTable?.Id;
+        }
+
         public GameTableDto CreateGameTable(Guid ownerId, string gameTableName, int playersCount, int cardsCount)
         {
             if (string.IsNullOrWhiteSpace(gameTableName))
