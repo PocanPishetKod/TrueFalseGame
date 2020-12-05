@@ -7,11 +7,11 @@ using TrueFalse.Domain.Models.Players;
 
 namespace TrueFalse.Repository.Repositories
 {
-    public class PlayerRepository : IPlayerRepository
+    public class InMemoryPlayerRepository : IPlayerRepository
     {
         private static List<Player> _players;
 
-        static PlayerRepository()
+        static InMemoryPlayerRepository()
         {
             _players = new List<Player>();
         }

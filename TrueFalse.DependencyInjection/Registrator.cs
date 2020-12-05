@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +21,7 @@ namespace TrueFalse.DependencyInjection
         public static IServiceCollection AddTrueFalseGameForUnitTasts(this IServiceCollection services)
         {
             return services.AddTrueFalseApplication()
-                .AddRepositories();
+                .AddRepositoriesForUnitTests();
         }
     }
 }
