@@ -71,7 +71,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
         private async Task NotifyAboutPlayerLeaved(Guid gameTableId, Guid playerId)
         {
-            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnPlayerLeaved(new OnPlayerJoinedParams()
+            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnPlayerLeaved(new OnPlayerLeavedParams()
             {
                 GameTableId = gameTableId,
                 PlayerId = playerId
@@ -199,7 +199,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
         {
             var result = _gameTableService.GetGameTablesTest();
 
-            await Clients.Caller.ReceiveGameTables(new ReceiveGameTableParams()
+            await Clients.Caller.ReceiveGameTables(new ReceiveGameTablesParams()
             {
                 GameTables = result.ToList()
             });

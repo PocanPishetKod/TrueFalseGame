@@ -56,7 +56,7 @@ namespace TrueFalse
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<MainHub>("/gametables");
+                endpoints.MapHub<MainHub>("/main");
             });
         }
     }
