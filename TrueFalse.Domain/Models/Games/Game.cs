@@ -141,7 +141,7 @@ namespace TrueFalse.Domain.Models.Games
             {
                 return GamePlayers
                     .Where(gp => gp.Priority > gamePlayer.Priority)
-                    .First(gp => gp.Priority == GamePlayers.Min(p => p.Priority));
+                    .First(gp => gp.Priority == GamePlayers.Where(p => p.Priority > gamePlayer.Priority).Min(p => p.Priority));
             }
         }
 

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Models.Cards;
 using TrueFalse.Domain.Models.Games;
 using TrueFalse.Domain.Models.GameTables;
+using TrueFalse.Domain.Models.Moves;
 using TrueFalse.Domain.Models.Players;
 using Xunit;
 
@@ -57,6 +59,48 @@ namespace TrueFalse.UnitTests.DomainTests
             {
                 Assert.NotEmpty(player.Cards);
             }
+        }
+
+        [Fact]
+        public void FirstMoveTest()
+        {
+            var players = ProvideGameTablePlayers(3);
+            var cardsPack = new CardsPack36();
+            var game = new Game(cardsPack, players);
+            game.Start();
+
+            var mover = game.Players.First(p => p.Player.Id == game.CurrentMover.Id);
+            var cardsCount = mover.Cards.Count;
+
+            game.MakeFirstMove(new FirstMove(mover.Cards.Take(4).ToList(), PlayingCardRank.Ten, mover.Player.Id));
+
+            Assert.Equal(cardsCount - 4, mover.Cards.Count);
+            Assert.NotEqual(mover.Player.Id, game.CurrentMover.Id);
+            Assert.Throws<TrueFalseGameException>(() => { game.MakeFirstMove(new FirstMove(mover.Cards.Take(4).ToList(), PlayingCardRank.Ten, game.CurrentMover.Id)); });
+        }
+
+        [Fact]
+        public void BeliveMoveTest()
+        {
+            var players = ProvideGameTablePlayers(3);
+            var cardsPack = new CardsPack36();
+            var game = new Game(cardsPack, players);
+            game.Start();
+
+            var mover = game.Players.First(p => p.Player.Id == game.CurrentMover.Id);
+            var cardsCount = mover.Cards.Count;
+
+            Assert.Throws<TrueFalseGameException>(() => { game.MakeBeleiveMove(new BelieveMove(mover.Cards.Take(3).ToList(), mover.Player.Id)); });
+
+            game.MakeFirstMove(new FirstMove(mover.Cards.Take(4).ToList(), PlayingCardRank.Ten, mover.Player.Id));
+
+            mover = game.Players.First(p => p.Player.Id == game.CurrentMover.Id);
+            cardsCount = mover.Cards.Count;
+
+            game.MakeBeleiveMove(new BelieveMove(mover.Cards.Take(3).ToList(), mover.Player.Id));
+            Assert.Equal(cardsCount - 3, mover.Cards.Count);
+            Assert.NotEqual(mover.Player.Id, game.CurrentMover.Id);
+            Assert.Throws<TrueFalseGameException>(() => { game.MakeBeleiveMove(new BelieveMove(mover.Cards.Take(3).ToList(), game.CurrentMover.Id)); });
         }
     }
 }
