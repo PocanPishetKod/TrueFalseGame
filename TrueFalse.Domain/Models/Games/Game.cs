@@ -421,5 +421,34 @@ namespace TrueFalse.Domain.Models.Games
 
             return CurrentRound.GetCardById(cardId);
         }
+
+        /// <summary>
+        /// Удаляет пользователя из игры
+        /// </summary>
+        /// <param name="player"></param>
+        public void RemovePlayer(Player player)
+        {
+            throw new NotImplementedException();
+
+            if (player == null)
+            {
+                throw new ArgumentNullException(nameof(player));
+            }
+
+            var gamePlayer = GamePlayers.FirstOrDefault(gp => gp.Player.Id == player.Id);
+            if (gamePlayer == null)
+            {
+                throw new TrueFalseGameException($"Игрока с Id = {player.Id} нет в данной игре");
+            }
+
+            if (!IsStarted || IsEnded)
+            {
+                GamePlayers.Remove(gamePlayer);
+            }
+            else
+            {
+
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using TrueFalse.Domain.Exceptions;
 using TrueFalse.Domain.Models.Cards;
 using TrueFalse.Domain.Models.Games;
@@ -13,8 +14,12 @@ namespace TrueFalse.Domain.Models.GameTables
     /// <summary>
     /// Игровой стол
     /// </summary>
-    public abstract class GameTable
+    public abstract class GameTable : IDisposable
     {
+        private bool _isDisposed;
+        private readonly Mutex _joinAndLeaveMutex;
+        private readonly Mutex _moveMutex;
+
         protected PlayPlaces PlayPlaces { get; }
 
         protected Game CurrentGame { get; set; }
@@ -57,6 +62,10 @@ namespace TrueFalse.Domain.Models.GameTables
             PlayPlaces = CreatePlayPlaces();
 
             Join(owner);
+
+            _joinAndLeaveMutex = new Mutex();
+            _moveMutex = new Mutex();
+            _isDisposed = false;
         }
 
         /// <summary>
@@ -88,17 +97,26 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(player));
             }
 
-            if (IsInvalid)
+            try
             {
-                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
-            }
+                _joinAndLeaveMutex.WaitOne();
 
-            if (CurrentGame != null && CurrentGame.IsStarted && !CurrentGame.IsEnded)
+                if (IsInvalid)
+                {
+                    throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+                }
+
+                if (CurrentGame != null && CurrentGame.IsStarted && !CurrentGame.IsEnded)
+                {
+                    throw new TrueFalseGameException("Игра уже началась");
+                }
+
+                PlayPlaces.PlantPlayer(player);
+            }
+            finally
             {
-                throw new TrueFalseGameException("Игра уже началась");
+                _joinAndLeaveMutex.ReleaseMutex();
             }
-
-            PlayPlaces.PlantPlayer(player);
         }
 
         /// <summary>
@@ -112,16 +130,25 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(player));
             }
 
-            if (IsInvalid)
+            try
             {
-                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+                _joinAndLeaveMutex.WaitOne();
+
+                if (IsInvalid)
+                {
+                    throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+                }
+
+                PlayPlaces.RemovePlayer(player);
+
+                if (player.Id == Owner.Id)
+                {
+                    Owner = GetNextOwner()?.Player;
+                }
             }
-
-            PlayPlaces.RemovePlayer(player);
-
-            if (player.Id == Owner.Id)
+            finally
             {
-                Owner = GetNextOwner()?.Player;
+                _joinAndLeaveMutex.ReleaseMutex();
             }
         }
 
@@ -170,17 +197,26 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (IsInvalid)
+            try
             {
-                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
-            }
+                _moveMutex.WaitOne();
 
-            if (CurrentGame == null)
+                if (IsInvalid)
+                {
+                    throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+                }
+
+                if (CurrentGame == null)
+                {
+                    throw new TrueFalseGameException("Игра еще не началась");
+                }
+
+                CurrentGame.MakeFirstMove(move);
+            }
+            finally
             {
-                throw new TrueFalseGameException("Игра еще не началась");
+                _moveMutex.ReleaseMutex();
             }
-
-            CurrentGame.MakeFirstMove(move);
         }
 
         /// <summary>
@@ -194,17 +230,26 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (IsInvalid)
+            try
             {
-                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
-            }
+                _moveMutex.WaitOne();
 
-            if (CurrentGame == null)
+                if (IsInvalid)
+                {
+                    throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+                }
+
+                if (CurrentGame == null)
+                {
+                    throw new TrueFalseGameException("Игра еще не началась");
+                }
+
+                CurrentGame.MakeBeleiveMove(move);
+            }
+            finally
             {
-                throw new TrueFalseGameException("Игра еще не началась");
+                _moveMutex.ReleaseMutex();
             }
-
-            CurrentGame.MakeBeleiveMove(move);
         }
 
         /// <summary>
@@ -218,17 +263,26 @@ namespace TrueFalse.Domain.Models.GameTables
                 throw new ArgumentNullException(nameof(move));
             }
 
-            if (IsInvalid)
+            try
             {
-                throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
-            }
+                _moveMutex.WaitOne();
 
-            if (CurrentGame == null)
+                if (IsInvalid)
+                {
+                    throw new TrueFalseGameException("Игровой стол находится в инвалидном состоянии");
+                }
+
+                if (CurrentGame == null)
+                {
+                    throw new TrueFalseGameException("Игра еще не началась");
+                }
+
+                CurrentGame.MakeDontBeleiveMove(move, out takedLoserCards, out loserId);
+            }
+            finally
             {
-                throw new TrueFalseGameException("Игра еще не началась");
+                _moveMutex.ReleaseMutex();
             }
-
-            CurrentGame.MakeDontBeleiveMove(move, out takedLoserCards, out loserId);
         }
 
         /// <summary>
@@ -265,6 +319,24 @@ namespace TrueFalse.Domain.Models.GameTables
             }
 
             return CurrentGame.GetCardFromCurrentRoundById(cardId);
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                if (_joinAndLeaveMutex != null)
+                {
+                    _joinAndLeaveMutex.Dispose();
+                }
+
+                if (_moveMutex != null)
+                {
+                    _moveMutex.Dispose();
+                }
+
+                _isDisposed = true;
+            }
         }
     }
 }
