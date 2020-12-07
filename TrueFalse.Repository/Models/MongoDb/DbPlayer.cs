@@ -10,7 +10,7 @@ namespace TrueFalse.Repository.Models.MongoDb
 {
     public class DbPlayer
     {
-        public const string CollectionName = "Players";
+        public const string CollectionName = "players";
 
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
