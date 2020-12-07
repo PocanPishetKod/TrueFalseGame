@@ -102,5 +102,39 @@ namespace TrueFalse.UnitTests.DomainTests
             Assert.NotEqual(mover.Player.Id, game.CurrentMover.Id);
             Assert.Throws<TrueFalseGameException>(() => { game.MakeBeleiveMove(new BelieveMove(mover.Cards.Take(3).ToList(), game.CurrentMover.Id)); });
         }
+
+        [Fact]
+        public void DontBeliveMoveTest()
+        {
+            var players = ProvideGameTablePlayers(3);
+            var cardsPack = new CardsPack36();
+            var game = new Game(cardsPack, players);
+            game.Start();
+
+            var mover = game.Players.First(p => p.Player.Id == game.CurrentMover.Id);
+            var cardsCount = mover.Cards.Count;
+
+            game.MakeFirstMove(new FirstMove(mover.Cards.Take(4).ToList(), PlayingCardRank.Ten, mover.Player.Id));
+
+            var previousMover = game.Players.First(p => p.Player.Id == game.CurrentMover.Id);
+            cardsCount = previousMover.Cards.Count;
+
+            var cards = previousMover.Cards.Take(3).ToList();
+            game.MakeBeleiveMove(new BelieveMove(cards, previousMover.Player.Id));
+
+            mover = game.Players.First(p => p.Player.Id == game.CurrentMover.Id);
+            cardsCount = mover.Cards.Count;
+
+            game.MakeDontBeleiveMove(new DontBelieveMove(cards.First().Id, mover.Player.Id), out var takedLoserCards, out Guid loserId);
+
+            if (cards.First().Rank == PlayingCardRank.Ten)
+            {
+                Assert.Equal(mover.Player.Id, loserId);
+            }
+            else
+            {
+                Assert.Equal(previousMover.Player.Id, loserId);
+            }
+        }
     }
 }
