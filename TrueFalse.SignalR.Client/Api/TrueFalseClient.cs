@@ -22,7 +22,7 @@ namespace TrueFalse.SignalR.Client.Api
             _accessToken = accessToken;
         }
 
-        private void SetHandlers(IMainHubClient mainHubClient)
+        public void SetHandlers(IMainHubClient mainHubClient)
         {
             _hubConnection.On<OnBeliveMoveMadeParams>(nameof(mainHubClient.OnBeliveMoveMade), mainHubClient.OnBeliveMoveMade);
             _hubConnection.On<OnCreatedNewGameTableParams>(nameof(mainHubClient.OnCreatedNewGameTable), mainHubClient.OnCreatedNewGameTable);
