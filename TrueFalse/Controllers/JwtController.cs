@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using TrueFalse.Application.Services;
 using TrueFalse.Auth.Services;
 using TrueFalse.Controllers.Dtos;
@@ -18,11 +19,13 @@ namespace TrueFalse.Controllers
     {
         private readonly JwtService _jwtService;
         private readonly PlayerService _playerService;
+        private readonly ILogger<JwtController> _logger;
 
-        public JwtController(JwtService jwtService, PlayerService playerService)
+        public JwtController(JwtService jwtService, PlayerService playerService, ILogger<JwtController> logger)
         {
             _jwtService = jwtService;
             _playerService = playerService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -44,8 +47,9 @@ namespace TrueFalse.Controllers
                     Token = jwt
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Ошибка выдачи токена");
                 return InternalServerError();
             }
         }
