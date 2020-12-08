@@ -6,7 +6,7 @@ using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.SignalR.Client.Api
 {
-    public interface ITrueFalseApi
+    public interface IMainHubApi
     {
         Task Disconnect();
 

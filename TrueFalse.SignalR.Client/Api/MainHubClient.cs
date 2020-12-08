@@ -7,12 +7,13 @@ using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.SignalR.Client.Api
 {
-    public class TrueFalseClient : ITrueFalseApi, IClientConnection, IDisposable
+    public class MainHubClient : IMainHubApi, IHubClientConnection, IDisposable
     {
         private HubConnection _hubConnection;
         private readonly string _accessToken;
+        private bool _isDisposed;
 
-        public TrueFalseClient(string accessToken)
+        public MainHubClient(string accessToken)
         {
             if (string.IsNullOrWhiteSpace(accessToken))
             {
@@ -20,6 +21,7 @@ namespace TrueFalse.SignalR.Client.Api
             }
 
             _accessToken = accessToken;
+            _isDisposed = false;
         }
 
         public void SetHandlers(IMainHubClient mainHubClient)
@@ -44,6 +46,11 @@ namespace TrueFalse.SignalR.Client.Api
 
         public async Task Connect()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection?.State == HubConnectionState.Connected)
             {
                 throw new Exception("Подключение уже в статусе Connected");
@@ -65,9 +72,14 @@ namespace TrueFalse.SignalR.Client.Api
 
         public async Task Close()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
-                throw new Exception("Подключение не создано или уже было закрыто");
+                throw new Exception("Подключение еще не было создано");
             }
 
             if (_hubConnection.State == HubConnectionState.Disconnected)
@@ -81,7 +93,7 @@ namespace TrueFalse.SignalR.Client.Api
 
         public void Dispose()
         {
-            if (_hubConnection != null)
+            if (_hubConnection != null && !_isDisposed)
             {
                 if (_hubConnection.State == HubConnectionState.Connected)
                 {
@@ -89,11 +101,17 @@ namespace TrueFalse.SignalR.Client.Api
                 }
 
                 _hubConnection.DisposeAsync();
+                _isDisposed = true;
             }
         }
 
         public async Task Disconnect()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -104,11 +122,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.Disconnect));
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.Disconnect));
         }
 
         public async Task GetGameTables(GetGameTablesParams @params)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -119,11 +142,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.GetGameTables), @params);
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.GetGameTables), @params);
         }
 
         public async Task CreateGameTable(CreateGameTableParams @params)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -134,11 +162,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.CreateGameTable), @params);
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.CreateGameTable), @params);
         }
 
         public async Task JoinToGameTable(JoinToGameTableParams @params)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -149,11 +182,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.JoinToGameTable), @params);
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.JoinToGameTable), @params);
         }
 
         public async Task LeaveFromGameTable()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -164,11 +202,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.LeaveFromGameTable));
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.LeaveFromGameTable));
         }
 
         public async Task StartGame()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -179,11 +222,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.StartGame));
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.StartGame));
         }
 
         public async Task MakeFirstMove(MakeFirstMoveParams @params)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -194,11 +242,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.MakeFirstMove), @params);
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeFirstMove), @params);
         }
 
         public async Task MakeBeliveMove(MakeBeliveMoveParams @params)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -209,11 +262,16 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.MakeBeliveMove), @params);
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeBeliveMove), @params);
         }
 
         public async Task MakeDontBelieveMove(MakeDontBeliveMoveParams @params)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException("Ресурсы объекта были освобождены");
+            }
+
             if (_hubConnection == null)
             {
                 throw new Exception("Подключение еще не было создано");
@@ -224,7 +282,7 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(ITrueFalseApi.MakeDontBelieveMove), @params);
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeDontBelieveMove), @params);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Api
 {
-    public interface IClientConnection
+    public interface IHubClientConnection
     {
         Task Connect();
 
