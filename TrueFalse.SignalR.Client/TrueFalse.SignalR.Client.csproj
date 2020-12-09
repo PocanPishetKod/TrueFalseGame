@@ -2,6 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>PocanPishetKod</Authors>
+    <Company>BerezAndUpis</Company>
+    <PackageId>TrueFalse.SignalR.Client</PackageId>
+    <Description>Только для моего пользования)</Description>
   </PropertyGroup>
 
   <ItemGroup>
