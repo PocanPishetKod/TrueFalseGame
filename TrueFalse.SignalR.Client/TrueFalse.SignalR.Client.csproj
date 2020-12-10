@@ -6,6 +6,7 @@
     <Company>BerezAndUpis</Company>
     <PackageId>TrueFalse.SignalR.Client</PackageId>
     <Description>Только для моего пользования)</Description>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

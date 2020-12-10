@@ -44,7 +44,9 @@ namespace TrueFalse.Controllers
 
                 return Ok(new JwtResponse()
                 {
-                    Token = jwt
+                    Token = jwt,
+                    PlayerId = player.Id,
+                    PlayerName = player.Name
                 });
             }
             catch (Exception ex)

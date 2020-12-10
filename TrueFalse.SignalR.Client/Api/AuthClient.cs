@@ -24,7 +24,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// </summary>
         /// <param name="playerName"></param>
         /// <returns></returns>
-        public async Task<string> Token(string playerName)
+        public async Task<JwtResponse> Token(string playerName)
         {
             if (string.IsNullOrWhiteSpace(playerName))
             {
@@ -56,7 +56,7 @@ namespace TrueFalse.SignalR.Client.Api
                     var responseData = await response.Content.ReadAsStringAsync();
                     var jwtResponse = JsonConvert.DeserializeObject<JwtResponse>(responseData);
                     _accessToken = jwtResponse.Token;
-                    return jwtResponse.Token;
+                    return jwtResponse;
                 }
                 else
                 {
