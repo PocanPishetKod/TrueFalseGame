@@ -23,8 +23,9 @@ namespace TrueFalse.Repository
 
             var mongoDbSettings = MongoDbSettings.Create(configuration);
 
-            return services.AddSingleton<IGameTableRepository, GameTableRepository>()
-                .AddScoped<IPlayerRepository, MongoDbPlayerRepository>()
+            return services.AddTransient<IGameTableRepository, GameTableRepository>()
+                .AddTransient<IPlayerRepository, MongoDbPlayerRepository>()
+                .AddTransient<MongoDbContext>()
                 .AddSingleton(mongoDbSettings);
         }
 
