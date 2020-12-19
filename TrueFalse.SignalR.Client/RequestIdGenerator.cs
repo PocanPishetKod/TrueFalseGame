@@ -11,6 +11,7 @@ namespace TrueFalse.SignalR.Client
 
         static RequestIdGenerator()
         {
+            _locker = new object();
             _counter = 1;
         }
 
