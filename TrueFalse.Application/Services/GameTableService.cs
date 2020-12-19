@@ -34,6 +34,7 @@ namespace TrueFalse.Application.Services
                     Id = Guid.NewGuid(),
                     Name = "Test1",
                     Owner = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 1" },
+                    Type = GameTableType.Cards36And3Players,
                     Players = new List<GameTablePlayerDto>() 
                     {
                         new GameTablePlayerDto() { GameTablePlaceNumber = 1, Player = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 1" } },
@@ -45,6 +46,7 @@ namespace TrueFalse.Application.Services
                     Id = Guid.NewGuid(),
                     Name = "Test2",
                     Owner = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 3" },
+                    Type = GameTableType.Cards36And4Players,
                     Players = new List<GameTablePlayerDto>()
                     {
                         new GameTablePlayerDto() { GameTablePlaceNumber = 1, Player = new PlayerDto() { Id = Guid.NewGuid(), Name = "Player 3" } },
@@ -61,6 +63,7 @@ namespace TrueFalse.Application.Services
                 Id = gt.Id,
                 Name = gt.Name,
                 Owner = new PlayerDto() { Id = gt.Owner.Id, Name = gt.Owner.Name },
+                Type = GameTableTypeCalculator.CalculateGameTableType(gt),
                 Players = gt.Players.Select(p => new GameTablePlayerDto() 
                 { 
                     GameTablePlaceNumber = p.GameTablePlaceNumber,
@@ -118,6 +121,7 @@ namespace TrueFalse.Application.Services
                     Id = gameTable.Owner.Id,
                     Name = gameTable.Owner.Name
                 },
+                Type = GameTableTypeCalculator.CalculateGameTableType(gameTable),
                 Players = gameTable.Players.Select(p => new GameTablePlayerDto()
                 {
                     GameTablePlaceNumber = p.GameTablePlaceNumber,

@@ -10,6 +10,8 @@ namespace TrueFalse.Application.Dtos
 
         public string Name { get; set; }
 
+        public GameTableType Type { get; set; }
+
         public PlayerDto Owner { get; set; }
 
         public List<GameTablePlayerDto> Players { get; set; }

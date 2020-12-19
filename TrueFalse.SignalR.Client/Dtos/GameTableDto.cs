@@ -12,6 +12,8 @@ namespace TrueFalse.SignalR.Client.Dtos
 
         public PlayerDto Owner { get; set; }
 
+        public GameTableType Type { get; set; }
+
         public List<GameTablePlayerDto> Players { get; set; }
     }
 }
