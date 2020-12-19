@@ -55,5 +55,12 @@ namespace TrueFalse.Controllers
                 return InternalServerError();
             }
         }
+
+        [HttpGet("check")]
+        [Authorize]
+        public IActionResult CheckToken()
+        {
+            return Ok();
+        }
     }
 }

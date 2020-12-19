@@ -12,13 +12,6 @@ namespace TrueFalse.SignalR.Client.Api
 {
     public class AuthClient
     {
-        private string _accessToken;
-
-        public AuthClient(string accessToken)
-        {
-            _accessToken = accessToken;
-        }
-
         /// <summary>
         /// Создает игрока и возвращает токен доступа
         /// </summary>
@@ -35,11 +28,6 @@ namespace TrueFalse.SignalR.Client.Api
 
             try
             {
-                if (!string.IsNullOrWhiteSpace(_accessToken))
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
-                }
-
                 var serializedData = JsonConvert.SerializeObject(new JwtRequest() { PlayerName = playerName });
                 var response = await httpClient.PostAsync("https://localhost:54613/token", new StringContent(serializedData, Encoding.UTF8, "application/json"));
 
@@ -47,21 +35,42 @@ namespace TrueFalse.SignalR.Client.Api
                 {
                     throw new Exception("Что-то не так на сервере");
                 }
-                else if (response.StatusCode == HttpStatusCode.Forbidden)
-                {
-                    throw new Exception("Попытка получения токена при уже полученном токене");
-                }
                 else if (response.StatusCode == HttpStatusCode.OK)
                 {
                     var responseData = await response.Content.ReadAsStringAsync();
                     var jwtResponse = JsonConvert.DeserializeObject<JwtResponse>(responseData);
-                    _accessToken = jwtResponse.Token;
                     return jwtResponse;
                 }
                 else
                 {
                     throw new Exception($"Не ожидаемый статус код - {response.StatusCode}");
                 }
+            }
+            finally
+            {
+                httpClient.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Отправляет запрос на проверку токена
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> CheckToken(string accessToken)
+        {
+            if (string.IsNullOrWhiteSpace(accessToken))
+            {
+                throw new ArgumentNullException(nameof(accessToken));
+            }
+
+            var httpClient = new HttpClient();
+
+            try
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+                var response = await httpClient.GetAsync("https://localhost:54613/token/check");
+                return response.IsSuccessStatusCode;
             }
             finally
             {
