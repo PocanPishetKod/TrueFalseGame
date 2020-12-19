@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class MakeDontBeliveMoveParams : RequestParams
+    public abstract class RequestParams
     {
-        public int SelectedCardId { get; set; }
+        public int RequestId { get; set; }
     }
 }

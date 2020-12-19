@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.SignalR.Client.Dtos;
+using TrueFalse.SignalR.Client.Promises;
 
 namespace TrueFalse.SignalR.Client.Api
 {
@@ -10,15 +11,15 @@ namespace TrueFalse.SignalR.Client.Api
     {
         Task Disconnect();
 
-        Task GetGameTables(GetGameTablesParams @params);
+        Promise<ReceiveGameTablesParams> GetGameTables(GetGameTablesParams @params);
 
         Task CreateGameTable(CreateGameTableParams @params);
 
         Task JoinToGameTable(JoinToGameTableParams @params);
 
-        Task LeaveFromGameTable();
+        Task LeaveFromGameTable(LeaveFromGameTableParams @params);
 
-        Task StartGame();
+        Task StartGame(StartGameParams @params);
 
         Task MakeFirstMove(MakeFirstMoveParams @params);
 

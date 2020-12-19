@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.SignalR.Client.Dtos;
+using TrueFalse.SignalR.Client.Promises;
 
 namespace TrueFalse.SignalR.Client.Api
 {
@@ -22,26 +23,187 @@ namespace TrueFalse.SignalR.Client.Api
 
             _accessToken = accessToken;
             _isDisposed = false;
+            SetHandlers();
         }
 
-        public void SetHandlers(IMainHubClient mainHubClient)
+        private void SetHandlers()
         {
-            _hubConnection.On<OnBeliveMoveMadeParams>(nameof(mainHubClient.OnBeliveMoveMade), mainHubClient.OnBeliveMoveMade);
-            _hubConnection.On<OnCreatedNewGameTableParams>(nameof(mainHubClient.OnCreatedNewGameTable), mainHubClient.OnCreatedNewGameTable);
-            _hubConnection.On<OnDontBeliveMoveMadeParams>(nameof(mainHubClient.OnDontBeliveMoveMade), mainHubClient.OnDontBeliveMoveMade);
-            _hubConnection.On<OnFirstMoveMadeParams>(nameof(mainHubClient.OnFirstMoveMade), mainHubClient.OnFirstMoveMade);
-            _hubConnection.On<OnGameStartedParams>(nameof(mainHubClient.OnGameStarted), mainHubClient.OnGameStarted);
-            _hubConnection.On<OnPlayerJoinedParams>(nameof(mainHubClient.OnPlayerJoined), mainHubClient.OnPlayerJoined);
-            _hubConnection.On<OnPlayerLeavedParams>(nameof(mainHubClient.OnPlayerLeaved), mainHubClient.OnPlayerLeaved);
-            _hubConnection.On<ReceiveCreateGameTableResultParams>(nameof(mainHubClient.ReceiveCreateGameTableResult), mainHubClient.ReceiveCreateGameTableResult);
-            _hubConnection.On<ReceiveGameStartResultParams>(nameof(mainHubClient.ReceiveGameStartResult), mainHubClient.ReceiveGameStartResult);
-            _hubConnection.On<ReceiveGameTablesParams>(nameof(mainHubClient.ReceiveGameTables), mainHubClient.ReceiveGameTables);
-            _hubConnection.On<ReceiveJoinResultParams>(nameof(mainHubClient.ReceiveJoinResult), mainHubClient.ReceiveJoinResult);
-            _hubConnection.On<ReceiveLeaveResultParams>(nameof(mainHubClient.ReceiveLeaveResult), mainHubClient.ReceiveLeaveResult);
-            _hubConnection.On<ReceiveMakeBeliveMoveResultParams>(nameof(mainHubClient.ReceiveMakeBeliveMoveResult), mainHubClient.ReceiveMakeBeliveMoveResult);
-            _hubConnection.On<ReceiveMakeDontBeliveMoveResultParams>(nameof(mainHubClient.ReceiveMakeDontBeliveMoveResult), mainHubClient.ReceiveMakeDontBeliveMoveResult);
-            _hubConnection.On<ReceiveMakeFirstMoveResultParams>(nameof(mainHubClient.ReceiveMakeFirstMoveResult), mainHubClient.ReceiveMakeFirstMoveResult);
-            _hubConnection.On<ReceiveNewGameTableParams>(nameof(mainHubClient.ReceiveNewGameTable), mainHubClient.ReceiveNewGameTable);
+            _hubConnection.On<OnBeliveMoveMadeParams>(nameof(OnBeliveMoveMade), OnBeliveMoveMade);
+            _hubConnection.On<OnCreatedNewGameTableParams>(nameof(OnCreatedNewGameTable), OnCreatedNewGameTable);
+            _hubConnection.On<OnDontBeliveMoveMadeParams>(nameof(OnDontBeliveMoveMade), OnDontBeliveMoveMade);
+            _hubConnection.On<OnFirstMoveMadeParams>(nameof(OnFirstMoveMade), OnFirstMoveMade);
+            _hubConnection.On<OnGameStartedParams>(nameof(OnGameStarted), OnGameStarted);
+            _hubConnection.On<OnPlayerJoinedParams>(nameof(OnPlayerJoined), OnPlayerJoined);
+            _hubConnection.On<OnPlayerLeavedParams>(nameof(OnPlayerLeaved), OnPlayerLeaved);
+            _hubConnection.On<ReceiveCreateGameTableResultParams>(nameof(ReceiveCreateGameTableResult), ReceiveCreateGameTableResult);
+            _hubConnection.On<ReceiveGameStartResultParams>(nameof(ReceiveGameStartResult), ReceiveGameStartResult);
+            _hubConnection.On<ReceiveGameTablesParams>(nameof(ReceiveGameTables), ReceiveGameTables);
+            _hubConnection.On<ReceiveJoinResultParams>(nameof(ReceiveJoinResult), ReceiveJoinResult);
+            _hubConnection.On<ReceiveLeaveResultParams>(nameof(ReceiveLeaveResult), ReceiveLeaveResult);
+            _hubConnection.On<ReceiveMakeBeliveMoveResultParams>(nameof(ReceiveMakeBeliveMoveResult), ReceiveMakeBeliveMoveResult);
+            _hubConnection.On<ReceiveMakeDontBeliveMoveResultParams>(nameof(ReceiveMakeDontBeliveMoveResult), ReceiveMakeDontBeliveMoveResult);
+            _hubConnection.On<ReceiveMakeFirstMoveResultParams>(nameof(ReceiveMakeFirstMoveResult), ReceiveMakeFirstMoveResult);
+            _hubConnection.On<ReceiveNewGameTableParams>(nameof(ReceiveNewGameTable), ReceiveNewGameTable);
+        }
+
+        /// <summary>
+        /// Принимает игровые столы от сервера
+        /// </summary>
+        /// <param name="gameTables"></param>
+        /// <returns></returns>
+        private void ReceiveGameTables(ReceiveGameTablesParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Принимает новую комнату
+        /// </summary>
+        /// <param name="gameTable"></param>
+        /// <returns></returns>
+        private void ReceiveNewGameTable(ReceiveNewGameTableParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат создания игрового стола
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveCreateGameTableResult(ReceiveCreateGameTableResultParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о создании нового игрового стола
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnCreatedNewGameTable(OnCreatedNewGameTableParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о присоединении игрока за игровой стол
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnPlayerJoined(OnPlayerJoinedParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат попытки присоединения к игровому столу
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveJoinResult(ReceiveJoinResultParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о выходе пользователя из-за игрового стола
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnPlayerLeaved(OnPlayerLeavedParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат попытки выхода из-за игрового стола
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveLeaveResult(ReceiveLeaveResultParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о начале игры
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnGameStarted(OnGameStartedParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат попытки начать игру
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveGameStartResult(ReceiveGameStartResultParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о совершении первого хода
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnFirstMoveMade(OnFirstMoveMadeParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат совершения первого хода
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveMakeFirstMoveResult(ReceiveMakeFirstMoveResultParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о совершении хода типа "Верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnBeliveMoveMade(OnBeliveMoveMadeParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат совершения хода типа "Верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveMakeBeliveMoveResult(ReceiveMakeBeliveMoveResultParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает уведомление о совершении хода типа "Не верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void OnDontBeliveMoveMade(OnDontBeliveMoveMadeParams @params)
+        {
+
+        }
+
+        /// <summary>
+        /// Получает результат совершения хода типа "Не верю"
+        /// </summary>
+        /// <param name="params"></param>
+        /// <returns></returns>
+        private void ReceiveMakeDontBeliveMoveResult(ReceiveMakeDontBeliveMoveResultParams @params)
+        {
+
         }
 
         public async Task Connect()
@@ -125,7 +287,7 @@ namespace TrueFalse.SignalR.Client.Api
             await _hubConnection.InvokeAsync(nameof(IMainHubApi.Disconnect));
         }
 
-        public async Task GetGameTables(GetGameTablesParams @params)
+        public Promise<ReceiveGameTablesParams> GetGameTables(GetGameTablesParams @params)
         {
             if (_isDisposed)
             {
@@ -142,7 +304,10 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.GetGameTables), @params);
+            return new Promise<ReceiveGameTablesParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.GetGameTables), @params);
+            });
         }
 
         public async Task CreateGameTable(CreateGameTableParams @params)
@@ -185,7 +350,7 @@ namespace TrueFalse.SignalR.Client.Api
             await _hubConnection.InvokeAsync(nameof(IMainHubApi.JoinToGameTable), @params);
         }
 
-        public async Task LeaveFromGameTable()
+        public async Task LeaveFromGameTable(LeaveFromGameTableParams @params)
         {
             if (_isDisposed)
             {
@@ -202,10 +367,10 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.LeaveFromGameTable));
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.LeaveFromGameTable), @params);
         }
 
-        public async Task StartGame()
+        public async Task StartGame(StartGameParams @params)
         {
             if (_isDisposed)
             {
@@ -222,7 +387,7 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.StartGame));
+            await _hubConnection.InvokeAsync(nameof(IMainHubApi.StartGame), @params);
         }
 
         public async Task MakeFirstMove(MakeFirstMoveParams @params)

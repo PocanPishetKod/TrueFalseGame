@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class ReceiveLeaveResultParams
+    public class ReceiveLeaveResultParams : ResponseParams
     {
-        public bool Succeeded { get; set; }
+
     }
 }

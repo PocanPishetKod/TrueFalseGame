@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class MakeBeliveMoveParams : RequestParams
+    public class LeaveFromGameTableParams
     {
-        public List<int> CardIds { get; set; }
+        public int RequestId { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class MakeDontBeliveMoveParams
+    public class MakeDontBeliveMoveParams : RequestParams
     {
         public int SelectedCardId { get; set; }
     }

@@ -197,12 +197,28 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
         public async Task GetGameTables(GetGameTablesParams @params)
         {
-            var result = _gameTableService.GetGameTablesTest();
-
-            await Clients.Caller.ReceiveGameTables(new ReceiveGameTablesParams()
+            try
             {
-                GameTables = result.ToList()
-            });
+                var result = _gameTableService.GetGameTablesTest();
+
+                await Clients.Caller.ReceiveGameTables(new ReceiveGameTablesParams()
+                {
+                    GameTables = result.ToList(),
+                    RequestId = @params.RequestId,
+                    Succeeded = true
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка возврата игровых столов");
+
+                await Clients.Caller.ReceiveGameTables(new ReceiveGameTablesParams()
+                {
+                    GameTables = null,
+                    RequestId = @params.RequestId,
+                    Succeeded = false
+                });
+            }
         }
 
         public async Task CreateGameTable(CreateGameTableParams @params)
@@ -214,7 +230,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveCreateGameTableResult(new ReceiveCreateGameTableResultParams()
                 {
                     GameTableId = dto.Id,
-                    IsSucceeded = true
+                    Succeeded = true,
+                    RequestId = @params.RequestId
                 });
 
                 await NotifyGameTableCreated(dto);
@@ -226,7 +243,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveCreateGameTableResult(new ReceiveCreateGameTableResultParams()
                 {
                     GameTableId = null,
-                    IsSucceeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }
@@ -241,7 +259,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await NotifyAboutPlayerJoined(@params.GameTableId, Context.User.GetUserId());
                 await Clients.Caller.ReceiveJoinResult(new ReceiveJoinResultParams()
                 {
-                    Succeeded = true
+                    Succeeded = true,
+                    RequestId = @params.RequestId
                 });
             }
             catch (Exception ex)
@@ -250,12 +269,13 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
                 await Clients.Caller.ReceiveJoinResult(new ReceiveJoinResultParams()
                 {
-                    Succeeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }
 
-        public async Task LeaveFromGameTable()
+        public async Task LeaveFromGameTable(LeaveFromGameTableParams @params)
         {
             try
             {
@@ -265,7 +285,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await NotifyAboutPlayerLeaved(gameTableId, Context.User.GetUserId());
                 await Clients.Caller.ReceiveLeaveResult(new ReceiveLeaveResultParams()
                 {
-                    Succeeded = true
+                    Succeeded = true,
+                    RequestId = @params.RequestId
                 });
             }
             catch (Exception ex)
@@ -274,12 +295,13 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
                 await Clients.Caller.ReceiveLeaveResult(new ReceiveLeaveResultParams()
                 {
-                    Succeeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }
 
-        public async Task StartGame()
+        public async Task StartGame(StartGameParams @params)
         {
             try
             {
@@ -289,7 +311,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveGameStartResult(new ReceiveGameStartResultParams()
                 {
                     Succeeded = true,
-                    MoverId = result.MoverId
+                    MoverId = result.MoverId,
+                    RequestId = @params.RequestId
                 });
             }
             catch (Exception ex)
@@ -298,7 +321,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
                 await Clients.Caller.ReceiveGameStartResult(new ReceiveGameStartResultParams()
                 {
-                    Succeeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }
@@ -313,7 +337,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
                 {
                     Succeeded = true,
-                    NextMoverId = result.NextMoverId
+                    NextMoverId = result.NextMoverId,
+                    RequestId = @params.RequestId
                 });
             }
             catch (Exception ex)
@@ -322,7 +347,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
                 await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
                 {
-                    Succeeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }
@@ -337,7 +363,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
                 {
                     Succeeded = true,
-                    NextMoverId = result.NextMoverId
+                    NextMoverId = result.NextMoverId,
+                    RequestId = @params.RequestId
                 });
             }
             catch (Exception ex)
@@ -346,7 +373,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
                 await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
                 {
-                    Succeeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }
@@ -365,7 +393,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                     LoserId = result.LoserId,
                     NextMoverId = result.NextMoverId,
                     HiddenTakedLoserCards = result.LoserId != Context.User.GetUserId() ? result.TakedLoserCards.Select(c => c.Id).ToList() : null,
-                    TakedLoserCards = result.LoserId == Context.User.GetUserId() ? result.TakedLoserCards.ToList() : null
+                    TakedLoserCards = result.LoserId == Context.User.GetUserId() ? result.TakedLoserCards.ToList() : null,
+                    RequestId = @params.RequestId
                 });
             }
             catch (Exception ex)
@@ -374,7 +403,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
                 await Clients.Caller.ReceiveMakeDontBeliveMoveResult(new ReceiveMakeDontBeliveMoveResultParams()
                 {
-                    Succeeded = false
+                    Succeeded = false,
+                    RequestId = @params.RequestId
                 });
             }
         }

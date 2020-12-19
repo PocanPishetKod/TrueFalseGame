@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class ReceiveNewGameTableParams
+    public class ReceiveNewGameTableParams : ResponseParams
     {
         public GameTableDto GameTable { get; set; }
     }

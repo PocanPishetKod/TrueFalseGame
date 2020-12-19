@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class ReceiveMakeBeliveMoveResultParams
+    public class ReceiveMakeBeliveMoveResultParams : ResponseParams
     {
-        public bool Succeeded { get; set; }
-
         public Guid? NextMoverId { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class JoinToGameTableParams
+    public class JoinToGameTableParams : RequestParams
     {
         public Guid GameTableId { get; set; }
     }

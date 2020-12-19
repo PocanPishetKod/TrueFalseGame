@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using TrueFalse.Application.Dtos;
 
 namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class ReceiveNewGameTableParams
+    public class LeaveFromGameTableParams : RequestParams
     {
-        public GameTableDto GameTable { get; set; }
+
     }
 }

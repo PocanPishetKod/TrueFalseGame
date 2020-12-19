@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class ReceiveJoinResultParams
+    public class ReceiveJoinResultParams : ResponseParams
     {
-        public bool Succeeded { get; set; }
+
     }
 }

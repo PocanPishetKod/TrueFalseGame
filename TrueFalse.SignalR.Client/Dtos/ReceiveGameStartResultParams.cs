@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class ReceiveGameStartResultParams
+    public class ReceiveGameStartResultParams : ResponseParams
     {
-        public bool Succeeded { get; set; }
-
         public Guid? MoverId { get; set; }
     }
 }

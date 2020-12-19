@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Client.Dtos
 {
-    public class CreateGameTableParams
+    public class CreateGameTableParams : RequestParams
     {
         public string Name { get; set; }
 

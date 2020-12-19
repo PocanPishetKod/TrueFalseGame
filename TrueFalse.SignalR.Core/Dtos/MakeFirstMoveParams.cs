@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.SignalR.Core.Dtos
 {
-    public class MakeFirstMoveParams
+    public class MakeFirstMoveParams : RequestParams
     {
         public List<int> CardIds { get; set; }
 

@@ -6,7 +6,7 @@ using TrueFalse.Application.Dtos;
 
 namespace TrueFalse.SignalR.Core.Dtos
 { 
-    public class ReceiveGameTablesParams
+    public class ReceiveGameTablesParams : ResponseParams
     {
         public List<GameTableDto> GameTables { get; set; }
     }
