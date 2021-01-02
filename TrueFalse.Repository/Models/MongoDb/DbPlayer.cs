@@ -13,7 +13,6 @@ namespace TrueFalse.Repository.Models.MongoDb
         public const string CollectionName = "players";
 
         [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public Guid Id { get; set; }
 
         public string Name { get; set; }
