@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.Client.Domain.Models.Players
 {
+    [Serializable]
     public class SavedPlayer : Player
     {
         public string Token { get; set; }

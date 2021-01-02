@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace TrueFalse.Client.ConsoleApp
 
         static void Main(string[] args)
         {
-            _app = new App();
+            _app = new App(new ServiceCollection());
             _app.Start();
         }
     }

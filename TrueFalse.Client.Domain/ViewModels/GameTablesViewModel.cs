@@ -46,10 +46,11 @@ namespace TrueFalse.Client.Domain.ViewModels
             }
         }
 
-        public void Initialize()
+        private void Initialize()
         {
             var currentPlayer = _stateService.GetSavedPlayer();
             _mainHubClient = new MainHubClient(currentPlayer.Token);
+            _mainHubClient.Connect().ConfigureAwait(false);
         }
 
         public void LoadGameTables()

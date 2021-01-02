@@ -1,85 +1,63 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrueFalse.Client.ConsoleApp.Views;
 using TrueFalse.Client.Domain;
+using TrueFalse.Client.Domain.Interfaces;
+using TrueFalse.Client.Domain.Services;
+using TrueFalse.Client.Domain.ViewModels;
 using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.Client.ConsoleApp
 {
     public class App
     {
-        private const string SavesPath = @"C:\TrueFalse saves";
+        private readonly IServiceCollection _services;
+        private IServiceProvider _serviceProvider;
+        private BaseView _currentView;
 
-        public App()
+        public App(IServiceCollection services)
         {
-            SubscrybeOnEvents();
-        }
-
-        public void SubscrybeOnEvents()
-        {
-
-        }
-
-        private void OnReceiveGameTables(ReceiveGameTablesParams @params)
-        {
-            foreach (var item in @params.GameTables)
-            {
-                Console.WriteLine($"Id = {item.Id} | Name = {item.Name}");
-            }
-        }
-
-        private void OnReceiveNewGameTable(ReceiveNewGameTableParams @params)
-        {
-
-        }
-
-        private string InputNameProcess()
-        {
-            while (true)
-            {
-                Console.WriteLine("Введите ник:");
-
-                var result = Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(result))
-                {
-                    Console.WriteLine("Введите корректный ник");
-                }
-                else
-                {
-                    return result;
-                }
-            }
-        }
-
-        private void RequestGameTablesProcess()
-        {
-            while (true)
-            {
-                Console.WriteLine("Показать игровые столы? (Да/Нет)");
-                var input = Console.ReadLine();
-                if (input.ToUpper() == "ДА")
-                {
-                    //_application.RequestGameTables();
-                    break;
-                }
-            }
+            _services = services;
         }
 
         public void Start()
         {
-            while (true)
-            {
-                var playerName = InputNameProcess();
-                //_application.Authenticate(playerName).Wait();
-                RequestGameTablesProcess();
+            _services.AddSingleton<IStoreFolderPathProvider>(new StoreFolderProvider(@"C:\TrueFalse saves"))
+                .AddTransient<INavigator, Navigator>()
+                .AddTransient<MainMenuViewModel>()
+                .AddTransient<GameTablesViewModel>()
+                .AddSingleton<IStateService>(new StateService())
+                .AddSingleton(this);
 
-                Console.WriteLine("Нажмите любую клавишу, чтобы выйти");
-                Console.ReadLine();
-                break;
+            _serviceProvider = _services.BuildServiceProvider();
+
+            GoToMainView();
+        }
+
+        public void GoToMainView()
+        {
+            if (_currentView != null)
+            {
+                _currentView.Stop();
             }
+
+            _currentView = new MainMenuView(_serviceProvider.GetService<MainMenuViewModel>());
+            _currentView.Start();
+        }
+
+        public void GoToGameTablesView()
+        {
+            if (_currentView != null)
+            {
+                _currentView.Stop();
+            }
+
+            _currentView = new GameTablesListView(_serviceProvider.GetService<GameTablesViewModel>());
+            _currentView.Start();
         }
     }
 }

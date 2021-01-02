@@ -42,7 +42,6 @@ namespace TrueFalse.Client.Domain.ViewModels
         private void AuthenticateBackground()
         {
             var authService = new AuthService(new SaveService(_storeFolderPathProvider.ProvidePath()));
-            var sc = SynchronizationContext.Current;
             authService.Authenticate().ContinueWith(task =>
             {
                 _stateService.SetPlayer(task.Result);

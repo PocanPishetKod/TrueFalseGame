@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TrueFalse.Client.Domain.Models.Players
 {
+    [Serializable]
     public class Player
     {
         public Guid Id { get; set; }
