@@ -29,7 +29,7 @@ namespace TrueFalse.SignalR.Client.Api
             try
             {
                 var serializedData = JsonConvert.SerializeObject(new JwtRequest() { PlayerName = playerName });
-                var response = await httpClient.PostAsync("https://localhost:54613/token", new StringContent(serializedData, Encoding.UTF8, "application/json"));
+                var response = await httpClient.PostAsync("https://localhost:44307/token", new StringContent(serializedData, Encoding.UTF8, "application/json"));
 
                 if (response.StatusCode == HttpStatusCode.InternalServerError)
                 {
@@ -69,7 +69,7 @@ namespace TrueFalse.SignalR.Client.Api
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-                var response = await httpClient.GetAsync("https://localhost:54613/token/check");
+                var response = await httpClient.GetAsync("https://localhost:44307/token/check");
                 return response.IsSuccessStatusCode;
             }
             finally

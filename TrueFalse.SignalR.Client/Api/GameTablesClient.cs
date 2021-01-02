@@ -47,7 +47,7 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new ArgumentOutOfRangeException();
             }
 
-            var response = await _httpClient.GetAsync($"https://localhost:54613/gametables/{pageNum}/{perPage}");
+            var response = await _httpClient.GetAsync($"https://localhost:44307/gametables/{pageNum}/{perPage}");
 
             if (response.StatusCode == HttpStatusCode.Forbidden)
             {
