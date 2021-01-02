@@ -19,13 +19,6 @@ namespace TrueFalse.SignalR.Client.Api
         Task ReceiveGameTables(ReceiveGameTablesParams @params);
 
         /// <summary>
-        /// Принимает новую комнату
-        /// </summary>
-        /// <param name="gameTable"></param>
-        /// <returns></returns>
-        Task ReceiveNewGameTable(ReceiveNewGameTableParams @params);
-
-        /// <summary>
         /// Получает результат создания игрового стола
         /// </summary>
         /// <param name="params"></param>

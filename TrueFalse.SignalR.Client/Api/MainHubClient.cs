@@ -14,6 +14,8 @@ namespace TrueFalse.SignalR.Client.Api
         private readonly string _accessToken;
         private bool _isDisposed;
 
+        internal event Action<ReceiveGameTablesParams> ReceivedGameTables;
+
         public MainHubClient(string accessToken)
         {
             if (string.IsNullOrWhiteSpace(accessToken))
@@ -23,7 +25,6 @@ namespace TrueFalse.SignalR.Client.Api
 
             _accessToken = accessToken;
             _isDisposed = false;
-            SetHandlers();
         }
 
         private void SetHandlers()
@@ -43,7 +44,6 @@ namespace TrueFalse.SignalR.Client.Api
             _hubConnection.On<ReceiveMakeBeliveMoveResultParams>(nameof(ReceiveMakeBeliveMoveResult), ReceiveMakeBeliveMoveResult);
             _hubConnection.On<ReceiveMakeDontBeliveMoveResultParams>(nameof(ReceiveMakeDontBeliveMoveResult), ReceiveMakeDontBeliveMoveResult);
             _hubConnection.On<ReceiveMakeFirstMoveResultParams>(nameof(ReceiveMakeFirstMoveResult), ReceiveMakeFirstMoveResult);
-            _hubConnection.On<ReceiveNewGameTableParams>(nameof(ReceiveNewGameTable), ReceiveNewGameTable);
         }
 
         /// <summary>
@@ -53,17 +53,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveGameTables(ReceiveGameTablesParams @params)
         {
-
-        }
-
-        /// <summary>
-        /// Принимает новую комнату
-        /// </summary>
-        /// <param name="gameTable"></param>
-        /// <returns></returns>
-        private void ReceiveNewGameTable(ReceiveNewGameTableParams @params)
-        {
-
+            ReceivedGameTables?.Invoke(@params);
         }
 
         /// <summary>
@@ -229,6 +219,8 @@ namespace TrueFalse.SignalR.Client.Api
             _hubConnection.ServerTimeout = TimeSpan.FromMinutes(1);
             _hubConnection.KeepAliveInterval = TimeSpan.FromSeconds(30);
 
+            SetHandlers();
+
             await _hubConnection.StartAsync();
         }
 
@@ -304,10 +296,14 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            return new Promise<ReceiveGameTablesParams>(@params.RequestId, () =>
+            var promise = new Promise<ReceiveGameTablesParams>(@params.RequestId, () =>
             {
                 _hubConnection.InvokeAsync(nameof(IMainHubApi.GetGameTables), @params);
             });
+
+            ReceivedGameTables += promise.OnCopleted;
+
+            return promise;
         }
 
         public async Task CreateGameTable(CreateGameTableParams @params)

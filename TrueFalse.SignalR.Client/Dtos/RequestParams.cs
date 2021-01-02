@@ -6,7 +6,7 @@ namespace TrueFalse.SignalR.Client.Dtos
 {
     public abstract class RequestParams
     {
-        internal int RequestId { get; private set; }
+        public int RequestId { get; private set; }
 
         public RequestParams()
         {
