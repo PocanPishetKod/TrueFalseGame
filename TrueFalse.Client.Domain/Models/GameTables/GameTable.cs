@@ -9,7 +9,7 @@ using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.Client.Domain.Models.GameTables
 {
-    public class GameTable
+    public class GameTable : ICreatableGameTable
     {
         public Guid Id { get; set; }
 
