@@ -15,13 +15,16 @@ namespace TrueFalse.Client.Domain.ViewModels
         private readonly IStoreFolderPathProvider _storeFolderPathProvider;
         private readonly INavigator _navigator;
         private readonly IStateService _stateService;
+        private readonly IBlockUIService _blockUIService;
         private ICommand<string> _navigateCommand;
+        private Task _authTask;
 
-        public MainMenuViewModel(IStoreFolderPathProvider storeFolderPathProvider, INavigator navigator, IStateService stateService)
+        public MainMenuViewModel(IStoreFolderPathProvider storeFolderPathProvider, INavigator navigator, IStateService stateService, IBlockUIService blockUIService)
         {
             _storeFolderPathProvider = storeFolderPathProvider;
             _navigator = navigator;
             _stateService = stateService;
+            _blockUIService = blockUIService;
 
             AuthenticateBackground();
         }
@@ -41,17 +44,27 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         private void AuthenticateBackground()
         {
-            var authService = new AuthService(new SaveService(_storeFolderPathProvider.ProvidePath()));
-            authService.Authenticate().ContinueWith(task =>
+            if (!_stateService.IsAuthenticated)
             {
-                _stateService.SetPlayer(task.Result);
-            });
+                var authService = new AuthService(new SaveService(_storeFolderPathProvider.ProvidePath()));
+                _authTask = authService.Authenticate().ContinueWith(task =>
+                {
+                    _stateService.SetPlayer(task.Result);
+                });
+            }
         }
 
-        public override void Navigate(string viewModelName)
+        public override async Task Navigate(string viewModelName)
         {
             if (viewModelName.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
+                if (_authTask != null && !_authTask.IsCompleted)
+                {
+                    _blockUIService.StartBlocking();
+                    await _authTask;
+                    _blockUIService.StopBlocking();
+                }
+
                 _navigator.Navigate(nameof(GameTablesViewModel));
             }
             else

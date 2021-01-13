@@ -21,6 +21,6 @@ namespace TrueFalse.Client.Domain.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public abstract void Navigate(string viewModelName);
+        public abstract Task Navigate(string viewModelName);
     }
 }

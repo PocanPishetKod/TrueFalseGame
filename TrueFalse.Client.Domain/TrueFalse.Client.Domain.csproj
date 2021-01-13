@@ -47,8 +47,10 @@
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\Parameters\LoadGameTablesParams.cs" />
     <Compile Include="Extensions\MapExtensions.cs" />
+    <Compile Include="Interfaces\IDispatcher.cs" />
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="Interfaces\IStoreFolderPathProvider.cs" />
+    <Compile Include="Interfaces\IBlockUIService.cs" />
     <Compile Include="Models\Cards\CardsPack.cs" />
     <Compile Include="Models\Cards\PlayingCard.cs" />
     <Compile Include="Models\Games\Game.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="Models\Games\GameRound.cs" />
     <Compile Include="Models\GameTables\GameTable.cs" />
     <Compile Include="Models\GameTables\GameTablePlayer.cs" />
+    <Compile Include="Models\GameTables\ICreatableGameTable.cs" />
     <Compile Include="Models\Players\Player.cs" />
     <Compile Include="Models\Cards\PlayingCardRank.cs" />
     <Compile Include="Models\Cards\PlayingCardSuit.cs" />
@@ -67,7 +70,9 @@
     <Compile Include="Services\SaveService.cs" />
     <Compile Include="Services\StateService.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\CreateGameTableViewModel.cs" />
     <Compile Include="ViewModels\GameTablesViewModel.cs" />
+    <Compile Include="ViewModels\GameTableViewModel.cs" />
     <Compile Include="ViewModels\MainMenuViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

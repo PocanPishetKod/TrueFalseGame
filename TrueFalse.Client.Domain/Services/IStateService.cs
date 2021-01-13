@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrueFalse.Client.Domain.Models.GameTables;
 using TrueFalse.Client.Domain.Models.Players;
 
 namespace TrueFalse.Client.Domain.Services
@@ -23,5 +24,21 @@ namespace TrueFalse.Client.Domain.Services
         /// </summary>
         /// <returns></returns>
         SavedPlayer GetSavedPlayer();
+
+        /// <summary>
+        /// Находится ли игрок за игровым столом
+        /// </summary>
+        bool AlreadyPlaying { get; }
+
+        /// <summary>
+        /// Авторизован ли игрок
+        /// </summary>
+        bool IsAuthenticated { get; }
+
+        /// <summary>
+        /// Установить текущий игровой стол
+        /// </summary>
+        /// <param name="gameTable"></param>
+        void SetGameTable(GameTable gameTable);
     }
 }

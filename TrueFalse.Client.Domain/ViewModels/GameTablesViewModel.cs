@@ -19,16 +19,23 @@ namespace TrueFalse.Client.Domain.ViewModels
     public class GameTablesViewModel : BaseViewModel
     {
         private readonly IStateService _stateService;
+        private readonly INavigator _navigator;
+        private readonly IBlockUIService _blockUIService;
+        private readonly IDispatcher _dispatcher;
         private MainHubClient _mainHubClient;
         private ObservableCollection<GameTable> _gameTables;
         private ICommand<LoadGameTablesParams> _loadGameTablesCommand;
 
         public ObservableCollection<GameTable> GameTables => _gameTables;
 
-        public GameTablesViewModel(IStoreFolderPathProvider storeFolderPathProvider, IStateService stateService)
+        public GameTablesViewModel(IStoreFolderPathProvider storeFolderPathProvider, IStateService stateService,
+            INavigator navigator, IBlockUIService blockUIService, IDispatcher dispatcher)
         {
             _gameTables = new ObservableCollection<GameTable>();
             _stateService = stateService;
+            _navigator = navigator;
+            _blockUIService = blockUIService;
+            _dispatcher = dispatcher;
 
             Initialize();
         }
@@ -50,7 +57,7 @@ namespace TrueFalse.Client.Domain.ViewModels
         {
             var currentPlayer = _stateService.GetSavedPlayer();
             _mainHubClient = new MainHubClient(currentPlayer.Token);
-            _mainHubClient.Connect().ConfigureAwait(false);
+            Task.Run(async () => await _mainHubClient.Connect());
         }
 
         public void LoadGameTables()
@@ -65,9 +72,55 @@ namespace TrueFalse.Client.Domain.ViewModels
                 });
         }
 
-        public override void Navigate(string viewModelName)
+        public void JoinToGameTable(GameTable gameTable)
         {
-            throw new NotImplementedException();
+            if (_stateService.AlreadyPlaying)
+            {
+                throw new Exception("Пользователь уже находится в игровой комнате");
+            }
+
+            _blockUIService.StartBlocking();
+            _mainHubClient.JoinToGameTable(new JoinToGameTableParams() { GameTableId = gameTable.Id })
+                .Then((response) =>
+            {
+                if (response.Succeeded)
+                {
+                    _dispatcher.Invoke(() =>
+                    {
+                        _blockUIService.StopBlocking();
+
+                        _stateService.SetGameTable(gameTable);
+                        Navigate(nameof(GameTableViewModel));
+                    });
+                }
+            });
+        }
+
+        public void GoToCreatingGameTable()
+        {
+            Navigate(nameof(CreateGameTableViewModel));
+        }
+
+        public override Task Navigate(string viewModelName)
+        {
+            if (viewModelName.Equals(nameof(MainMenuViewModel), StringComparison.CurrentCultureIgnoreCase))
+            {
+                _navigator.Navigate(nameof(MainMenuViewModel));
+            }
+            else if (viewModelName.Equals(nameof(CreateGameTableViewModel), StringComparison.CurrentCultureIgnoreCase))
+            {
+                _navigator.Navigate(nameof(CreateGameTableViewModel));
+            }
+            else if (viewModelName.Equals(nameof(GameTableViewModel), StringComparison.CurrentCultureIgnoreCase))
+            {
+                _navigator.Navigate(nameof(GameTableViewModel));
+            }
+            else
+            {
+                throw new Exception("Ошибка навигации");
+            }
+
+            return Task.CompletedTask;
         }
     }
 }

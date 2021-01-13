@@ -13,9 +13,9 @@ namespace TrueFalse.SignalR.Client.Api
 
         Promise<ReceiveGameTablesParams> GetGameTables(GetGameTablesParams @params);
 
-        Task CreateGameTable(CreateGameTableParams @params);
+        Promise<ReceiveCreateGameTableResultParams> CreateGameTable(CreateGameTableParams @params);
 
-        Task JoinToGameTable(JoinToGameTableParams @params);
+        Promise<ReceiveJoinResultParams> JoinToGameTable(JoinToGameTableParams @params);
 
         Task LeaveFromGameTable(LeaveFromGameTableParams @params);
 

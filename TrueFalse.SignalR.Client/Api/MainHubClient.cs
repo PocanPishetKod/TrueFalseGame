@@ -15,6 +15,8 @@ namespace TrueFalse.SignalR.Client.Api
         private bool _isDisposed;
 
         internal event Action<ReceiveGameTablesParams> ReceivedGameTables;
+        internal event Action<ReceiveCreateGameTableResultParams> ReceivedCreateGameTableResult;
+        internal event Action<ReceiveJoinResultParams> ReceivedJoinResult;
 
         public MainHubClient(string accessToken)
         {
@@ -63,7 +65,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveCreateGameTableResult(ReceiveCreateGameTableResultParams @params)
         {
-
+            ReceivedCreateGameTableResult?.Invoke(@params);
         }
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveJoinResult(ReceiveJoinResultParams @params)
         {
-
+            ReceivedJoinResult?.Invoke(@params);
         }
 
         /// <summary>
@@ -306,7 +308,7 @@ namespace TrueFalse.SignalR.Client.Api
             return promise;
         }
 
-        public async Task CreateGameTable(CreateGameTableParams @params)
+        public Promise<ReceiveCreateGameTableResultParams> CreateGameTable(CreateGameTableParams @params)
         {
             if (_isDisposed)
             {
@@ -323,10 +325,17 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.CreateGameTable), @params);
+            var promise = new Promise<ReceiveCreateGameTableResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.CreateGameTable), @params);
+            });
+
+            ReceivedCreateGameTableResult += promise.OnCopleted;
+
+            return promise;
         }
 
-        public async Task JoinToGameTable(JoinToGameTableParams @params)
+        public Promise<ReceiveJoinResultParams> JoinToGameTable(JoinToGameTableParams @params)
         {
             if (_isDisposed)
             {
@@ -343,7 +352,14 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.JoinToGameTable), @params);
+            var promise = new Promise<ReceiveJoinResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.JoinToGameTable), @params);
+            });
+
+            ReceivedJoinResult += promise.OnCopleted;
+
+            return promise;
         }
 
         public async Task LeaveFromGameTable(LeaveFromGameTableParams @params)

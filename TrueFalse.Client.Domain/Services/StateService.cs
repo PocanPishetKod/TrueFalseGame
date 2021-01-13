@@ -13,6 +13,10 @@ namespace TrueFalse.Client.Domain.Services
         private GameTable _currentGameTable;
         private SavedPlayer _savedPlayer;
 
+        public bool AlreadyPlaying => _currentGameTable != null;
+
+        public bool IsAuthenticated => _savedPlayer != null;
+
         public void SetPlayer(SavedPlayer savedPlayer)
         {
             if (_savedPlayer != null)
