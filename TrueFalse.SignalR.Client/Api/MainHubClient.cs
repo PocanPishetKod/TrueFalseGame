@@ -11,22 +11,30 @@ namespace TrueFalse.SignalR.Client.Api
     public class MainHubClient : IMainHubApi, IHubClientConnection, IDisposable
     {
         private HubConnection _hubConnection;
-        private readonly string _accessToken;
+        private string _accessToken;
         private bool _isDisposed;
 
         internal event Action<ReceiveGameTablesParams> ReceivedGameTables;
         internal event Action<ReceiveCreateGameTableResultParams> ReceivedCreateGameTableResult;
         internal event Action<ReceiveJoinResultParams> ReceivedJoinResult;
 
-        public MainHubClient(string accessToken)
+        public MainHubClient(string accessToken = null)
         {
-            if (string.IsNullOrWhiteSpace(accessToken))
-            {
-                throw new ArgumentNullException(nameof(accessToken));
-            }
-
             _accessToken = accessToken;
             _isDisposed = false;
+        }
+
+        public string AccessToken
+        {
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new ArgumentNullException(nameof(value));
+                }
+
+                _accessToken = value;
+            }
         }
 
         private void SetHandlers()
@@ -208,6 +216,11 @@ namespace TrueFalse.SignalR.Client.Api
             if (_hubConnection?.State == HubConnectionState.Connected)
             {
                 throw new Exception("Подключение уже в статусе Connected");
+            }
+
+            if (string.IsNullOrWhiteSpace(_accessToken))
+            {
+                throw new Exception("AccessToken не установлен");
             }
 
             _hubConnection = new HubConnectionBuilder()

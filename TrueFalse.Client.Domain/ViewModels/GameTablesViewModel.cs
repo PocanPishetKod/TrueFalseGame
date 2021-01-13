@@ -22,22 +22,20 @@ namespace TrueFalse.Client.Domain.ViewModels
         private readonly INavigator _navigator;
         private readonly IBlockUIService _blockUIService;
         private readonly IDispatcher _dispatcher;
-        private MainHubClient _mainHubClient;
+        private IMainHubApi _mainHubClient;
         private ObservableCollection<GameTable> _gameTables;
         private ICommand<LoadGameTablesParams> _loadGameTablesCommand;
 
         public ObservableCollection<GameTable> GameTables => _gameTables;
 
         public GameTablesViewModel(IStoreFolderPathProvider storeFolderPathProvider, IStateService stateService,
-            INavigator navigator, IBlockUIService blockUIService, IDispatcher dispatcher)
+            INavigator navigator, IBlockUIService blockUIService, IDispatcher dispatcher, IMainHubApi mainHubClient)
         {
             _gameTables = new ObservableCollection<GameTable>();
             _stateService = stateService;
             _navigator = navigator;
             _blockUIService = blockUIService;
             _dispatcher = dispatcher;
-
-            Initialize();
         }
 
         public ICommand<LoadGameTablesParams> LoadGameTablesCommand
@@ -51,13 +49,6 @@ namespace TrueFalse.Client.Domain.ViewModels
 
                 return _loadGameTablesCommand;
             }
-        }
-
-        private void Initialize()
-        {
-            var currentPlayer = _stateService.GetSavedPlayer();
-            _mainHubClient = new MainHubClient(currentPlayer.Token);
-            Task.Run(async () => await _mainHubClient.Connect());
         }
 
         public void LoadGameTables()

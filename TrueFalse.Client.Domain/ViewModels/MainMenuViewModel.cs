@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Commands;
 using TrueFalse.Client.Domain.Interfaces;
 using TrueFalse.Client.Domain.Services;
+using TrueFalse.SignalR.Client.Api;
 
 namespace TrueFalse.Client.Domain.ViewModels
 {
@@ -16,16 +17,21 @@ namespace TrueFalse.Client.Domain.ViewModels
         private readonly INavigator _navigator;
         private readonly IStateService _stateService;
         private readonly IBlockUIService _blockUIService;
+        private readonly IHubClientConnection _hubClientConnection;
         private ICommand<string> _navigateCommand;
         private Task _authTask;
+        private Task _connectTask;
 
-        public MainMenuViewModel(IStoreFolderPathProvider storeFolderPathProvider, INavigator navigator, IStateService stateService, IBlockUIService blockUIService)
+        public MainMenuViewModel(IStoreFolderPathProvider storeFolderPathProvider, INavigator navigator, IStateService stateService,
+            IBlockUIService blockUIService, IHubClientConnection hubClientConnection)
         {
             _storeFolderPathProvider = storeFolderPathProvider;
             _navigator = navigator;
             _stateService = stateService;
             _blockUIService = blockUIService;
+            _hubClientConnection = hubClientConnection;
 
+            OpenConnection();
             AuthenticateBackground();
         }
 
@@ -40,6 +46,11 @@ namespace TrueFalse.Client.Domain.ViewModels
 
                 return _navigateCommand;
             }
+        }
+
+        private void OpenConnection()
+        {
+            _connectTask = _hubClientConnection.Connect();
         }
 
         private void AuthenticateBackground()
@@ -62,6 +73,13 @@ namespace TrueFalse.Client.Domain.ViewModels
                 {
                     _blockUIService.StartBlocking();
                     await _authTask;
+                    _blockUIService.StopBlocking();
+                }
+
+                if (!_connectTask.IsCompleted)
+                {
+                    _blockUIService.StartBlocking();
+                    await _connectTask;
                     _blockUIService.StopBlocking();
                 }
 
