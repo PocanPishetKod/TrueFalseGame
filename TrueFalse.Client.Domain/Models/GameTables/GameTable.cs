@@ -22,5 +22,26 @@ namespace TrueFalse.Client.Domain.Models.GameTables
         public GameTableType Type { get; set; }
 
         public string Name { get; set; }
+
+        public bool IsStarted => CurrentGame != null;
+
+        public bool CanStart
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case GameTableType.Cards36And3Players:
+                        return Players.Count == 3;
+                    case GameTableType.Cards36And4Players:
+                    case GameTableType.Cards52And4Players:
+                        return Players.Count == 4;
+                    case GameTableType.Cards52And5Players:
+                        return Players.Count == 4;
+                    default:
+                        throw new Exception($"Нет обработчика для значения {Type}");
+                }
+            }
+        }
     }
 }

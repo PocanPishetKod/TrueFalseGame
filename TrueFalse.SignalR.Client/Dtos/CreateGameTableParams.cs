@@ -11,8 +11,6 @@ namespace TrueFalse.SignalR.Client.Dtos
 
         public Guid OwnerId { get; set; }
 
-        public int PlayersCount { get; set; }
-
-        public int CardsCount { get; set; }
+        public GameTableType GameTableType { get; set; }
     }
 }

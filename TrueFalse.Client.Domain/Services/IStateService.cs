@@ -26,6 +26,12 @@ namespace TrueFalse.Client.Domain.Services
         SavedPlayer GetSavedPlayer();
 
         /// <summary>
+        /// Возвращает текущий игровой стол
+        /// </summary>
+        /// <returns></returns>
+        GameTable GetGameTable();
+
+        /// <summary>
         /// Находится ли игрок за игровым столом
         /// </summary>
         bool AlreadyPlaying { get; }

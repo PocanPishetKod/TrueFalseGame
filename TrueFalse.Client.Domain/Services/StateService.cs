@@ -37,6 +37,11 @@ namespace TrueFalse.Client.Domain.Services
             _currentGameTable = gameTable;
         }
 
+        public GameTable GetGameTable()
+        {
+            return _currentGameTable;
+        }
+
         public SavedPlayer GetSavedPlayer()
         {
             return _savedPlayer;
