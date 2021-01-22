@@ -5,8 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Exceptions;
 using TrueFalse.Client.Domain.Interfaces;
+using TrueFalse.Client.Domain.Models.Cards;
+using TrueFalse.Client.Domain.Models.Games;
 using TrueFalse.Client.Domain.Services;
 using TrueFalse.SignalR.Client.Api;
+using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.Client.Domain.ViewModels
 {
@@ -29,10 +32,38 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void StartGame()
         {
-            if (_stateService.GetGameTable().IsStarted)
+            var gameTable = _stateService.GetGameTable();
+
+            if (gameTable.IsStarted)
             {
                 throw new TrueFalseGameException("Игра уже идет");
             }
+
+            _blockUIService.StartBlocking();
+
+            _mainHubApi.StartGame(new StartGameParams())
+                .Then((response) =>
+                {
+                    if (response.Succeeded)
+                    {
+                        _dispatcher.Invoke(() =>
+                        {
+                            gameTable.CurrentGame = new Game()
+                            {
+                                CardsPack = new CardsPack() { Count = response.PlayerCardsInfo.Sum(pc => pc.CardsCount) },
+                                CurrentMover = gameTable.Players.First(p => p.Player.Id == response.MoverId.Value).Player,
+                                GameRounds = new List<GameRound>() { new GameRound() }
+                            };
+                        });
+                    }
+                })
+                .Finally(() =>
+                {
+                    _dispatcher.Invoke(() =>
+                    {
+                        _blockUIService.StopBlocking();
+                    });
+                });
         }
 
         public void MakeFirstMove()
