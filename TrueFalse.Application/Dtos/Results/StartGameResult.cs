@@ -9,5 +9,7 @@ namespace TrueFalse.Application.Dtos.Results
         public Guid GameTableId { get; set; }
 
         public Guid MoverId { get; set; }
+
+        public List<PlayerCardsInfo> PlayerCards { get; set; }
     }
 }

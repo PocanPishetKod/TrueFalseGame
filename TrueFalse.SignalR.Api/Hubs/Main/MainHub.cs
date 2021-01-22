@@ -312,7 +312,11 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 {
                     Succeeded = true,
                     MoverId = result.MoverId,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    PlayerCardsInfo = result.PlayerCards.Select(pc => new PlayerCardsInfoDto()
+                    { 
+                        Cards = pc.Cards, CardsCount = pc.CardsCount, PlayerId = pc.PlayerId
+                    }).ToList()
                 });
             }
             catch (Exception ex)

@@ -187,11 +187,32 @@ namespace TrueFalse.Application.Services
 
             gameTable.StartNewGame(player);
 
-            return new StartGameResult()
+            var result = new StartGameResult()
             {
                 GameTableId = gameTable.Id,
-                MoverId = gameTable.CurrentMover.Id
+                MoverId = gameTable.CurrentMover.Id,
+                PlayerCards = new List<PlayerCardsInfo>()
             };
+
+            foreach (var item in gameTable.Players)
+            {
+                var playerCards = gameTable.GetPlayerCards(item.Player.Id);
+
+                var playerCardsItem = new PlayerCardsInfo()
+                {
+                    PlayerId = item.Player.Id,
+                    CardsCount = playerCards.Count
+                };
+
+                if (player.Id == item.Player.Id)
+                {
+                    playerCardsItem.Cards = playerCards.Select(c => new PlayingCardDto() { Id = c.Id, Rank = (int)c.Rank, Suit = (int)c.Suit }).ToList();
+                }
+
+                result.PlayerCards.Add(playerCardsItem);
+            }
+
+            return result;
         }
 
         public MakeFirstMoveResult MakeFirstMove(Guid playerId, IReadOnlyCollection<int> cardIds, int rank)
