@@ -23,6 +23,14 @@ namespace TrueFalse.SignalR.Client.Api
         internal event Action<ReceiveMakeBeliveMoveResultParams> ReceivedMakeBeliveMoveResult;
         internal event Action<ReceiveMakeDontBeliveMoveResultParams> ReceivedMakeDontBeliveMoveResult;
 
+        public event Action<OnCreatedNewGameTableParams> CreatedNewGameTable;
+        public event Action<OnPlayerJoinedParams> PlayerJoined;
+        public event Action<OnPlayerLeavedParams> PlayerLeaved;
+        public event Action<OnGameStartedParams> GameStarted;
+        public event Action<OnFirstMoveMadeParams> FirstMoveMade;
+        public event Action<OnBeliveMoveMadeParams> BeliveMoveMade;
+        public event Action<OnDontBeliveMoveMadeParams> DontBeliveMoveMade;
+
         public MainHubClient(string accessToken = null)
         {
             _accessToken = accessToken;
@@ -88,7 +96,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnCreatedNewGameTable(OnCreatedNewGameTableParams @params)
         {
-
+            CreatedNewGameTable?.Invoke(@params);
         }
 
         /// <summary>
@@ -98,7 +106,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnPlayerJoined(OnPlayerJoinedParams @params)
         {
-
+            PlayerJoined?.Invoke(@params);
         }
 
         /// <summary>
@@ -118,7 +126,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnPlayerLeaved(OnPlayerLeavedParams @params)
         {
-
+            PlayerLeaved?.Invoke(@params);
         }
 
         /// <summary>
@@ -138,7 +146,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnGameStarted(OnGameStartedParams @params)
         {
-
+            GameStarted?.Invoke(@params);
         }
 
         /// <summary>
@@ -158,7 +166,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnFirstMoveMade(OnFirstMoveMadeParams @params)
         {
-
+            FirstMoveMade?.Invoke(@params);
         }
 
         /// <summary>
@@ -178,7 +186,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnBeliveMoveMade(OnBeliveMoveMadeParams @params)
         {
-
+            BeliveMoveMade?.Invoke(@params);
         }
 
         /// <summary>
@@ -198,7 +206,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void OnDontBeliveMoveMade(OnDontBeliveMoveMadeParams @params)
         {
-
+            DontBeliveMoveMade?.Invoke(@params);
         }
 
         /// <summary>

@@ -26,5 +26,19 @@ namespace TrueFalse.SignalR.Client.Api
         Promise<ReceiveMakeBeliveMoveResultParams> MakeBeliveMove(MakeBeliveMoveParams @params);
 
         Promise<ReceiveMakeDontBeliveMoveResultParams> MakeDontBelieveMove(MakeDontBeliveMoveParams @params);
+
+        event Action<OnCreatedNewGameTableParams> CreatedNewGameTable;
+
+        event Action<OnPlayerJoinedParams> PlayerJoined;
+
+        event Action<OnPlayerLeavedParams> PlayerLeaved;
+
+        event Action<OnGameStartedParams> GameStarted;
+
+        event Action<OnFirstMoveMadeParams> FirstMoveMade;
+
+        event Action<OnBeliveMoveMadeParams> BeliveMoveMade;
+
+        event Action<OnDontBeliveMoveMadeParams> DontBeliveMoveMade;
     }
 }
