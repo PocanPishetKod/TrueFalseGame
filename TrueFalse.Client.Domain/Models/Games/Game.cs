@@ -12,8 +12,6 @@ namespace TrueFalse.Client.Domain.Models.Games
     {
         public List<GameRound> GameRounds { get; set; }
 
-        public List<GamePlayer> Players { get; set; }
-
         public CardsPack CardsPack { get; set; }
 
         public Player CurrentMover { get; set; }

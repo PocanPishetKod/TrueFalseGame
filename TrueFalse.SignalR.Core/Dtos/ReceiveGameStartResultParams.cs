@@ -8,5 +8,7 @@ namespace TrueFalse.SignalR.Core.Dtos
     public class ReceiveGameStartResultParams : ResponseParams
     {
         public Guid? MoverId { get; set; }
+
+        public List<PlayerCardsInfoDto> PlayerCardsInfo { get; set; }
     }
 }

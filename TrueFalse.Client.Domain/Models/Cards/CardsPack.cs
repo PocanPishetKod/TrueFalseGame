@@ -8,6 +8,6 @@ namespace TrueFalse.Client.Domain.Models.Cards
 {
     public class CardsPack
     {
-        public List<PlayingCard> PlayingCards { get; set; }
+        public int Count { get; set; }
     }
 }
