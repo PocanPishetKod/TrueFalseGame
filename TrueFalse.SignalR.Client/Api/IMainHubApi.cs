@@ -19,7 +19,7 @@ namespace TrueFalse.SignalR.Client.Api
 
         Task LeaveFromGameTable(LeaveFromGameTableParams @params);
 
-        Task StartGame(StartGameParams @params);
+        Promise<ReceiveGameStartResultParams> StartGame(StartGameParams @params);
 
         Task MakeFirstMove(MakeFirstMoveParams @params);
 

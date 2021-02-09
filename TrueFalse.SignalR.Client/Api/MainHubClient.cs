@@ -17,6 +17,7 @@ namespace TrueFalse.SignalR.Client.Api
         internal event Action<ReceiveGameTablesParams> ReceivedGameTables;
         internal event Action<ReceiveCreateGameTableResultParams> ReceivedCreateGameTableResult;
         internal event Action<ReceiveJoinResultParams> ReceivedJoinResult;
+        internal event Action<ReceiveGameStartResultParams> ReceivedGameStartResult;
 
         public MainHubClient(string accessToken = null)
         {
@@ -395,7 +396,7 @@ namespace TrueFalse.SignalR.Client.Api
             await _hubConnection.InvokeAsync(nameof(IMainHubApi.LeaveFromGameTable), @params);
         }
 
-        public async Task StartGame(StartGameParams @params)
+        public Promise<ReceiveGameStartResultParams> StartGame(StartGameParams @params)
         {
             if (_isDisposed)
             {
@@ -412,7 +413,14 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.StartGame), @params);
+            var promise = new Promise<ReceiveGameStartResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.StartGame), @params);
+            });
+
+            ReceivedGameStartResult += promise.OnCopleted;
+
+            return promise;
         }
 
         public async Task MakeFirstMove(MakeFirstMoveParams @params)

@@ -7,6 +7,7 @@ using TrueFalse.Client.Domain.Exceptions;
 using TrueFalse.Client.Domain.Interfaces;
 using TrueFalse.Client.Domain.Services;
 using TrueFalse.SignalR.Client.Api;
+using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.Client.Domain.ViewModels
 {
@@ -32,6 +33,29 @@ namespace TrueFalse.Client.Domain.ViewModels
             if (_stateService.GetGameTable().IsStarted)
             {
                 throw new TrueFalseGameException("Игра уже идет");
+            }
+
+            if (!_stateService.GetGameTable().CanStart)
+            {
+                throw new TrueFalseGameException("Недостаточное количество пользователей");
+            }
+
+            if (_stateService.GetGameTable().Owner.Id == _stateService.GetSavedPlayer().Id)
+            {
+                _blockUIService.StartBlocking();
+
+                _mainHubApi.StartGame(new StartGameParams())
+                    .Then(response =>
+                    {
+                        if (response.Succeeded)
+                        {
+                            // todo добавить возвращение тасованных карт всем игрокам
+                        }
+                    })
+                    .Finally(() =>
+                    {
+                        _blockUIService.StopBlocking();
+                    });
             }
         }
 
