@@ -40,8 +40,9 @@ namespace TrueFalse.Client.Domain.ViewModels
             }
 
             _blockUIService.StartBlocking();
-
-            _mainHubApi.StartGame(new StartGameParams())
+            if (_stateService.GetGameTable().Owner.Id == _stateService.GetSavedPlayer().Id)
+            {
+                _mainHubApi.StartGame(new StartGameParams())
                 .Then((response) =>
                 {
                     if (response.Succeeded)
@@ -64,6 +65,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                         _blockUIService.StopBlocking();
                     });
                 });
+            } 
         }
 
         public void MakeFirstMove()
