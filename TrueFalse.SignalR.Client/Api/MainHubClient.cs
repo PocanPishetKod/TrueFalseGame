@@ -18,6 +18,10 @@ namespace TrueFalse.SignalR.Client.Api
         internal event Action<ReceiveCreateGameTableResultParams> ReceivedCreateGameTableResult;
         internal event Action<ReceiveJoinResultParams> ReceivedJoinResult;
         internal event Action<ReceiveGameStartResultParams> ReceivedGameStartResult;
+        internal event Action<ReceiveLeaveResultParams> ReceivedLeaveResult;
+        internal event Action<ReceiveMakeFirstMoveResultParams> ReceivedMakeFirstMoveResult;
+        internal event Action<ReceiveMakeBeliveMoveResultParams> ReceivedMakeBeliveMoveResult;
+        internal event Action<ReceiveMakeDontBeliveMoveResultParams> ReceivedMakeDontBeliveMoveResult;
 
         public MainHubClient(string accessToken = null)
         {
@@ -124,7 +128,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveLeaveResult(ReceiveLeaveResultParams @params)
         {
-
+            ReceivedLeaveResult?.Invoke(@params);
         }
 
         /// <summary>
@@ -144,7 +148,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveGameStartResult(ReceiveGameStartResultParams @params)
         {
-
+            ReceivedGameStartResult?.Invoke(@params);
         }
 
         /// <summary>
@@ -164,7 +168,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveMakeFirstMoveResult(ReceiveMakeFirstMoveResultParams @params)
         {
-
+            ReceivedMakeFirstMoveResult?.Invoke(@params);
         }
 
         /// <summary>
@@ -184,7 +188,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveMakeBeliveMoveResult(ReceiveMakeBeliveMoveResultParams @params)
         {
-
+            ReceivedMakeBeliveMoveResult?.Invoke(@params);
         }
 
         /// <summary>
@@ -204,7 +208,7 @@ namespace TrueFalse.SignalR.Client.Api
         /// <returns></returns>
         private void ReceiveMakeDontBeliveMoveResult(ReceiveMakeDontBeliveMoveResultParams @params)
         {
-
+            ReceivedMakeDontBeliveMoveResult?.Invoke(@params);
         }
 
         public async Task Connect()
@@ -376,7 +380,7 @@ namespace TrueFalse.SignalR.Client.Api
             return promise;
         }
 
-        public async Task LeaveFromGameTable(LeaveFromGameTableParams @params)
+        public Promise<ReceiveLeaveResultParams> LeaveFromGameTable(LeaveFromGameTableParams @params)
         {
             if (_isDisposed)
             {
@@ -393,7 +397,14 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.LeaveFromGameTable), @params);
+            var promise = new Promise<ReceiveLeaveResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.LeaveFromGameTable), @params);
+            });
+
+            ReceivedLeaveResult += promise.OnCopleted;
+
+            return promise;
         }
 
         public Promise<ReceiveGameStartResultParams> StartGame(StartGameParams @params)
@@ -423,7 +434,7 @@ namespace TrueFalse.SignalR.Client.Api
             return promise;
         }
 
-        public async Task MakeFirstMove(MakeFirstMoveParams @params)
+        public Promise<ReceiveMakeFirstMoveResultParams> MakeFirstMove(MakeFirstMoveParams @params)
         {
             if (_isDisposed)
             {
@@ -440,10 +451,17 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeFirstMove), @params);
+            var promise = new Promise<ReceiveMakeFirstMoveResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeFirstMove), @params);
+            });
+
+            ReceivedMakeFirstMoveResult += promise.OnCopleted;
+
+            return promise;
         }
 
-        public async Task MakeBeliveMove(MakeBeliveMoveParams @params)
+        public Promise<ReceiveMakeBeliveMoveResultParams> MakeBeliveMove(MakeBeliveMoveParams @params)
         {
             if (_isDisposed)
             {
@@ -460,10 +478,17 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeBeliveMove), @params);
+            var promise = new Promise<ReceiveMakeBeliveMoveResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeBeliveMove), @params);
+            });
+
+            ReceivedMakeBeliveMoveResult += promise.OnCopleted;
+
+            return promise;
         }
 
-        public async Task MakeDontBelieveMove(MakeDontBeliveMoveParams @params)
+        public Promise<ReceiveMakeDontBeliveMoveResultParams> MakeDontBelieveMove(MakeDontBeliveMoveParams @params)
         {
             if (_isDisposed)
             {
@@ -480,7 +505,14 @@ namespace TrueFalse.SignalR.Client.Api
                 throw new Exception($"Подключение еще не установлено. Статус - {_hubConnection.State}");
             }
 
-            await _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeDontBelieveMove), @params);
+            var promise = new Promise<ReceiveMakeDontBeliveMoveResultParams>(@params.RequestId, () =>
+            {
+                _hubConnection.InvokeAsync(nameof(IMainHubApi.MakeDontBelieveMove), @params);
+            });
+
+            ReceivedMakeDontBeliveMoveResult += promise.OnCopleted;
+
+            return promise;
         }
     }
 }

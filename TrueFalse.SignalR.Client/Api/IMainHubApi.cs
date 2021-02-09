@@ -17,14 +17,14 @@ namespace TrueFalse.SignalR.Client.Api
 
         Promise<ReceiveJoinResultParams> JoinToGameTable(JoinToGameTableParams @params);
 
-        Task LeaveFromGameTable(LeaveFromGameTableParams @params);
+        Promise<ReceiveLeaveResultParams> LeaveFromGameTable(LeaveFromGameTableParams @params);
 
         Promise<ReceiveGameStartResultParams> StartGame(StartGameParams @params);
 
-        Task MakeFirstMove(MakeFirstMoveParams @params);
+        Promise<ReceiveMakeFirstMoveResultParams> MakeFirstMove(MakeFirstMoveParams @params);
 
-        Task MakeBeliveMove(MakeBeliveMoveParams @params);
+        Promise<ReceiveMakeBeliveMoveResultParams> MakeBeliveMove(MakeBeliveMoveParams @params);
 
-        Task MakeDontBelieveMove(MakeDontBeliveMoveParams @params);
+        Promise<ReceiveMakeDontBeliveMoveResultParams> MakeDontBelieveMove(MakeDontBeliveMoveParams @params);
     }
 }
