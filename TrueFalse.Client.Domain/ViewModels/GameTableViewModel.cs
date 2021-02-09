@@ -39,32 +39,33 @@ namespace TrueFalse.Client.Domain.ViewModels
                 throw new TrueFalseGameException("Игра уже идет");
             }
 
-            _blockUIService.StartBlocking();
             if (_stateService.GetGameTable().Owner.Id == _stateService.GetSavedPlayer().Id)
             {
+                _blockUIService.StartBlocking();
+
                 _mainHubApi.StartGame(new StartGameParams())
-                .Then((response) =>
-                {
-                    if (response.Succeeded)
+                    .Then((response) =>
+                    {
+                        if (response.Succeeded)
+                        {
+                            _dispatcher.Invoke(() =>
+                            {
+                                gameTable.CurrentGame = new Game()
+                                {
+                                    CardsPack = new CardsPack() { Count = response.PlayerCardsInfo.Sum(pc => pc.CardsCount) },
+                                    CurrentMover = gameTable.Players.First(p => p.Player.Id == response.MoverId.Value).Player,
+                                    GameRounds = new List<GameRound>() { new GameRound() }
+                                };
+                            });
+                        }
+                    })
+                    .Finally(() =>
                     {
                         _dispatcher.Invoke(() =>
                         {
-                            gameTable.CurrentGame = new Game()
-                            {
-                                CardsPack = new CardsPack() { Count = response.PlayerCardsInfo.Sum(pc => pc.CardsCount) },
-                                CurrentMover = gameTable.Players.First(p => p.Player.Id == response.MoverId.Value).Player,
-                                GameRounds = new List<GameRound>() { new GameRound() }
-                            };
+                            _blockUIService.StopBlocking();
                         });
-                    }
-                })
-                .Finally(() =>
-                {
-                    _dispatcher.Invoke(() =>
-                    {
-                        _blockUIService.StopBlocking();
                     });
-                });
             } 
         }
 
