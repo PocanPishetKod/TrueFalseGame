@@ -16,8 +16,9 @@ using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.Client.Domain.ViewModels
 {
-    public class GameTablesViewModel : BaseViewModel
+    public class GameTablesViewModel : BaseViewModel, IDisposable
     {
+        private bool _isDisposed;
         private readonly IStateService _stateService;
         private readonly INavigator _navigator;
         private readonly IBlockUIService _blockUIService;
@@ -36,6 +37,24 @@ namespace TrueFalse.Client.Domain.ViewModels
             _navigator = navigator;
             _blockUIService = blockUIService;
             _dispatcher = dispatcher;
+
+            _mainHubClient.CreatedNewGameTable += OnCreatedGameTable;
+        }
+
+        private void OnCreatedGameTable(OnCreatedNewGameTableParams @params)
+        {
+            if (@params == null || @params.GameTable == null)
+            {
+                return;
+            }
+
+            GameTables.Add(new GameTable()
+            {
+                Id = @params.GameTable.Id,
+                Name = @params.GameTable.Name,
+                Type = @params.GameTable.Type,
+                Owner = new Player() { Id = @params.GameTable.Owner.Id, Name = @params.GameTable.Owner.Name }
+            });
         }
 
         public ICommand<LoadGameTablesParams> LoadGameTablesCommand
@@ -112,6 +131,17 @@ namespace TrueFalse.Client.Domain.ViewModels
             }
 
             return Task.CompletedTask;
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                if (_mainHubClient != null)
+                {
+                    _mainHubClient.CreatedNewGameTable -= OnCreatedGameTable;
+                }
+            }
         }
     }
 }
