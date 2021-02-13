@@ -28,6 +28,13 @@ namespace TrueFalse.Client.Domain.ViewModels
             _dispatcher = dispatcher;
             _mainHubApi = mainHubApi;
             _blockUIService = blockUIService;
+
+            _mainHubApi.GameStarted += OnGameStarted;
+        }
+
+        private void OnGameStarted(OnGameStartedParams @params)
+        {
+            
         }
 
         public void StartGame()
@@ -48,15 +55,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                     {
                         if (response.Succeeded)
                         {
-                            _dispatcher.Invoke(() =>
-                            {
-                                gameTable.CurrentGame = new Game()
-                                {
-                                    CardsPack = new CardsPack() { Count = response.PlayerCardsInfo.Sum(pc => pc.CardsCount) },
-                                    CurrentMover = gameTable.Players.First(p => p.Player.Id == response.MoverId.Value).Player,
-                                    GameRounds = new List<GameRound>() { new GameRound() }
-                                };
-                            });
+                            _stateService.GetGameTable().StartGame(response.MoverId.Value, response.PlayerCardsInfo);
                         }
                     })
                     .Finally(() =>
@@ -71,7 +70,37 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void MakeFirstMove()
         {
+            if (_stateService.GetSavedPlayer().Id != _stateService.GetGameTable().CurrentGame?.CurrentMover.Id)
+            {
+                return;
+            }
 
+            if (_stateService.FirstMove == null)
+            {
+                return;
+            }
+
+            _blockUIService.StartBlocking();
+
+            _mainHubApi.MakeFirstMove(new MakeFirstMoveParams()
+            {
+                Rank = (int)_stateService.FirstMove.Rank,
+                CardIds = _stateService.FirstMove.SelectedCards.Select(c => c.Id).ToList()
+            })
+                .Then(response =>
+                {
+                    if (response.Succeeded)
+                    {
+                        _stateService.GetGameTable().MakeFirstMove(_stateService.FirstMove, response.NextMoverId.Value);
+                    }
+                })
+                .Finally(() =>
+                {
+                    _dispatcher.Invoke(() =>
+                    {
+                        _blockUIService.StopBlocking();
+                    });
+                });
         }
 
         public void MakeBeliveMove()

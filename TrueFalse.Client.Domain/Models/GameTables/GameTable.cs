@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Models.Games;
+using TrueFalse.Client.Domain.Models.Moves;
 using TrueFalse.Client.Domain.Models.Players;
 using TrueFalse.SignalR.Client.Dtos;
 
@@ -42,6 +43,17 @@ namespace TrueFalse.Client.Domain.Models.GameTables
                         throw new Exception($"Нет обработчика для значения {Type}");
                 }
             }
+        }
+
+        public void StartGame(Guid moverId, IReadOnlyCollection<PlayerCardsInfoDto> playerCardsInfos)
+        {
+            CurrentGame = new Game();
+            CurrentGame.Start(playerCardsInfos.Sum(pc => pc.CardsCount), Players.First(p => p.Player.Id == moverId).Player);
+        }
+
+        public void MakeFirstMove(FirstMove move, Guid nextMoverId)
+        {
+            CurrentGame.MakeFirstMove(move, Players.First(p => p.Player.Id == nextMoverId).Player);
         }
     }
 }

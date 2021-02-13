@@ -52,6 +52,7 @@
     <Compile Include="Interfaces\INavigator.cs" />
     <Compile Include="Interfaces\IStoreFolderPathProvider.cs" />
     <Compile Include="Interfaces\IBlockUIService.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Cards\CardsPack.cs" />
     <Compile Include="Models\Cards\PlayingCard.cs" />
     <Compile Include="Models\Games\Game.cs" />
@@ -60,6 +61,10 @@
     <Compile Include="Models\GameTables\GameTable.cs" />
     <Compile Include="Models\GameTables\GameTablePlayer.cs" />
     <Compile Include="Models\GameTables\ICreatableGameTable.cs" />
+    <Compile Include="Models\Moves\BeliveMove.cs" />
+    <Compile Include="Models\Moves\DontBeliveMove.cs" />
+    <Compile Include="Models\Moves\FirstMove.cs" />
+    <Compile Include="Models\Moves\Move.cs" />
     <Compile Include="Models\Players\Player.cs" />
     <Compile Include="Models\Cards\PlayingCardRank.cs" />
     <Compile Include="Models\Cards\PlayingCardSuit.cs" />

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Models.GameTables;
+using TrueFalse.Client.Domain.Models.Moves;
 using TrueFalse.Client.Domain.Models.Players;
 
 namespace TrueFalse.Client.Domain.Services
@@ -16,6 +17,8 @@ namespace TrueFalse.Client.Domain.Services
         public bool AlreadyPlaying => _currentGameTable != null;
 
         public bool IsAuthenticated => _savedPlayer != null;
+
+        public FirstMove FirstMove { get; set; }
 
         public void SetPlayer(SavedPlayer savedPlayer)
         {
