@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace TrueFalse.SignalR.Client.Dtos
+namespace TrueFalse.Application.Dtos.Results
 {
-    public class OnPlayerJoinedParams
+    public class JoinResult
     {
-        public Guid GameTableId { get; set; }
-
         public PlayerDto Player { get; set; }
 
         public int PlaceNumber { get; set; }

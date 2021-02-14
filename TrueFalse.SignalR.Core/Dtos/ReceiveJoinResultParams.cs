@@ -7,6 +7,6 @@ namespace TrueFalse.SignalR.Core.Dtos
 {
     public class ReceiveJoinResultParams : ResponseParams
     {
-
+        public int PlaceNumber { get; set; }
     }
 }

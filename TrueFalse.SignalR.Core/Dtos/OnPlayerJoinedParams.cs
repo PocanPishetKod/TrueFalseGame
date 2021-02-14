@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TrueFalse.Application.Dtos;
 
 namespace TrueFalse.SignalR.Core.Dtos
 {
@@ -9,6 +10,8 @@ namespace TrueFalse.SignalR.Core.Dtos
     {
         public Guid GameTableId { get; set; }
 
-        public Guid PlayerId { get; set; }
+        public PlayerDto Player { get; set; }
+
+        public int PlaceNumber { get; set; }
     }
 }

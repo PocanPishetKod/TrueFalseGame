@@ -33,5 +33,21 @@ namespace TrueFalse.Application.Services
                 Name = player.Name
             };
         }
+
+        public PlayerDto GetById(Guid playerId)
+        {
+            var player = _playerRepository.GetById(playerId);
+
+            if (player == null)
+            {
+                return null;
+            }
+
+            return new PlayerDto()
+            {
+                Id = player.Id,
+                Name = player.Name
+            };
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
     {
         private readonly GameTableService _gameTableService;
         private readonly ILogger<MainHub> _logger;
+        private readonly PlayerService _playerService;
 
         private static readonly ConcurrentDictionary<Guid, string> _userConnectionIdStore;
 
@@ -25,10 +26,11 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             _userConnectionIdStore = new ConcurrentDictionary<Guid, string>();
         }
 
-        public MainHub(GameTableService gameTableService, ILogger<MainHub> logger)
+        public MainHub(GameTableService gameTableService, ILogger<MainHub> logger, PlayerService playerService)
         {
             _gameTableService = gameTableService;
             _logger = logger;
+            _playerService = playerService;
         }
 
         private async Task AddToGroup(string groupName, string connectionId)
@@ -60,12 +62,13 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
         #region Notificators
 
-        private async Task NotifyAboutPlayerJoined(Guid gameTableId, Guid playerId)
+        private async Task NotifyAboutPlayerJoined(Guid gameTableId, JoinResult joinResult)
         {
             await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnPlayerJoined(new OnPlayerJoinedParams()
             {
                 GameTableId = gameTableId,
-                PlayerId = playerId
+                Player = joinResult.Player,
+                PlaceNumber = joinResult.PlaceNumber
             });
         }
 
@@ -270,14 +273,15 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
         {
             try
             {
-                _gameTableService.Join(@params.GameTableId, Context.User.GetUserId());
+                var result = _gameTableService.Join(@params.GameTableId, Context.User.GetUserId());
 
                 await AddToGroup(@params.GameTableId.ToString(), Context.ConnectionId);
                 await NotifyAboutPlayerJoined(@params.GameTableId, Context.User.GetUserId());
                 await Clients.Caller.ReceiveJoinResult(new ReceiveJoinResultParams()
                 {
                     Succeeded = true,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    PlaceNumber = result.PlaceNumber
                 });
             }
             catch (Exception ex)

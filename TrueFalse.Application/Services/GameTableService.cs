@@ -130,7 +130,7 @@ namespace TrueFalse.Application.Services
             };
         }
 
-        public void Join(Guid gameTableId, Guid playerId)
+        public JoinResult Join(Guid gameTableId, Guid playerId)
         {
             var player = _playerRepository.GetById(playerId);
             if (player == null)
@@ -150,6 +150,18 @@ namespace TrueFalse.Application.Services
             }
 
             gameTable.Join(player);
+
+            var gameTablePlayer = gameTable.Players.First(gp => gp.Player.Id == player.Id);
+
+            return new JoinResult()
+            {
+                PlaceNumber = gameTablePlayer.GameTablePlaceNumber,
+                Player = new PlayerDto()
+                {
+                    Id = gameTablePlayer.Player.Id,
+                    Name = gameTablePlayer.Player.Name
+                }
+            };
         }
 
         public Guid Leave(Guid playerId)
