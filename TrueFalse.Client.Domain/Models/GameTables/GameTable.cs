@@ -47,12 +47,22 @@ namespace TrueFalse.Client.Domain.Models.GameTables
 
         public void StartGame(Guid moverId, IReadOnlyCollection<PlayerCardsInfoDto> playerCardsInfos)
         {
+            if (IsStarted)
+            {
+                return;
+            }
+
             CurrentGame = new Game();
             CurrentGame.Start(playerCardsInfos.Sum(pc => pc.CardsCount), Players.First(p => p.Player.Id == moverId).Player);
         }
 
         public void MakeFirstMove(FirstMove move, Guid nextMoverId)
         {
+            if (!IsStarted || CurrentGame.CurrentMover.Id != move.Initiator.Id)
+            {
+                return;
+            }
+
             CurrentGame.MakeFirstMove(move, Players.First(p => p.Player.Id == nextMoverId).Player);
         }
     }
