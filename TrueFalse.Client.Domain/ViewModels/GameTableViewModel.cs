@@ -7,6 +7,7 @@ using TrueFalse.Client.Domain.Exceptions;
 using TrueFalse.Client.Domain.Interfaces;
 using TrueFalse.Client.Domain.Models.Cards;
 using TrueFalse.Client.Domain.Models.Games;
+using TrueFalse.Client.Domain.Models.GameTables;
 using TrueFalse.Client.Domain.Services;
 using TrueFalse.SignalR.Client.Api;
 using TrueFalse.SignalR.Client.Dtos;
@@ -20,6 +21,8 @@ namespace TrueFalse.Client.Domain.ViewModels
         private readonly IDispatcher _dispatcher;
         private readonly IMainHubApi _mainHubApi;
         private readonly IBlockUIService _blockUIService;
+
+        public GameTable GameTable => _stateService.GetGameTable();
 
         public GameTableViewModel(IStateService stateService, INavigator navigator, IDispatcher dispatcher, IMainHubApi mainHubApi, IBlockUIService blockUIService)
         {
@@ -39,14 +42,12 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void StartGame()
         {
-            var gameTable = _stateService.GetGameTable();
-
-            if (gameTable.IsStarted)
+            if (GameTable.IsStarted)
             {
                 throw new TrueFalseGameException("Игра уже идет");
             }
 
-            if (_stateService.GetGameTable().Owner.Id == _stateService.GetSavedPlayer().Id)
+            if (GameTable.Owner.Id == _stateService.GetSavedPlayer().Id)
             {
                 _blockUIService.StartBlocking();
 
@@ -55,7 +56,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                     {
                         if (response.Succeeded)
                         {
-                            _stateService.GetGameTable().StartGame(response.MoverId.Value, response.PlayerCardsInfo);
+                            GameTable.StartGame(response.MoverId.Value, response.PlayerCardsInfo);
                         }
                     })
                     .Finally(() =>
@@ -70,7 +71,7 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void MakeFirstMove()
         {
-            if (_stateService.GetSavedPlayer().Id != _stateService.GetGameTable().CurrentGame?.CurrentMover.Id)
+            if (_stateService.GetSavedPlayer().Id != GameTable.CurrentGame?.CurrentMover.Id)
             {
                 return;
             }
@@ -91,7 +92,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                 {
                     if (response.Succeeded)
                     {
-                        _stateService.GetGameTable().MakeFirstMove(_stateService.FirstMove, response.NextMoverId.Value);
+                        GameTable.MakeFirstMove(_stateService.FirstMove, response.NextMoverId.Value);
                     }
                 })
                 .Finally(() =>
