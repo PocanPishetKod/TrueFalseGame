@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Exceptions;
 using TrueFalse.Client.Domain.Models.Cards;
+using TrueFalse.Client.Domain.Models.Players;
 
 namespace TrueFalse.Client.Domain.Models.Moves
 {
@@ -24,6 +25,11 @@ namespace TrueFalse.Client.Domain.Models.Moves
                 _selectedCard = value;
                 OnPropertyChanged(nameof(SelectedCard));
             }
+        }
+
+        public DontBeliveMove(Player initiator) : base(initiator)
+        {
+
         }
     }
 }

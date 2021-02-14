@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Models.Cards;
+using TrueFalse.Client.Domain.Models.Players;
 
 namespace TrueFalse.Client.Domain.Models.Moves
 {
@@ -12,7 +13,7 @@ namespace TrueFalse.Client.Domain.Models.Moves
     {
         public ObservableCollection<PlayingCard> SelectedCards { get; private set; }
 
-        public BeliveMove()
+        public BeliveMove(Player initiator) : base(initiator)
         {
             SelectedCards = new ObservableCollection<PlayingCard>();
         }

@@ -26,7 +26,7 @@ namespace TrueFalse.Client.Domain.Models.Moves
 
         public Player NextMover { get; set; }
 
-        public FirstMove()
+        public FirstMove(Player initiator) : base(initiator)
         {
             SelectedCards = new ObservableCollection<PlayingCard>();
         }
