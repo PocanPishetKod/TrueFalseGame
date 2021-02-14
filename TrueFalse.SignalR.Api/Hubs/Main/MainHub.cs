@@ -80,7 +80,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
 
         private async Task NotifyGameStarted(StartGameResult startGameResult)
         {
-            foreach (var item in startGameResult.PlayerCards)
+            foreach (var item in startGameResult.PlayerCards.Where(pc => pc.PlayerId != Context.User.GetUserId()))
             {
                 if (_userConnectionIdStore.TryGetValue(item.PlayerId, out var connectionId))
                 {
