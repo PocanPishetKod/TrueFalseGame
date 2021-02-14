@@ -106,13 +106,14 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             });
         }
 
-        private async Task NotifyFirstMoveMade(Guid gameTableId, IReadOnlyCollection<int> cardIds, Guid nextMoverId)
+        private async Task NotifyFirstMoveMade(Guid gameTableId, IReadOnlyCollection<int> cardIds, int rank, Guid nextMoverId)
         {
             await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnFirstMoveMade(new OnFirstMoveMadeParams()
             {
                 NextMoverId = nextMoverId,
                 CardIds = cardIds.ToList(),
-                MoverId = Context.User.GetUserId()
+                MoverId = Context.User.GetUserId(),
+                Rank = rank
             });
         }
 
@@ -355,7 +356,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             {
                 var result = _gameTableService.MakeFirstMove(Context.User.GetUserId(), @params.CardIds, @params.Rank);
 
-                await NotifyFirstMoveMade(result.GameTableId, @params.CardIds, result.NextMoverId);
+                await NotifyFirstMoveMade(result.GameTableId, @params.CardIds, @params.Rank, result.NextMoverId);
                 await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
                 {
                     Succeeded = true,

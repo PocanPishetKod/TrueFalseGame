@@ -8,6 +8,7 @@ using TrueFalse.Client.Domain.Interfaces;
 using TrueFalse.Client.Domain.Models.Cards;
 using TrueFalse.Client.Domain.Models.Games;
 using TrueFalse.Client.Domain.Models.GameTables;
+using TrueFalse.Client.Domain.Models.Moves;
 using TrueFalse.Client.Domain.Services;
 using TrueFalse.SignalR.Client.Api;
 using TrueFalse.SignalR.Client.Dtos;
@@ -33,11 +34,44 @@ namespace TrueFalse.Client.Domain.ViewModels
             _blockUIService = blockUIService;
 
             _mainHubApi.GameStarted += OnGameStarted;
+            _mainHubApi.FirstMoveMade += OnFirstMoveMade;
         }
 
         private void OnGameStarted(OnGameStartedParams @params)
         {
-            
+            if (@params == null)
+            {
+                return;
+            }
+
+            GameTable.StartGame(@params.MoverId, @params.PlayerCardsInfo);
+        }
+
+        private void OnFirstMoveMade(OnFirstMoveMadeParams @params)
+        {
+            if (@params == null)
+            {
+                return;
+            }
+
+            var mover = GameTable.Players.FirstOrDefault(gp => gp.Player.Id == @params.MoverId);
+            if (mover == null)
+            {
+                return;
+            }
+
+            var nextMover = GameTable.Players.FirstOrDefault(gp => gp.Player.Id == @params.NextMoverId);
+            if (nextMover == null)
+            {
+                return;
+            }
+
+            var move = new FirstMove(mover.Player, @params.CardIds.Select(c => new PlayingCard() { Id = c }).ToList())
+            {
+                Rank = (PlayingCardRank)@params.Rank
+            };
+
+            GameTable.MakeFirstMove(move, nextMover.Player.Id);
         }
 
         public void StartGame()
