@@ -9,6 +9,7 @@ using TrueFalse.Client.Domain.Models.Cards;
 using TrueFalse.Client.Domain.Models.Games;
 using TrueFalse.Client.Domain.Models.GameTables;
 using TrueFalse.Client.Domain.Models.Moves;
+using TrueFalse.Client.Domain.Models.Players;
 using TrueFalse.Client.Domain.Services;
 using TrueFalse.SignalR.Client.Api;
 using TrueFalse.SignalR.Client.Dtos;
@@ -35,6 +36,7 @@ namespace TrueFalse.Client.Domain.ViewModels
 
             _mainHubApi.GameStarted += OnGameStarted;
             _mainHubApi.FirstMoveMade += OnFirstMoveMade;
+            _mainHubApi.PlayerJoined += OnPlayerJoined;
         }
 
         private void OnGameStarted(OnGameStartedParams @params)
@@ -72,6 +74,21 @@ namespace TrueFalse.Client.Domain.ViewModels
             };
 
             GameTable.MakeFirstMove(move, nextMover.Player.Id);
+        }
+
+        private void OnPlayerJoined(OnPlayerJoinedParams @params)
+        {
+            if (@params == null)
+            {
+                return;
+            }
+
+            if (@params.GameTableId != GameTable.Id)
+            {
+                return;
+            }
+
+            GameTable.JoinPlayer(new Player() { Id = @params.Player.Id, Name = @params.Player.Name }, @params.PlaceNumber);
         }
 
         public void StartGame()

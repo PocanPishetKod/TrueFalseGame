@@ -45,6 +45,8 @@ namespace TrueFalse.Client.Domain.Models.GameTables
             }
         }
 
+        public bool IsFull => CanStart;
+
         public void StartGame(Guid moverId, IReadOnlyCollection<PlayerCardsInfoDto> playerCardsInfos)
         {
             if (IsStarted)
@@ -54,6 +56,16 @@ namespace TrueFalse.Client.Domain.Models.GameTables
 
             CurrentGame = new Game();
             CurrentGame.Start(playerCardsInfos.Sum(pc => pc.CardsCount), Players.First(p => p.Player.Id == moverId).Player);
+        }
+
+        public void JoinPlayer(Player player, int placeNumber)
+        {
+            if (IsStarted || IsFull)
+            {
+                return;
+            }
+
+            Players.Add(new GameTablePlayer(player, placeNumber));
         }
 
         public void MakeFirstMove(FirstMove move, Guid nextMoverId)

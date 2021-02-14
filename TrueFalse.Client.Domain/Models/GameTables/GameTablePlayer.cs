@@ -12,5 +12,11 @@ namespace TrueFalse.Client.Domain.Models.GameTables
         public Player Player { get; set; }
 
         public int GameTablePlaceNumber { get; set; }
+
+        public GameTablePlayer(Player player, int placeNumber)
+        {
+            Player = player;
+            GameTablePlaceNumber = placeNumber;
+        }
     }
 }
