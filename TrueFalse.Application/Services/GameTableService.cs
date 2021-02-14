@@ -201,13 +201,9 @@ namespace TrueFalse.Application.Services
                 var playerCardsItem = new PlayerCardsInfo()
                 {
                     PlayerId = item.Player.Id,
-                    CardsCount = playerCards.Count
+                    CardsCount = playerCards.Count,
+                    Cards = playerCards.Select(c => new PlayingCardDto() { Id = c.Id, Rank = (int)c.Rank, Suit = (int)c.Suit }).ToList()
                 };
-
-                if (player.Id == item.Player.Id)
-                {
-                    playerCardsItem.Cards = playerCards.Select(c => new PlayingCardDto() { Id = c.Id, Rank = (int)c.Rank, Suit = (int)c.Suit }).ToList();
-                }
 
                 result.PlayerCards.Add(playerCardsItem);
             }

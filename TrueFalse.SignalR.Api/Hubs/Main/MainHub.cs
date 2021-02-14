@@ -78,12 +78,24 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             });
         }
 
-        private async Task NotifyGameStarted(Guid gameTableId, Guid moverId)
+        private async Task NotifyGameStarted(StartGameResult startGameResult)
         {
-            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnGameStarted(new OnGameStartedParams()
+            foreach (var item in startGameResult.PlayerCards)
             {
-                MoverId = moverId
-            });
+                if (_userConnectionIdStore.TryGetValue(item.PlayerId, out var connectionId))
+                {
+                    await Clients.Client(connectionId).OnGameStarted(new OnGameStartedParams()
+                    {
+                        MoverId = startGameResult.MoverId,
+                        PlayerCardsInfo = startGameResult.PlayerCards.Select(pc => new PlayerCardsInfoDto()
+                        {
+                            Cards = item.PlayerId == pc.PlayerId ? pc.Cards : null,
+                            CardsCount = pc.CardsCount,
+                            PlayerId = pc.PlayerId
+                        }).ToList()
+                    });
+                }
+            }
         }
 
         private async Task NotifyGameTableCreated(GameTableDto gameTable)
@@ -307,15 +319,17 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             {
                 var result = _gameTableService.StartGame(Context.User.GetUserId());
 
-                await NotifyGameStarted(result.GameTableId, result.MoverId);
+                await NotifyGameStarted(result);
                 await Clients.Caller.ReceiveGameStartResult(new ReceiveGameStartResultParams()
                 {
                     Succeeded = true,
                     MoverId = result.MoverId,
                     RequestId = @params.RequestId,
                     PlayerCardsInfo = result.PlayerCards.Select(pc => new PlayerCardsInfoDto()
-                    { 
-                        Cards = pc.Cards, CardsCount = pc.CardsCount, PlayerId = pc.PlayerId
+                    {
+                        Cards = Context.User.GetUserId() == pc.PlayerId ? pc.Cards : null,
+                        CardsCount = pc.CardsCount,
+                        PlayerId = pc.PlayerId
                     }).ToList()
                 });
             }
