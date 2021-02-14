@@ -27,8 +27,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrueFalse.SignalR.Client", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueFalse.Client.Domain", "TrueFalse.Client.Domain\TrueFalse.Client.Domain.csproj", "{F31DB32B-6A68-4CCB-A69B-C0B8BB2A0103}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrueFalse.Client.Console", "TrueFalse.Client.Console\TrueFalse.Client.Console.csproj", "{324C619E-D5BE-4183-A21C-98BB1C67BF4C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,10 +81,6 @@ Global
 		{F31DB32B-6A68-4CCB-A69B-C0B8BB2A0103}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F31DB32B-6A68-4CCB-A69B-C0B8BB2A0103}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F31DB32B-6A68-4CCB-A69B-C0B8BB2A0103}.Release|Any CPU.Build.0 = Release|Any CPU
-		{324C619E-D5BE-4183-A21C-98BB1C67BF4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{324C619E-D5BE-4183-A21C-98BB1C67BF4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{324C619E-D5BE-4183-A21C-98BB1C67BF4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{324C619E-D5BE-4183-A21C-98BB1C67BF4C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
