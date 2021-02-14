@@ -34,7 +34,7 @@ namespace TrueFalse.SignalR.Core.Dtos
         {
             get
             {
-                return GameTableType == GameTableType.Cards36And3Players || GameTableType == GameTableType.Cards36And4Players ? 36 : 52
+                return GameTableType == GameTableType.Cards36And3Players || GameTableType == GameTableType.Cards36And4Players ? 36 : 52;
             }
         }
 
