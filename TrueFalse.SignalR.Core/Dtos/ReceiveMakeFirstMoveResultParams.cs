@@ -7,6 +7,8 @@ namespace TrueFalse.SignalR.Core.Dtos
 {
     public class ReceiveMakeFirstMoveResultParams : ResponseParams
     {
+        public Guid MoverId { get; set; }
+
         public Guid? NextMoverId { get; set; }
     }
 }

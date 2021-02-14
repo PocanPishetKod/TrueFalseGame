@@ -10,5 +10,7 @@ namespace TrueFalse.SignalR.Client.Dtos
         public List<int> CardIds { get; set; }
 
         public Guid NextMoverId { get; set; }
+
+        public Guid MoverId { get; set; }
     }
 }

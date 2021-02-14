@@ -8,5 +8,7 @@ namespace TrueFalse.SignalR.Core.Dtos
     public class ReceiveMakeBeliveMoveResultParams : ResponseParams
     {
         public Guid? NextMoverId { get; set; }
+
+        public Guid MoverId { get; set; }
     }
 }

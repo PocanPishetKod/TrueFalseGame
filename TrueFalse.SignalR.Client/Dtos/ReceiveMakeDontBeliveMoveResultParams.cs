@@ -11,6 +11,8 @@ namespace TrueFalse.SignalR.Client.Dtos
 
         public Guid? LoserId { get; set; }
 
+        public Guid MoverId { get; set; }
+
         public PlayingCardDto CheckedCard { get; set; }
 
         public List<int> HiddenTakedLoserCards { get; set; }

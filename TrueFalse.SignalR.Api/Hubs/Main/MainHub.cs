@@ -111,7 +111,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnFirstMoveMade(new OnFirstMoveMadeParams()
             {
                 NextMoverId = nextMoverId,
-                CardIds = cardIds.ToList()
+                CardIds = cardIds.ToList(),
+                MoverId = Context.User.GetUserId()
             });
         }
 
@@ -120,7 +121,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
             {
                 CardIds = cardIds.ToList(),
-                NextMoverId = nextMoverId
+                NextMoverId = nextMoverId,
+                MoverId = Context.User.GetUserId()
             });
         }
 
@@ -133,7 +135,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                     LoserId = moveResult.LoserId,
                     CheckedCard = moveResult.CheckedCard,
                     NextMoverId = moveResult.NextMoverId,
-                    HiddenTakedLoserCards = moveResult.TakedLoserCards.Select(c => c.Id).ToList()
+                    HiddenTakedLoserCards = moveResult.TakedLoserCards.Select(c => c.Id).ToList(),
+                    MoverId = Context.User.GetUserId()
                 });
 
                 await Clients.Client(loserConnectionId).OnDontBeliveMoveMade(new OnDontBeliveMoveMadeParams()
@@ -141,7 +144,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                     LoserId = moveResult.LoserId,
                     CheckedCard = moveResult.CheckedCard,
                     NextMoverId = moveResult.NextMoverId,
-                    TakedLoserCards = moveResult.TakedLoserCards.ToList()
+                    TakedLoserCards = moveResult.TakedLoserCards.ToList(),
+                    MoverId = Context.User.GetUserId()
                 });
             }
             else
@@ -356,7 +360,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 {
                     Succeeded = true,
                     NextMoverId = result.NextMoverId,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    MoverId = Context.User.GetUserId()
                 });
             }
             catch (Exception ex)
@@ -366,7 +371,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
                 {
                     Succeeded = false,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    MoverId = Context.User.GetUserId()
                 });
             }
         }
@@ -382,7 +388,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 {
                     Succeeded = true,
                     NextMoverId = result.NextMoverId,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    MoverId = Context.User.GetUserId()
                 });
             }
             catch (Exception ex)
@@ -392,7 +399,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
                 {
                     Succeeded = false,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    MoverId = Context.User.GetUserId()
                 });
             }
         }
@@ -412,7 +420,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                     NextMoverId = result.NextMoverId,
                     HiddenTakedLoserCards = result.LoserId != Context.User.GetUserId() ? result.TakedLoserCards.Select(c => c.Id).ToList() : null,
                     TakedLoserCards = result.LoserId == Context.User.GetUserId() ? result.TakedLoserCards.ToList() : null,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    MoverId = Context.User.GetUserId()
                 });
             }
             catch (Exception ex)
@@ -422,7 +431,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 await Clients.Caller.ReceiveMakeDontBeliveMoveResult(new ReceiveMakeDontBeliveMoveResultParams()
                 {
                     Succeeded = false,
-                    RequestId = @params.RequestId
+                    RequestId = @params.RequestId,
+                    MoverId = Context.User.GetUserId()
                 });
             }
         }
