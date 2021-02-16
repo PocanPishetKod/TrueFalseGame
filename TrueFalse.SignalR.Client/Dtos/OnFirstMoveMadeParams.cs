@@ -14,5 +14,7 @@ namespace TrueFalse.SignalR.Client.Dtos
         public Guid NextMoverId { get; set; }
 
         public Guid MoverId { get; set; }
+
+        public List<MoveType> NextPossibleMoves { get; set; }
     }
 }

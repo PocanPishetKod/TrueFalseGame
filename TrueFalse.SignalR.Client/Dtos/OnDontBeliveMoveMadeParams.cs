@@ -18,5 +18,7 @@ namespace TrueFalse.SignalR.Client.Dtos
         public List<int> HiddenTakedLoserCards { get; set; }
 
         public List<PlayingCardDto> TakedLoserCards { get; set; }
+
+        public List<MoveType> NextPossibleMoves { get; set; }
     }
 }

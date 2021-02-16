@@ -15,5 +15,7 @@ namespace TrueFalse.Application.Dtos.Results
         public Guid LoserId { get; set; }
 
         public IReadOnlyCollection<PlayingCardDto> TakedLoserCards { get; set; }
+
+        public IReadOnlyCollection<MoveType> NextPossibleMoves { get; set; }
     }
 }

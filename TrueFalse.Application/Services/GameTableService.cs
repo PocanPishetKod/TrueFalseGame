@@ -250,7 +250,9 @@ namespace TrueFalse.Application.Services
 
             return new MakeFirstMoveResult()
             {
-                NextMoverId = gameTable.CurrentMover.Id
+                NextMoverId = gameTable.CurrentMover.Id,
+                GameTableId = gameTable.Id,
+                NextPossibleMoves = gameTable.GetNextPossibleMoves().Select(mt => MoveTypesUtils.GetMoveType(mt)).ToList()
             };
         }
 
@@ -282,7 +284,8 @@ namespace TrueFalse.Application.Services
             return new MakeBeleiveMoveResult()
             {
                 GameTableId = gameTable.Id,
-                NextMoverId = gameTable.CurrentMover.Id
+                NextMoverId = gameTable.CurrentMover.Id,
+                NextPossibleMoves = gameTable.GetNextPossibleMoves().Select(mt => MoveTypesUtils.GetMoveType(mt)).ToList()
             };
         }
 
@@ -327,7 +330,8 @@ namespace TrueFalse.Application.Services
                     Id = c.Id,
                     Rank = (int)c.Rank,
                     Suit = (int)c.Suit
-                }).ToList()
+                }).ToList(),
+                NextPossibleMoves = gameTable.GameInProgress ? gameTable.GetNextPossibleMoves().Select(mt => MoveTypesUtils.GetMoveType(mt)).ToList() : new List<MoveType>()
             };
         }
     }

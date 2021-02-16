@@ -17,7 +17,6 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
     {
         private readonly GameTableService _gameTableService;
         private readonly ILogger<MainHub> _logger;
-        private readonly PlayerService _playerService;
 
         private static readonly ConcurrentDictionary<Guid, string> _userConnectionIdStore;
 
@@ -26,11 +25,10 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             _userConnectionIdStore = new ConcurrentDictionary<Guid, string>();
         }
 
-        public MainHub(GameTableService gameTableService, ILogger<MainHub> logger, PlayerService playerService)
+        public MainHub(GameTableService gameTableService, ILogger<MainHub> logger)
         {
             _gameTableService = gameTableService;
             _logger = logger;
-            _playerService = playerService;
         }
 
         private async Task AddToGroup(string groupName, string connectionId)
@@ -109,24 +107,26 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             });
         }
 
-        private async Task NotifyFirstMoveMade(Guid gameTableId, IReadOnlyCollection<int> cardIds, int rank, Guid nextMoverId)
+        private async Task NotifyFirstMoveMade(MakeFirstMoveResult moveResult, IReadOnlyCollection<int> cardIds, int rank)
         {
-            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnFirstMoveMade(new OnFirstMoveMadeParams()
+            await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[1] { Context.ConnectionId }).OnFirstMoveMade(new OnFirstMoveMadeParams()
             {
-                NextMoverId = nextMoverId,
+                NextMoverId = moveResult.NextMoverId,
                 CardIds = cardIds.ToList(),
                 MoverId = Context.User.GetUserId(),
-                Rank = rank
+                Rank = rank,
+                NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
             });
         }
 
-        private async Task NotifyBelieveMoveMade(Guid gameTableId, IReadOnlyCollection<int> cardIds, Guid nextMoverId)
+        private async Task NotifyBelieveMoveMade(MakeBeleiveMoveResult moveResult, IReadOnlyCollection<int> cardIds)
         {
-            await Clients.GroupExcept(gameTableId.ToString(), new string[1] { Context.ConnectionId }).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
+            await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[1] { Context.ConnectionId }).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
             {
                 CardIds = cardIds.ToList(),
-                NextMoverId = nextMoverId,
-                MoverId = Context.User.GetUserId()
+                NextMoverId = moveResult.NextMoverId,
+                MoverId = Context.User.GetUserId(),
+                NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
             });
         }
 
@@ -140,7 +140,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                     CheckedCard = moveResult.CheckedCard,
                     NextMoverId = moveResult.NextMoverId,
                     HiddenTakedLoserCards = moveResult.TakedLoserCards.Select(c => c.Id).ToList(),
-                    MoverId = Context.User.GetUserId()
+                    MoverId = Context.User.GetUserId(),
+                    NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
                 });
 
                 await Clients.Client(loserConnectionId).OnDontBeliveMoveMade(new OnDontBeliveMoveMadeParams()
@@ -149,7 +150,8 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                     CheckedCard = moveResult.CheckedCard,
                     NextMoverId = moveResult.NextMoverId,
                     TakedLoserCards = moveResult.TakedLoserCards.ToList(),
-                    MoverId = Context.User.GetUserId()
+                    MoverId = Context.User.GetUserId(),
+                    NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
                 });
             }
             else
@@ -276,7 +278,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
                 var result = _gameTableService.Join(@params.GameTableId, Context.User.GetUserId());
 
                 await AddToGroup(@params.GameTableId.ToString(), Context.ConnectionId);
-                await NotifyAboutPlayerJoined(@params.GameTableId, Context.User.GetUserId());
+                await NotifyAboutPlayerJoined(@params.GameTableId, result);
                 await Clients.Caller.ReceiveJoinResult(new ReceiveJoinResultParams()
                 {
                     Succeeded = true,
@@ -360,7 +362,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             {
                 var result = _gameTableService.MakeFirstMove(Context.User.GetUserId(), @params.CardIds, @params.Rank);
 
-                await NotifyFirstMoveMade(result.GameTableId, @params.CardIds, @params.Rank, result.NextMoverId);
+                await NotifyFirstMoveMade(result, @params.CardIds, @params.Rank);
                 await Clients.Caller.ReceiveMakeFirstMoveResult(new ReceiveMakeFirstMoveResultParams()
                 {
                     Succeeded = true,
@@ -388,7 +390,7 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             {
                 var result = _gameTableService.MakeBelieveMove(Context.User.GetUserId(), @params.CardIds);
 
-                await NotifyBelieveMoveMade(result.GameTableId, @params.CardIds, result.NextMoverId);
+                await NotifyBelieveMoveMade(result, @params.CardIds);
                 await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
                 {
                     Succeeded = true,

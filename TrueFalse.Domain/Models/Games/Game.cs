@@ -450,5 +450,35 @@ namespace TrueFalse.Domain.Models.Games
 
             }
         }
+
+        /// <summary>
+        /// Возвращает список типов возможных ходов
+        /// </summary>
+        /// <returns></returns>
+        public IReadOnlyCollection<Type> GetNextPossibleMoves()
+        {
+            var result = new List<Type>();
+
+            if (!CanMakeMove())
+            {
+                return result;
+            }
+
+            if (CurrentRound.MovesCount == 0)
+            {
+                result.Add(typeof(FirstMove));
+            }
+            else
+            {
+                if (CurrentRound.MovesCount > 0 && !(CurrentRound.GetLastMove() is DontBelieveMove))
+                {
+                    result.Add(typeof(DontBelieveMove));
+                }
+
+                result.Add(typeof(BelieveMove));
+            }
+
+            return result;
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace TrueFalse.Application.Dtos.Results
         public Guid GameTableId { get; set; }
 
         public Guid NextMoverId { get; set; }
+
+        public IReadOnlyCollection<MoveType> NextPossibleMoves { get; set; }
     }
 }

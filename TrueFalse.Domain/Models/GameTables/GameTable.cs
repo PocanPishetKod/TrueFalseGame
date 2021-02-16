@@ -36,6 +36,8 @@ namespace TrueFalse.Domain.Models.GameTables
 
         public bool IsFull => PlayPlaces.IsFull;
 
+        public bool GameInProgress => CurrentGame != null ? CurrentGame.IsStarted && !CurrentGame.IsEnded : false;
+
         /// <summary>
         /// Является ли комната прогодна для использования
         /// </summary>
@@ -319,6 +321,20 @@ namespace TrueFalse.Domain.Models.GameTables
             }
 
             return CurrentGame.GetCardFromCurrentRoundById(cardId);
+        }
+
+        /// <summary>
+        /// Возвращает список типов возможных ходов
+        /// </summary>
+        /// <returns></returns>
+        public IReadOnlyCollection<Type> GetNextPossibleMoves()
+        {
+            if (CurrentGame == null)
+            {
+                throw new TrueFalseGameException("Игра еще не началась");
+            }
+
+            return CurrentGame.GetNextPossibleMoves();
         }
 
         public void Dispose()
