@@ -37,7 +37,7 @@ namespace TrueFalse.Client.Domain.ViewModels
             GameTable = new GameTable()
             {
                 Owner = _stateService.GetSavedPlayer(),
-                Type = GameTableType.Cards36And3Players,
+                Type = GameTableType.Cards36And4Players,
                 Name = GameTableNameGenerator.Generate()
             };
         }
