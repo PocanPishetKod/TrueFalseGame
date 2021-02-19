@@ -34,11 +34,7 @@ namespace TrueFalse.Client.Domain.Extensions
 
         public static GameTablePlayer ToModel(this GameTablePlayerDto dto)
         {
-            return new GameTablePlayer()
-            {
-                GameTablePlaceNumber = dto.GameTablePlaceNumber,
-                Player = dto.Player.ToModel()
-            };
+            return new GameTablePlayer(dto.Player.ToModel(), dto.GameTablePlaceNumber);
         }
     }
 }
