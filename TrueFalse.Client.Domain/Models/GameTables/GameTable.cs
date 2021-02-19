@@ -47,6 +47,16 @@ namespace TrueFalse.Client.Domain.Models.GameTables
 
         public bool IsFull => CanStart;
 
+        public void SetNextPossibleMoves(IReadOnlyCollection<MoveType> moveTypes)
+        {
+            if (!IsStarted)
+            {
+                return;
+            }
+
+            CurrentGame.SetNextPossibleMoves(moveTypes);
+        }
+
         public void StartGame(Guid moverId, IReadOnlyCollection<PlayerCardsInfoDto> playerCardsInfos)
         {
             if (IsStarted)

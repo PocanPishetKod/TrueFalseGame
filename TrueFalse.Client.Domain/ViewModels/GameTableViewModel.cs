@@ -37,6 +37,8 @@ namespace TrueFalse.Client.Domain.ViewModels
             _mainHubApi.GameStarted += OnGameStarted;
             _mainHubApi.FirstMoveMade += OnFirstMoveMade;
             _mainHubApi.PlayerJoined += OnPlayerJoined;
+            _mainHubApi.BeliveMoveMade += OnBeliveMoveMade;
+            _mainHubApi.DontBeliveMoveMade += OnDontBeliveMoveMade;
         }
 
         private void OnGameStarted(OnGameStartedParams @params)
@@ -74,6 +76,17 @@ namespace TrueFalse.Client.Domain.ViewModels
             };
 
             GameTable.MakeFirstMove(move, nextMover.Player.Id);
+            GameTable.SetNextPossibleMoves(@params.NextPossibleMoves);
+        }
+
+        private void OnBeliveMoveMade(OnBeliveMoveMadeParams @params)
+        {
+
+        }
+
+        private void OnDontBeliveMoveMade(OnDontBeliveMoveMadeParams @params)
+        {
+
         }
 
         private void OnPlayerJoined(OnPlayerJoinedParams @params)

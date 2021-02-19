@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Models.Cards;
 using TrueFalse.Client.Domain.Models.Moves;
 using TrueFalse.Client.Domain.Models.Players;
+using TrueFalse.SignalR.Client.Dtos;
 
 namespace TrueFalse.Client.Domain.Models.Games
 {
     public class Game
     {
+        private List<MoveType> _nextPossibleMoves;
+        public IReadOnlyCollection<MoveType> NextPossibleMoves => _nextPossibleMoves;
+
         public List<GameRound> GameRounds { get; private set; }
 
         public GameRound CurrentRound => GameRounds.LastOrDefault();
@@ -18,6 +22,17 @@ namespace TrueFalse.Client.Domain.Models.Games
         public CardsPack CardsPack { get; private set; }
 
         public Player CurrentMover { get; private set; }
+
+        public Game()
+        {
+            _nextPossibleMoves = new List<MoveType>();
+        }
+
+        public void SetNextPossibleMoves(IReadOnlyCollection<MoveType> moveTypes)
+        {
+            _nextPossibleMoves.Clear();
+            _nextPossibleMoves.AddRange(moveTypes);
+        }
 
         public void Start(int cardsCount, Player mover)
         {
