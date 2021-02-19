@@ -256,11 +256,11 @@ namespace TrueFalse.Application.Services
             };
         }
 
-        public MakeBeleiveMoveResult MakeBelieveMove(Guid playerId, IReadOnlyCollection<int> cardIds)
+        public MakeBeleiveMoveResult MakeBelieveMove(Guid playerId, int selectedCardId)
         {
-            if (cardIds == null)
+            if (selectedCardId <= 0)
             {
-                throw new ArgumentNullException(nameof(cardIds));
+                throw new ArgumentException(nameof(selectedCardId));
             }
 
             var player = _playerRepository.GetById(playerId);
@@ -275,17 +275,30 @@ namespace TrueFalse.Application.Services
                 throw new Exception($"Игрок с Id = {playerId} не находится за игровым столом");
             }
 
-            var cards = gameTable.GetPlayerCards(playerId, cardIds);
+            var checkedCard = gameTable.GetCardFromCurrentRoundById(selectedCardId);
 
-            var move = new BelieveMove(cards.Select(c => new PlayingCard(c.Id, c.Suit, c.Rank)).ToList(), playerId);
+            var move = new BelieveMove(selectedCardId, playerId);
 
-            gameTable.MakeBeleiveMove(move);
+            gameTable.MakeBeleiveMove(move, out var takedLoserCards, out var loserId);
 
             return new MakeBeleiveMoveResult()
             {
                 GameTableId = gameTable.Id,
                 NextMoverId = gameTable.CurrentMover.Id,
-                NextPossibleMoves = gameTable.GetNextPossibleMoves().Select(mt => MoveTypesUtils.GetMoveType(mt)).ToList()
+                NextPossibleMoves = gameTable.GetNextPossibleMoves().Select(mt => MoveTypesUtils.GetMoveType(mt)).ToList(),
+                CheckedCard = new PlayingCardDto()
+                {
+                    Id = checkedCard.Id,
+                    Rank = (int)checkedCard.Rank,
+                    Suit = (int)checkedCard.Suit
+                },
+                LoserId = loserId,
+                TakedLoserCards = takedLoserCards.Select(c => new PlayingCardDto()
+                {
+                    Id = c.Id,
+                    Rank = (int)c.Rank,
+                    Suit = (int)c.Suit
+                }).ToList()
             };
         }
 

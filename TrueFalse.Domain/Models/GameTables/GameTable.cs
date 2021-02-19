@@ -225,7 +225,7 @@ namespace TrueFalse.Domain.Models.GameTables
         /// Делает ход "Верю"
         /// </summary>
         /// <param name="move"></param>
-        public void MakeBeleiveMove(BelieveMove move)
+        public void MakeBeleiveMove(BelieveMove move, out IReadOnlyCollection<IPlayingCardInfo> takedLoserCards, out Guid loserId)
         {
             if (move == null)
             {
@@ -246,7 +246,7 @@ namespace TrueFalse.Domain.Models.GameTables
                     throw new TrueFalseGameException("Игра еще не началась");
                 }
 
-                CurrentGame.MakeBeleiveMove(move);
+                CurrentGame.MakeBeleiveMove(move, out takedLoserCards, out loserId);
             }
             finally
             {

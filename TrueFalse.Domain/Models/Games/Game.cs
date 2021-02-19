@@ -120,16 +120,6 @@ namespace TrueFalse.Domain.Models.Games
             return true;
         }
 
-        private bool ValidateBeleiveMove(BelieveMove move)
-        {
-            if (!ValidateCardsCount(move.Cards))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         private GamePlayer GetNextMover()
         {
             var gamePlayer = GamePlayers.First(gp => gp.Player.Id == CurrentMover.Id);
@@ -249,7 +239,7 @@ namespace TrueFalse.Domain.Models.Games
         /// Делает ход "Верю"
         /// </summary>
         /// <param name="move"></param>
-        public void MakeBeleiveMove(BelieveMove move)
+        public void MakeBeleiveMove(BelieveMove move, out IReadOnlyCollection<IPlayingCardInfo> takedLoserCards, out Guid loserId)
         {
             if (!CanMakeMove())
             {
@@ -277,19 +267,45 @@ namespace TrueFalse.Domain.Models.Games
                 throw new TrueFalseGameException($"Ход вне очереди со стороны пользователя с Id = {move.InitiatorId}");
             }
 
-            if (!ValidateBeleiveMove(move))
+            var lastCards = CurrentRound.GetLastCards();
+            if (lastCards == null || lastCards.Count == 0)
             {
-                throw new TrueFalseGameException("Невалидный ход");
+                throw new Exception("Ошибка логики кода. Ожидался не пустой список карт");
             }
 
-            if (GetNextMover().Cards.Count == 0)
+            var selectedCard = lastCards.FirstOrDefault(c => c.Id == move.SelectedCardId);
+            if (selectedCard == null)
             {
-                throw new TrueFalseGameException("Нельзя сделать данных ход так как у следующего игрока нет карт");
+                throw new TrueFalseGameException("Указанныая пользователем карта не может быть выбрана для проверки так как ее нет в картах предыдущего хода");
             }
 
-            gamePlayer.TakeCards(move.Cards.Select(c => c.Id).ToList());
+            var loserCards = CurrentRound.GetAllCards();
+            takedLoserCards = loserCards;
+            GamePlayer loser;
+            if (selectedCard.Rank == CurrentRound.GetRank()) // Проиграл
+            {
+                loser = GetPreviousMover();
+                loser.GiveCards(loserCards);
+            }
+            else // Выиграл
+            {
+                gamePlayer.GiveCards(loserCards);
+                loser = gamePlayer;
+            }
+
             CurrentRound.AddMove(move);
-            SetNextMover();
+            CurrentRound.End(loser.Player);
+            loserId = loser.Player.Id;
+
+            if (GamePlayers.Where(gp => gp.Cards.Any()).Count() == 1) // Игра закончилась
+            {
+                End(loser);
+            }
+            else // Закончился раунд
+            {
+                NextRound();
+                SetNextMover(loser);
+            }
         }
 
         /// <summary>
@@ -309,11 +325,6 @@ namespace TrueFalse.Domain.Models.Games
             }
 
             if (CurrentRound.MovesCount == 0)
-            {
-                throw new TrueFalseGameException("В данный момент нельзя совершать ход этого типа");
-            }
-
-            if (CurrentRound.GetLastMove() is DontBelieveMove)
             {
                 throw new TrueFalseGameException("В данный момент нельзя совершать ход этого типа");
             }
@@ -470,11 +481,7 @@ namespace TrueFalse.Domain.Models.Games
             }
             else
             {
-                if (CurrentRound.MovesCount > 0 && !(CurrentRound.GetLastMove() is DontBelieveMove))
-                {
-                    result.Add(typeof(DontBelieveMove));
-                }
-
+                result.Add(typeof(DontBelieveMove));
                 result.Add(typeof(BelieveMove));
             }
 

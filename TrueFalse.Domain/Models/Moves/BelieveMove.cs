@@ -8,16 +8,18 @@ namespace TrueFalse.Domain.Models.Moves
     /// <summary>
     /// Ход "Верю"
     /// </summary>
-    public class BelieveMove : MoveWithCards
+    public class BelieveMove : IMove
     {
-        public BelieveMove(IReadOnlyList<PlayingCard> cards, Guid initiatorId)
-        {
-            if (cards == null)
-            {
-                throw new ArgumentNullException(nameof(cards));
-            }
+        /// <summary>
+        /// Выбранная карта на проверку
+        /// </summary>
+        public int SelectedCardId { get; private set; }
 
-            Cards = cards;
+        public Guid InitiatorId { get; protected set; }
+
+        public BelieveMove(int selectedCardId, Guid initiatorId)
+        {
+            SelectedCardId = selectedCardId;
             InitiatorId = initiatorId;
         }
     }

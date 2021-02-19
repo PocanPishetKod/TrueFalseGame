@@ -119,15 +119,34 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
             });
         }
 
-        private async Task NotifyBelieveMoveMade(MakeBeleiveMoveResult moveResult, IReadOnlyCollection<int> cardIds)
+        private async Task NotifyBelieveMoveMade(MakeBeleiveMoveResult moveResult)
         {
-            await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[1] { Context.ConnectionId }).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
+            if (_userConnectionIdStore.TryGetValue(moveResult.LoserId, out var loserConnectionId))
             {
-                CardIds = cardIds.ToList(),
-                NextMoverId = moveResult.NextMoverId,
-                MoverId = Context.User.GetUserId(),
-                NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
-            });
+                await Clients.GroupExcept(moveResult.GameTableId.ToString(), new string[2] { loserConnectionId, Context.ConnectionId }).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
+                {
+                    LoserId = moveResult.LoserId,
+                    CheckedCard = moveResult.CheckedCard,
+                    NextMoverId = moveResult.NextMoverId,
+                    HiddenTakedLoserCards = moveResult.TakedLoserCards.Select(c => c.Id).ToList(),
+                    MoverId = Context.User.GetUserId(),
+                    NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
+                });
+
+                await Clients.Client(loserConnectionId).OnBeliveMoveMade(new OnBeliveMoveMadeParams()
+                {
+                    LoserId = moveResult.LoserId,
+                    CheckedCard = moveResult.CheckedCard,
+                    NextMoverId = moveResult.NextMoverId,
+                    TakedLoserCards = moveResult.TakedLoserCards.ToList(),
+                    MoverId = Context.User.GetUserId(),
+                    NextPossibleMoves = moveResult.NextPossibleMoves.ToList()
+                });
+            }
+            else
+            {
+                _logger.LogError("Игрок не найден в группе");
+            }
         }
 
         private async Task NotifyDontBeliveMoveMade(MakeDontBeliveMoveResult moveResult)
@@ -388,13 +407,17 @@ namespace TrueFalse.SignalR.Api.Hubs.Main
         {
             try
             {
-                var result = _gameTableService.MakeBelieveMove(Context.User.GetUserId(), @params.CardIds);
+                var result = _gameTableService.MakeBelieveMove(Context.User.GetUserId(), @params.SelectedCardId);
 
-                await NotifyBelieveMoveMade(result, @params.CardIds);
+                await NotifyBelieveMoveMade(result);
                 await Clients.Caller.ReceiveMakeBeliveMoveResult(new ReceiveMakeBeliveMoveResultParams()
                 {
                     Succeeded = true,
+                    CheckedCard = result.CheckedCard,
+                    LoserId = result.LoserId,
                     NextMoverId = result.NextMoverId,
+                    HiddenTakedLoserCards = result.LoserId != Context.User.GetUserId() ? result.TakedLoserCards.Select(c => c.Id).ToList() : null,
+                    TakedLoserCards = result.LoserId == Context.User.GetUserId() ? result.TakedLoserCards.ToList() : null,
                     RequestId = @params.RequestId,
                     MoverId = Context.User.GetUserId()
                 });

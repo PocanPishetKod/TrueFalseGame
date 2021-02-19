@@ -7,6 +7,6 @@ namespace TrueFalse.SignalR.Core.Dtos
 {
     public class MakeBeliveMoveParams : RequestParams
     {
-        public List<int> CardIds { get; set; }
+        public int SelectedCardId { get; set; }
     }
 }
