@@ -31,7 +31,6 @@ namespace TrueFalse.Client.Domain.ViewModels
             _blockUIService = blockUIService;
             _hubClientConnection = hubClientConnection;
 
-            OpenConnection();
             AuthenticateBackground();
         }
 
@@ -50,7 +49,7 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         private void OpenConnection(string token)
         {
-            _connectTask = _hubClientConnection.Connect();
+            _connectTask = _hubClientConnection.WithAccessToken(token).Connect();
         }
 
         private void AuthenticateBackground()
