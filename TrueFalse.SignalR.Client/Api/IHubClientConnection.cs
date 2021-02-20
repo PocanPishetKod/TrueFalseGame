@@ -10,5 +10,7 @@ namespace TrueFalse.SignalR.Client.Api
         Task Connect();
 
         Task Close();
+
+        IHubClientConnection WithAccessToken(string token);
     }
 }

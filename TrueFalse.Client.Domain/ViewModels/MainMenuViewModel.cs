@@ -48,7 +48,7 @@ namespace TrueFalse.Client.Domain.ViewModels
             }
         }
 
-        private void OpenConnection()
+        private void OpenConnection(string token)
         {
             _connectTask = _hubClientConnection.Connect();
         }
@@ -61,6 +61,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                 _authTask = authService.Authenticate().ContinueWith(task =>
                 {
                     _stateService.SetPlayer(task.Result);
+                    OpenConnection(task.Result.Token);
                 });
             }
         }

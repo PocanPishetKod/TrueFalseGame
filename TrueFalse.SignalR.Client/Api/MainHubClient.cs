@@ -37,17 +37,15 @@ namespace TrueFalse.SignalR.Client.Api
             _isDisposed = false;
         }
 
-        public string AccessToken
+        public IHubClientConnection WithAccessToken(string token)
         {
-            set
+            if (string.IsNullOrWhiteSpace(token))
             {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-
-                _accessToken = value;
+                throw new ArgumentNullException(nameof(token));
             }
+
+            _accessToken = token;
+            return this;
         }
 
         private void SetHandlers()
