@@ -183,7 +183,7 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         }
 
-        public override Task Navigate(string viewModelName)
+        public override Task Navigate<TViewModel>()
         {
             throw new NotImplementedException();
         }

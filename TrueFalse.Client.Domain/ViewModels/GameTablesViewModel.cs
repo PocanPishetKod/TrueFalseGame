@@ -37,6 +37,8 @@ namespace TrueFalse.Client.Domain.ViewModels
             _navigator = navigator;
             _blockUIService = blockUIService;
             _dispatcher = dispatcher;
+            _mainHubClient = mainHubClient;
+            _isDisposed = false;
 
             _mainHubClient.CreatedNewGameTable += OnCreatedGameTable;
         }
@@ -100,7 +102,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                         _blockUIService.StopBlocking();
 
                         _stateService.SetGameTable(gameTable);
-                        Navigate(nameof(GameTableViewModel));
+                        Navigate<GameTableViewModel>();
                     });
                 }
             });
@@ -108,22 +110,23 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void GoToCreatingGameTable()
         {
-            Navigate(nameof(CreateGameTableViewModel));
+            Navigate<CreateGameTableViewModel>();
         }
 
-        public override Task Navigate(string viewModelName)
+        public override Task Navigate<TViewModel>()
         {
-            if (viewModelName.Equals(nameof(MainMenuViewModel), StringComparison.CurrentCultureIgnoreCase))
+            var viewModelType = typeof(TViewModel);
+            if (viewModelType.Name.Equals(nameof(MainMenuViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
-                _navigator.Navigate(nameof(MainMenuViewModel));
+                _navigator.Navigate<MainMenuViewModel>();
             }
-            else if (viewModelName.Equals(nameof(CreateGameTableViewModel), StringComparison.CurrentCultureIgnoreCase))
+            else if (viewModelType.Name.Equals(nameof(CreateGameTableViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
-                _navigator.Navigate(nameof(CreateGameTableViewModel));
+                _navigator.Navigate<CreateGameTableViewModel>();
             }
-            else if (viewModelName.Equals(nameof(GameTableViewModel), StringComparison.CurrentCultureIgnoreCase))
+            else if (viewModelType.Name.Equals(nameof(GameTableViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
-                _navigator.Navigate(nameof(GameTableViewModel));
+                _navigator.Navigate<GameTableViewModel>();
             }
             else
             {

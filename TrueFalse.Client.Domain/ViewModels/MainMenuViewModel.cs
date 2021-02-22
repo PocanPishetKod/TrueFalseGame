@@ -34,19 +34,6 @@ namespace TrueFalse.Client.Domain.ViewModels
             AuthenticateBackground();
         }
 
-        public ICommand<string> NavigateCommand
-        {
-            get
-            {
-                if (_navigateCommand == null)
-                {
-                    _navigateCommand = new NavigateCommand(this);
-                }
-
-                return _navigateCommand;
-            }
-        }
-
         private void OpenConnection(string token)
         {
             _connectTask = _hubClientConnection.WithAccessToken(token).Connect();
@@ -65,9 +52,9 @@ namespace TrueFalse.Client.Domain.ViewModels
             }
         }
 
-        public override async Task Navigate(string viewModelName)
+        public override async Task Navigate<TViewModel>()
         {
-            if (viewModelName.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
+            if (typeof(TViewModel).Name.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
                 if (_authTask != null && !_authTask.IsCompleted)
                 {
@@ -83,7 +70,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                     _blockUIService.StopBlocking();
                 }
 
-                _navigator.Navigate(nameof(GameTablesViewModel));
+                _navigator.Navigate<GameTablesViewModel>();
             }
             else
             {

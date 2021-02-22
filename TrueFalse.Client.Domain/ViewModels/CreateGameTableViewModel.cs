@@ -67,7 +67,7 @@ namespace TrueFalse.Client.Domain.ViewModels
                     if (response.Succeeded)
                     {
                         _stateService.SetGameTable(GameTable as GameTable);
-                        Navigate(nameof(GameTableViewModel));
+                        Navigate<GameTableViewModel>();
                     }
                 })
                 .Finally(() =>
@@ -81,14 +81,14 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void Cancel()
         {
-            Navigate(nameof(GameTablesViewModel));
+            Navigate<GameTablesViewModel>();
         }
 
-        public override Task Navigate(string viewModelName)
+        public override Task Navigate<TViewModel>()
         {
-            if (viewModelName.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
+            if (typeof(TViewModel).Name.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
-                _navigator.Navigate(nameof(GameTablesViewModel));
+                _navigator.Navigate<GameTablesViewModel>();
             }
             else
             {
