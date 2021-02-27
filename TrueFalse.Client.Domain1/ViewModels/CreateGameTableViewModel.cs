@@ -90,15 +90,7 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public override Task Navigate<TViewModel>()
         {
-            if (typeof(TViewModel).Name.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
-            {
-                _navigator.Navigate<GameTablesViewModel>();
-            }
-            else
-            {
-                throw new Exception("Ошибка навигации");
-            }
-
+            _navigator.Navigate<TViewModel>();
             return Task.CompletedTask;
         }
     }
