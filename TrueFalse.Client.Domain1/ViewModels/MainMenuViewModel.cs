@@ -52,24 +52,40 @@ namespace TrueFalse.Client.Domain.ViewModels
             }
         }
 
+        private async Task AwaitTasks()
+        {
+            if (!_authTask.IsCompleted)
+            {
+                _blockUIService.StartBlocking();
+                await _authTask;
+
+                if (!_connectTask.IsCompleted)
+                {
+                    await _connectTask;
+                }
+
+                _blockUIService.StopBlocking();
+            }
+            else if (_authTask.IsCompleted && _authTask.IsFaulted)
+            {
+                return; // todo добавить нормальную обработку случая провала подключения к серверу
+            }
+        }
+
         public override async Task Navigate<TViewModel>()
         {
             if (typeof(TViewModel).Name.Equals(nameof(GameTablesViewModel), StringComparison.CurrentCultureIgnoreCase))
             {
-                if (_authTask != null && !_authTask.IsCompleted)
+                if (!_stateService.IsAuthenticated && _authTask == null)
                 {
-                    _blockUIService.StartBlocking();
-                    await _authTask;
-                    _blockUIService.StopBlocking();
+                    return;
                 }
 
-                if (!_connectTask.IsCompleted)
+                if (!_stateService.IsAuthenticated)
                 {
-                    _blockUIService.StartBlocking();
-                    await _connectTask;
-                    _blockUIService.StopBlocking();
+                    await AwaitTasks();
                 }
-
+                
                 _navigator.Navigate<GameTablesViewModel>();
             }
             else
