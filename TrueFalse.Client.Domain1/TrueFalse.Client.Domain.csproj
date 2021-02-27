@@ -5,6 +5,10 @@
     <AssemblyName>TrueFalse.Client.Domain</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>C:\Users\Ghost\TrueFalse\Assets\Plugins\</OutputPath>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\TrueFalse.SignalR.Client\TrueFalse.SignalR.Client.csproj" />
   </ItemGroup>
