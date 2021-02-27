@@ -79,7 +79,10 @@ namespace TrueFalse.Client.Domain.ViewModels
                 {
                     if (response.Succeeded)
                     {
-                        response.GameTables.ForEach(g => _gameTables.Add(g.ToModel()));
+                        _dispatcher.Invoke(() =>
+                        {
+                            response.GameTables.ForEach(g => _gameTables.Add(g.ToModel()));
+                        });
                     }
                 });
         }
