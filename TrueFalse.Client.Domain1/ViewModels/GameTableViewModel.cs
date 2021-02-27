@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using TrueFalse.Client.Domain.Exceptions;
 using TrueFalse.Client.Domain.Interfaces;
 using TrueFalse.Client.Domain.Models.Cards;
-using TrueFalse.Client.Domain.Models.Games;
 using TrueFalse.Client.Domain.Models.GameTables;
 using TrueFalse.Client.Domain.Models.Moves;
 using TrueFalse.Client.Domain.Models.Players;
@@ -180,12 +179,20 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void Leave()
         {
-
+            _mainHubApi.LeaveFromGameTable(new LeaveFromGameTableParams())
+                .Then((response) =>
+                {
+                    if (response.Succeeded)
+                    {
+                        Navigate<MainMenuViewModel>();
+                    }
+                });
         }
 
         public override Task Navigate<TViewModel>()
         {
-            throw new NotImplementedException();
+            _navigator.Navigate<TViewModel>();
+            return Task.CompletedTask;
         }
     }
 }
