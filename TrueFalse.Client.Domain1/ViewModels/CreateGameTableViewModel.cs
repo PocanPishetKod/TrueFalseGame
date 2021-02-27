@@ -67,7 +67,11 @@ namespace TrueFalse.Client.Domain.ViewModels
                     if (response.Succeeded)
                     {
                         _stateService.SetGameTable(GameTable as GameTable);
-                        Navigate<GameTableViewModel>();
+
+                        _dispatcher.Invoke(() =>
+                        {
+                            Navigate<GameTableViewModel>();
+                        });
                     }
                 })
                 .Finally(() =>
