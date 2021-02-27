@@ -63,11 +63,11 @@ namespace TrueFalse.Domain.Models.GameTables
             DateOfCreate = DateTime.Now;
             PlayPlaces = CreatePlayPlaces();
 
-            Join(owner);
-
             _joinAndLeaveMutex = new Mutex();
             _moveMutex = new Mutex();
             _isDisposed = false;
+
+            Join(owner);
         }
 
         /// <summary>
