@@ -50,12 +50,15 @@ namespace TrueFalse.Client.Domain.ViewModels
                 return;
             }
 
-            GameTables.Add(new GameTable()
+            _dispatcher.Invoke(() =>
             {
-                Id = @params.GameTable.Id,
-                Name = @params.GameTable.Name,
-                Type = @params.GameTable.Type,
-                Owner = new Player() { Id = @params.GameTable.Owner.Id, Name = @params.GameTable.Owner.Name }
+                GameTables.Add(new GameTable()
+                {
+                    Id = @params.GameTable.Id,
+                    Name = @params.GameTable.Name,
+                    Type = @params.GameTable.Type,
+                    Owner = new Player() { Id = @params.GameTable.Owner.Id, Name = @params.GameTable.Owner.Name }
+                });
             });
         }
 
