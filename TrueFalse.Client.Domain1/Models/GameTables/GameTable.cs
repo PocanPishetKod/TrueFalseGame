@@ -26,6 +26,8 @@ namespace TrueFalse.Client.Domain.Models.GameTables
 
         public bool IsStarted => CurrentGame != null;
 
+        public bool IsInvalid => Owner == null;
+
         public bool CanStart
         {
             get
@@ -76,6 +78,27 @@ namespace TrueFalse.Client.Domain.Models.GameTables
             }
 
             Players.Add(new GameTablePlayer(player, placeNumber));
+        }
+
+        public void LeavePlayer(Player player)
+        {
+            if (!IsStarted)
+            {
+                return;
+            }
+
+            var gamePlayer = Players.FirstOrDefault(gp => gp.Player.Id == player.Id);
+            if (gamePlayer == null)
+            {
+                throw new NullReferenceException($"Игрока с Id = {player.Id} и именем {player.Name} нет за столом");
+            }
+
+            Players.Remove(gamePlayer);
+
+            if (player.Id == Owner.Id)
+            {
+                Owner = null;
+            }
         }
 
         public void MakeFirstMove(FirstMove move, Guid nextMoverId)

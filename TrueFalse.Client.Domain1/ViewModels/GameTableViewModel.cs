@@ -184,7 +184,17 @@ namespace TrueFalse.Client.Domain.ViewModels
                 {
                     if (response.Succeeded)
                     {
-                        Navigate<MainMenuViewModel>();
+                        GameTable.LeavePlayer(_stateService.GetSavedPlayer());
+
+                        if (GameTable.IsInvalid)
+                        {
+                            _stateService.SetGameTable(null);
+                        }
+
+                        _dispatcher.Invoke(() =>
+                        {
+                            Navigate<MainMenuViewModel>();
+                        });
                     }
                 });
         }
