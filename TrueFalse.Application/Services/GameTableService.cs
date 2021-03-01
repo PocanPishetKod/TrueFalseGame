@@ -180,6 +180,11 @@ namespace TrueFalse.Application.Services
 
             gameTable.Leave(player);
 
+            if (gameTable.IsInvalid)
+            {
+                _gameTableRepository.Remove(gameTable);
+            }
+
             return gameTable.Id;
         }
 
