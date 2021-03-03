@@ -454,7 +454,7 @@ namespace TrueFalse.Domain.Models.Games
 
             if (!IsStarted || IsEnded)
             {
-                GamePlayers.Remove(gamePlayer);
+                GamePlayers.Remove(gamePlayer);// todo Убрать удаление игрока из коллекции, но проставить ему флаг типа он ливнул, чтобы не учитывать его при расчете некст хода
             }
             else
             {

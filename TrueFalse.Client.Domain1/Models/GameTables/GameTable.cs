@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TrueFalse.Client.Domain.Models.Cards;
 using TrueFalse.Client.Domain.Models.Games;
 using TrueFalse.Client.Domain.Models.Moves;
 using TrueFalse.Client.Domain.Models.Players;
@@ -66,7 +67,7 @@ namespace TrueFalse.Client.Domain.Models.GameTables
                 return;
             }
 
-            CurrentGame = new Game();
+            CurrentGame = new Game(Players);
             CurrentGame.Start(playerCardsInfos.Sum(pc => pc.CardsCount), Players.First(p => p.Player.Id == moverId).Player);
         }
 
@@ -101,14 +102,34 @@ namespace TrueFalse.Client.Domain.Models.GameTables
             }
         }
 
+        public bool CanMakeMove(MoveType moveType)
+        {
+            if (!IsStarted || IsInvalid)
+            {
+                return false;
+            }
+
+            return CurrentGame.CanMakeMove(moveType);
+        }
+
         public void MakeFirstMove(FirstMove move, Guid nextMoverId)
         {
-            if (!IsStarted || CurrentGame.CurrentMover.Id != move.Initiator.Id)
+            if (!IsStarted || CurrentGame.CurrentMover.Id != move.Initiator.Id || CurrentGame.CanMakeMove(MoveType.FirstMove))
             {
                 return;
             }
 
             CurrentGame.MakeFirstMove(move, Players.First(p => p.Player.Id == nextMoverId).Player);
+        }
+
+        public void MakeBeliveMove(BeliveMove move, Guid nextMoverId, Guid loserId, IReadOnlyCollection<PlayingCard> takedLoserCards)
+        {
+            if (!IsStarted || CurrentGame.CurrentMover.Id != move.Initiator.Id || CurrentGame.CanMakeMove(MoveType.BeliveMove))
+            {
+                return;
+            }
+
+            CurrentGame.MakeBeliveMove(move, nextMoverId, loserId, takedLoserCards);
         }
     }
 }

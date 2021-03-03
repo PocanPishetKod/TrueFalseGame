@@ -20,6 +20,10 @@ namespace TrueFalse.Client.Domain.Services
 
         public FirstMove FirstMove { get; set; }
 
+        public BeliveMove BeliveMove { get; set; }
+
+        public DontBeliveMove DontBeliveMove { get; set; }
+
         public void SetPlayer(SavedPlayer savedPlayer)
         {
             if (_savedPlayer != null)

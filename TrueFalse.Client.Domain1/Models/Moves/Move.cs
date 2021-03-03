@@ -11,6 +11,8 @@ namespace TrueFalse.Client.Domain.Models.Moves
     {
         public Player Initiator { get; protected set; }
 
+        public abstract bool IsValid { get; }
+
         public Move(Player initiator)
         {
             Initiator = initiator;

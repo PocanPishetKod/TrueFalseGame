@@ -24,6 +24,8 @@ namespace TrueFalse.Client.Domain.Models.Moves
 
         public ObservableCollection<PlayingCard> SelectedCards { get; private set; }
 
+        public override bool IsValid => SelectedCards.Count > 0;
+
         public FirstMove(Player initiator) : base(initiator)
         {
             SelectedCards = new ObservableCollection<PlayingCard>();

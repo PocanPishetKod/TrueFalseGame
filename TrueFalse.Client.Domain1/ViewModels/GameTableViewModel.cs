@@ -119,7 +119,10 @@ namespace TrueFalse.Client.Domain.ViewModels
                     {
                         if (response.Succeeded)
                         {
-                            GameTable.StartGame(response.MoverId.Value, response.PlayerCardsInfo);
+                            _dispatcher.Invoke(() =>
+                            {
+                                GameTable.StartGame(response.MoverId.Value, response.PlayerCardsInfo);
+                            });
                         }
                     })
                     .Finally(() =>
@@ -139,7 +142,12 @@ namespace TrueFalse.Client.Domain.ViewModels
                 return;
             }
 
-            if (_stateService.FirstMove == null)
+            if (_stateService.FirstMove == null || !_stateService.FirstMove.IsValid)
+            {
+                return;
+            }
+
+            if (!GameTable.CanMakeMove(MoveType.FirstMove))
             {
                 return;
             }
@@ -169,7 +177,58 @@ namespace TrueFalse.Client.Domain.ViewModels
 
         public void MakeBeliveMove()
         {
+            if (_stateService.GetSavedPlayer().Id != GameTable.CurrentGame?.CurrentMover.Id)
+            {
+                return;
+            }
 
+            if (_stateService.BeliveMove == null || !_stateService.BeliveMove.IsValid)
+            {
+                return;
+            }
+
+            if (!GameTable.CanMakeMove(MoveType.BeliveMove))
+            {
+                return;
+            }
+
+            _blockUIService.StartBlocking();
+
+            _mainHubApi.MakeBeliveMove(new MakeBeliveMoveParams()
+            {
+                SelectedCardId = _stateService.BeliveMove.SelectedCard.Id
+            })
+                .Then((response) =>
+                {
+                    if (response.Succeeded)
+                    {
+                        _dispatcher.Invoke(() =>
+                        {
+                            if (response.LoserId == _stateService.GetSavedPlayer().Id)
+                            {
+                                GameTable.MakeBeliveMove(_stateService.BeliveMove, response.NextMoverId.Value,
+                                    response.LoserId.Value, response.TakedLoserCards.Select(c => new PlayingCard()
+                                {
+                                    Id = c.Id,
+                                    Rank = (PlayingCardRank)(int)c.Rank,
+                                    Suit = (PlayingCardSuit)(int)c.Suit
+                                }).ToList());
+                            }
+                            else
+                            {
+                                GameTable.MakeBeliveMove(_stateService.BeliveMove, response.NextMoverId.Value, response.LoserId.Value,
+                                    response.HiddenTakedLoserCards.Select(c => new PlayingCard()
+                                    {
+                                        Id = c
+                                    }).ToList());
+                            }
+                        });
+                    }
+                })
+                .Finally(() =>
+                {
+                    _dispatcher.Invoke(() => _blockUIService.StartBlocking());
+                });
         }
 
         public void MakeDontBeliveMove()

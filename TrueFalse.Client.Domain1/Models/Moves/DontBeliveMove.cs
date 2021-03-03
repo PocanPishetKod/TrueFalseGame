@@ -19,13 +19,15 @@ namespace TrueFalse.Client.Domain.Models.Moves
             {
                 if (_selectedCard != null)
                 {
-                    throw new TrueFalseGameException("Карта уже выбрана");
+                    return;
                 }
 
                 _selectedCard = value;
                 OnPropertyChanged(nameof(SelectedCard));
             }
         }
+
+        public override bool IsValid => _selectedCard != null;
 
         public DontBeliveMove(Player initiator) : base(initiator)
         {

@@ -52,5 +52,15 @@ namespace TrueFalse.Client.Domain.Services
         /// Данные о ходе типа "Первый ход"
         /// </summary>
         FirstMove FirstMove { get; set; }
+
+        /// <summary>
+        /// Данные о ходе типа "Верю"
+        /// </summary>
+        BeliveMove BeliveMove { get; set; }
+
+        /// <summary>
+        /// Данные о ходе типа "Не верю"
+        /// </summary>
+        DontBeliveMove DontBeliveMove { get; set; }
     }
 }
