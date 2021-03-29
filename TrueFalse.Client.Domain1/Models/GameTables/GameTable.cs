@@ -131,5 +131,15 @@ namespace TrueFalse.Client.Domain.Models.GameTables
 
             CurrentGame.MakeBeliveMove(move, nextMoverId, loserId, takedLoserCards);
         }
+
+        public void MakeDontBeliveMove(DontBeliveMove move, Guid? nextMoverId, Guid loserId, IReadOnlyCollection<PlayingCard> takedLoserCards)
+        {
+            if (!IsStarted || CurrentGame.CurrentMover.Id != move.Initiator.Id || CurrentGame.CanMakeMove(MoveType.BeliveMove))
+            {
+                return;
+            }
+
+            CurrentGame.MakeDontBeliveMove(move, nextMoverId, loserId, takedLoserCards);
+        }
     }
 }

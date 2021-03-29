@@ -19,7 +19,7 @@ namespace TrueFalse.Client.Domain.Models.Games
 
         public List<GameRound> GameRounds { get; private set; }
 
-        public GameRound CurrentRound => GameRounds.LastOrDefault();
+        public GameRound CurrentRound => IsEnded ? null : GameRounds.LastOrDefault();
 
         public CardsPack CardsPack { get; private set; }
 
@@ -27,6 +27,11 @@ namespace TrueFalse.Client.Domain.Models.Games
 
         private List<GamePlayer> _players;
         public IReadOnlyCollection<GamePlayer> Players => _players;
+
+        private Player _loser;
+        public Player Loser => _loser;
+
+        public bool IsEnded => _loser != null;
 
         public Game(IReadOnlyCollection<GameTablePlayer> players)
         {
@@ -45,6 +50,12 @@ namespace TrueFalse.Client.Domain.Models.Games
             GameRounds.Add(new GameRound());
         }
 
+        private void End(GamePlayer gamePlayer)
+        {
+            _loser = gamePlayer.Player;
+            CurrentMover = null;
+        }
+
         public void SetNextPossibleMoves(IReadOnlyCollection<MoveType> moveTypes)
         {
             _nextPossibleMoves.Clear();
@@ -56,6 +67,11 @@ namespace TrueFalse.Client.Domain.Models.Games
             CardsPack = new CardsPack(cardsCount);
             CurrentMover = mover;
             GameRounds = new List<GameRound>() { new GameRound() };
+        }
+
+        public void End()
+        {
+            throw new NotImplementedException();
         }
 
         public bool CanMakeMove(MoveType moveType)
@@ -82,7 +98,7 @@ namespace TrueFalse.Client.Domain.Models.Games
             CurrentMover = Players.First(p => p.Player.Id == nextMoverId).Player;
         }
 
-        public void MakeDontBeliveMove(DontBeliveMove move, Guid nextMoverId, Guid loserId, IReadOnlyCollection<PlayingCard> takedLoserCards)
+        public void MakeDontBeliveMove(DontBeliveMove move, Guid? nextMoverId, Guid loserId, IReadOnlyCollection<PlayingCard> takedLoserCards)
         {
             var loser = Players.FirstOrDefault(p => p.Player.Id == loserId);
             loser.PlayingCards.AddRange(takedLoserCards);
@@ -90,9 +106,15 @@ namespace TrueFalse.Client.Domain.Models.Games
             CurrentRound.AddMove(move);
             CurrentRound.End(loser.Player);
 
-            NextRound();
-
-            CurrentMover = Players.First(p => p.Player.Id == nextMoverId).Player;
+            if (nextMoverId.HasValue)
+            {
+                NextRound();
+                CurrentMover = Players.First(p => p.Player.Id == nextMoverId).Player;
+            } 
+            else
+            {
+                End(loser);
+            }
         }
     }
 }
